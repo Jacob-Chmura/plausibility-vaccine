@@ -1,6 +1,4 @@
-> Consider the following categories
-
-# Weight Data
+### Weight Data
 
 ______________________________________________________________________
 
