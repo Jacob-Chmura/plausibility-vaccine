@@ -1,14 +1,11 @@
-def hello_torch() -> str:
-    import torch
+from plausibility_vaccine.util import seed_everything, setup_basic_logging
 
-    _ = torch.zeros(1337)
-    return 'Hello PyTorch'
+seed = 0
 
 
 def main() -> None:
-    print('Checking packages...', end='')
-    hello_torch()
-    print('Ok.')
+    setup_basic_logging()
+    seed_everything(seed)
 
 
 if __name__ == '__main__':
