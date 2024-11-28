@@ -6,6 +6,18 @@ resolution-markers = [
 ]
 
 [[package]]
+name = "adapters"
+version = "1.0.1"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "transformers" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/7b/d7/510d735ffa757de956645228b49cf15d281fd324dbe826066137c0f21a2e/adapters-1.0.1.tar.gz", hash = "sha256:a5825c8773899c9f4fded9c8c0565ad157fa1975dca7574b706aa8eb26c8ed2d", size = 233348 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/69/c9/23a4a17aaff8ea66f8d2631eeaeaed4b8c6a7559082865ddc9e0344170b9/adapters-1.0.1-py3-none-any.whl", hash = "sha256:d5d0c9f73eab5bba613d3e29da1e001dce525de8209efeb8f281ff58ddd15f00", size = 283688 },
+]
+
+[[package]]
 name = "certifi"
 version = "2024.8.30"
 source = { registry = "https://pypi.org/simple" }
@@ -630,9 +642,9 @@ name = "plausibility-vaccine"
 version = "0.1.0"
 source = { editable = "." }
 dependencies = [
+    { name = "adapters" },
     { name = "numpy" },
     { name = "torch" },
-    { name = "transformers" },
 ]
 
 [package.dev-dependencies]
@@ -647,9 +659,9 @@ dev = [
 
 [package.metadata]
 requires-dist = [
+    { name = "adapters", specifier = ">=1.0.1" },
     { name = "numpy", specifier = ">=2.0.2" },
     { name = "torch", specifier = ">=2.5.1" },
-    { name = "transformers", specifier = ">=4.46.3" },
 ]
 
 [package.metadata.requires-dev]
@@ -1180,7 +1192,7 @@ wheels = [
 
 [[package]]
 name = "transformers"
-version = "4.46.3"
+version = "4.45.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "filelock" },
@@ -1194,9 +1206,9 @@ dependencies = [
     { name = "tokenizers" },
     { name = "tqdm" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/37/5a/58f96c83e566f907ae39f16d4401bbefd8bb85c60bd1e6a95c419752ab90/transformers-4.46.3.tar.gz", hash = "sha256:8ee4b3ae943fe33e82afff8e837f4b052058b07ca9be3cb5b729ed31295f72cc", size = 8627944 }
+sdist = { url = "https://files.pythonhosted.org/packages/4b/4c/3862b2dd6cdf83b187897bd351da0f7fb74d0df642b03c6f5d06353a3ca0/transformers-4.45.2.tar.gz", hash = "sha256:72bc390f6b203892561f05f86bbfaa0e234aab8e927a83e62b9d92ea7e3ae101", size = 8478357 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/51/51/b87caa939fedf307496e4dbf412f4b909af3d9ca8b189fc3b65c1faa456f/transformers-4.46.3-py3-none-any.whl", hash = "sha256:a12ef6f52841fd190a3e5602145b542d03507222f2c64ebb7ee92e8788093aef", size = 10034536 },
+    { url = "https://files.pythonhosted.org/packages/f9/9d/030cc1b3e88172967e22ee1d012e0d5e0384eb70d2a098d1669d549aea29/transformers-4.45.2-py3-none-any.whl", hash = "sha256:c551b33660cfc815bae1f9f097ecfd1e65be623f13c6ee0dda372bd881460210", size = 9881312 },
 ]
 
 [[package]]

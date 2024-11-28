@@ -1,12 +1,8 @@
 import logging
 from typing import Tuple
 
-from transformers import (
-    AutoModel,
-    AutoTokenizer,
-    PreTrainedModel,
-    PreTrainedTokenizer,
-)
+from adapters import AutoAdapterModel
+from transformers import AutoTokenizer, PreTrainedModel, PreTrainedTokenizer
 
 from plausibility_vaccine.util import seed_everything, setup_basic_logging
 
@@ -21,7 +17,7 @@ def load_pretrained_model(
     tokenizer = AutoTokenizer.from_pretrained(model_name)
 
     logging.info('Loading AutoModel for: %s', model_name)
-    model = AutoModel.from_pretrained(model_name)
+    model = AutoAdapterModel.from_pretrained(model_name)
 
     return model, tokenizer
 
