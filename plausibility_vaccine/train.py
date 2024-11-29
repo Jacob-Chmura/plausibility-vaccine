@@ -1,15 +1,12 @@
 import logging
 import os
 import pathlib
-import random
 from dataclasses import dataclass, field
 from typing import Optional
 
 import datasets
-import numpy as np
-from datasets import load_dataset
-
 import evaluate
+import numpy as np
 import transformers
 from adapters import (
     AdapterArguments,
@@ -17,6 +14,7 @@ from adapters import (
     AutoAdapterModel,
     setup_adapter_training,
 )
+from datasets import load_dataset
 from transformers import (
     AutoConfig,
     AutoTokenizer,
@@ -26,7 +24,6 @@ from transformers import (
     set_seed,
 )
 from transformers.trainer_utils import get_last_checkpoint
-
 
 logger = logging.getLogger(__name__)
 

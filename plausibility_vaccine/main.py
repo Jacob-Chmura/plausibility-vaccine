@@ -4,8 +4,8 @@ from typing import Tuple, Union
 from adapters import AdapterConfig, AutoAdapterModel
 from transformers import AutoTokenizer, PreTrainedModel, PreTrainedTokenizer
 
-from plausibility_vaccine.util import seed_everything, setup_basic_logging
 from plausibility_vaccine.train import run
+from plausibility_vaccine.util import seed_everything, setup_basic_logging
 
 seed = 0
 pretrained_model_name = 'albert-base-v2'
