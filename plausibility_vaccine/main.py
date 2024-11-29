@@ -1,12 +1,11 @@
 import logging
 import os
-from typing import Dict, List, Tuple, Union
+from typing import Dict, List
 
 import evaluate
 import numpy as np
 from adapters import (
     AdapterArguments,
-    AdapterConfig,
     AdapterTrainer,
     AutoAdapterModel,
     setup_adapter_training,
@@ -17,8 +16,6 @@ from transformers import (
     AutoTokenizer,
     DataCollatorWithPadding,
     EvalPrediction,
-    PreTrainedModel,
-    PreTrainedTokenizer,
     TrainingArguments,
 )
 from transformers.trainer_utils import get_last_checkpoint
@@ -30,32 +27,6 @@ from plausibility_vaccine.util.args import (
 )
 from plausibility_vaccine.util.logging import setup_basic_logging
 from plausibility_vaccine.util.seed import seed_everything
-
-
-def load_pretrained_model(
-    model_name: str,
-) -> Tuple[PreTrainedModel, PreTrainedTokenizer]:
-    logging.info('Loading AutoTokenizer for: %s', model_name)
-    tokenizer = AutoTokenizer.from_pretrained(model_name)
-
-    logging.info('Loading AutoModel for: %s', model_name)
-    model = AutoAdapterModel.from_pretrained(model_name)
-
-    return model, tokenizer
-
-
-def add_adapter_head(
-    model: PreTrainedModel,
-    adapter_name: str,
-    adapter_config: Union[str, AdapterConfig],
-) -> PreTrainedModel:
-    model.add_adapter(adapter_name, config=adapter_config)
-    return model
-
-
-def add_plausibility_adapter_head(model: PreTrainedModel) -> PreTrainedModel:
-    model.add_classification_head('plausibility', num_labels=2)
-    return model
 
 
 def run(
