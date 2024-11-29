@@ -7,7 +7,6 @@ pretrained_model_name: "albert-base-v2"
 overwrite_cache: false
 task_name: "plausibility"
 train_file: "data/plausibility_data/pep_3k/valid.csv"
-validation_file:
 test_file: "data/plausibility_data/pep_3k/test.csv"
 
 # TrainingArguments:

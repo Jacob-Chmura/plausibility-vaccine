@@ -1,15 +1,13 @@
 import logging
 import os
 import pathlib
-from dataclasses import dataclass, field
-from typing import Dict, List, Optional, Tuple, Union
+from typing import Dict, List, Tuple, Union
 
 import datasets
 import evaluate
 import numpy as np
 import transformers
 from adapters import (
-    AdapterArguments,
     AdapterConfig,
     AdapterTrainer,
     AutoAdapterModel,
@@ -21,15 +19,15 @@ from transformers import (
     AutoTokenizer,
     DataCollatorWithPadding,
     EvalPrediction,
-    HfArgumentParser,
     PreTrainedModel,
     PreTrainedTokenizer,
-    TrainingArguments,
     set_seed,
 )
 from transformers.trainer_utils import get_last_checkpoint
 
-from plausibility_vaccine.util import seed_everything, setup_basic_logging
+from plausibility_vaccine.util.args import parse_args
+from plausibility_vaccine.util.logging import setup_basic_logging
+from plausibility_vaccine.util.seed import seed_everything
 
 seed = 0
 
@@ -63,53 +61,8 @@ def add_plausibility_adapter_head(model: PreTrainedModel) -> PreTrainedModel:
 logger = logging.getLogger(__name__)
 
 
-@dataclass
-class DataTrainingArguments:
-    task_name: str = field(
-        metadata={'help': 'The name of the task to train on'},
-    )
-    overwrite_cache: bool = field(
-        default=False,
-        metadata={'help': 'Overwrite the cached preprocessed datasets or not.'},
-    )
-    train_file: Optional[str] = field(
-        default=None,
-        metadata={'help': 'A csv or a json file containing the training data.'},
-    )
-    validation_file: Optional[str] = field(
-        default=None,
-        metadata={'help': 'A csv or a json file containing the validation data.'},
-    )
-    test_file: Optional[str] = field(
-        default=None,
-        metadata={'help': 'A csv or a json file containing the test data.'},
-    )
-
-
-@dataclass
-class ModelArguments:
-    pretrained_model_name: str = field(
-        default='foo',
-        metadata={
-            'help': 'Path to pretrained model or model identifier from huggingface.co/models'
-        },
-    )
-    cache_dir: Optional[str] = field(
-        default=None,
-        metadata={
-            'help': 'Where do you want to store the pretrained models downloaded from huggingface.co'
-        },
-    )
-
-
 def run(config_yaml: Union[str, pathlib.Path]) -> None:
-    parser = HfArgumentParser(
-        (ModelArguments, DataTrainingArguments, TrainingArguments, AdapterArguments)
-    )
-
-    model_args, data_args, training_args, adapter_args = parser.parse_yaml_file(
-        config_yaml
-    )
+    model_args, data_args, training_args, adapter_args = parse_args(config_yaml)
 
     transformers.utils.logging.set_verbosity_info()
     log_level = training_args.get_process_log_level()
@@ -263,8 +216,6 @@ def run(config_yaml: Union[str, pathlib.Path]) -> None:
     trainer.save_state()
 
     logger.info('*** Predict ***')
-    # Removing the `label` columns because it contains -1 and Trainer won't like that.
-    # predict_dataset = predict_dataset.remove_columns('label')
     predictions = trainer.predict(
         predict_dataset, metric_key_prefix='predict'
     ).predictions
