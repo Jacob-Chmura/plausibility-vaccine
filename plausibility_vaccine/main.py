@@ -5,6 +5,7 @@ from adapters import AdapterConfig, AutoAdapterModel
 from transformers import AutoTokenizer, PreTrainedModel, PreTrainedTokenizer
 
 from plausibility_vaccine.util import seed_everything, setup_basic_logging
+from plausibility_vaccine.train import run
 
 seed = 0
 pretrained_model_name = 'albert-base-v2'
@@ -40,8 +41,11 @@ def main() -> None:
     setup_basic_logging()
     seed_everything(seed)
 
-    model, tokenizer = load_pretrained_model(pretrained_model_name)
-    model = add_plausibility_adapter_head(model)
+    # model, tokenizer = load_pretrained_model(pretrained_model_name)
+    # model = add_plausibility_adapter_head(model)
+    # model.set_active_adapters('plausibility')
+
+    run('config/base.yaml')
 
 
 if __name__ == '__main__':

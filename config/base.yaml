@@ -1,8 +1,7 @@
 ---
 # ModelArguments
-cache_dir: "cache"
+cache_dir: ".cache"
 pretrained_model_name: "albert-base-v2"
-use_fast_tokenizer: true
 
 # DataTrainingArguments:
 overwrite_cache: false
@@ -17,7 +16,7 @@ local_rank: 0
 log_level: passive
 num_train_epochs: 3.0
 optim: adamw_torch
-output_dir: "bar"
+output_dir: "results"
 overwrite_output_dir: false
 per_device_eval_batch_size: 8
 per_device_train_batch_size: 8
