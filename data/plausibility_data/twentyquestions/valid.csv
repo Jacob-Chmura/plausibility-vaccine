@@ -1,3 +1,4 @@
+label,subject,verb,object,subject_sense,object_sense
 1	coroner	involve	people	coroner.n.01	people.n.03
 1	wheel	have	scent	wheel.n.01	olfactory_property.n.01
 1	stamen	involve	plant	stamen.n.01	plant.n.02
