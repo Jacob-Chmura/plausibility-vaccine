@@ -1,6 +1,6 @@
 import logging
 import os
-from typing import Dict, List
+from typing import Dict, List, Optional, Tuple
 
 import evaluate
 import numpy as np
@@ -10,17 +10,19 @@ from adapters import (
     AutoAdapterModel,
     setup_adapter_training,
 )
-from datasets import load_dataset
+from datasets import DatasetDict, load_dataset
 from transformers import (
     AutoConfig,
     AutoTokenizer,
     DataCollatorWithPadding,
     EvalPrediction,
+    PreTrainedModel,
     TrainingArguments,
 )
 from transformers.trainer_utils import get_last_checkpoint
 
 from plausibility_vaccine.util.args import (
+    AdapterArguments,
     DataTrainingArguments,
     ModelArguments,
     parse_args,
@@ -29,19 +31,25 @@ from plausibility_vaccine.util.logging import setup_basic_logging
 from plausibility_vaccine.util.seed import seed_everything
 
 
-def run(
-    model_args: ModelArguments,
-    data_args: DataTrainingArguments,
-    training_args: TrainingArguments,
+def setup_adapters(
+    model: PreTrainedModel,
     adapter_args: AdapterArguments,
-) -> None:
-    logging.warning(
-        f'Process rank: {training_args.local_rank}, device: {training_args.device}, n_gpu: {training_args.n_gpu}, '
-        + f"distributed training: {training_args.parallel_mode.value == 'distributed'}, 16-bits training: {training_args.fp16}"
+    task_name: str,
+    label_list: List[str],
+) -> PreTrainedModel:
+    model.add_classification_head(
+        task_name,
+        num_labels=len(label_list),
+        id2label={i: v for i, v in enumerate(label_list)},
     )
-    logging.debug(f'Training/evaluation parameters {training_args}')
+    model.add_adapter(task_name, config='seq_bn')
+    model.set_active_adapters(task_name)
 
-    # Detecting last checkpoint.
+    setup_adapter_training(model, adapter_args, task_name)
+    return model
+
+
+def get_checkpoint(training_args: TrainingArguments) -> Optional[str]:
     last_checkpoint = None
     if (
         os.path.isdir(training_args.output_dir)
@@ -61,7 +69,16 @@ def run(
                 'the `--output_dir` or add `--overwrite_output_dir` to train from scratch.'
             )
 
-    # Loading a dataset from your local files.
+    checkpoint = None
+    if last_checkpoint is not None:
+        checkpoint = last_checkpoint
+    return checkpoint
+
+
+def get_data(
+    data_args: DataTrainingArguments,
+    cache_dir: Optional[str],
+) -> Tuple[DatasetDict, List[str]]:
     data_files = {
         'train': data_args.train_file,
         'test': data_args.test_file,
@@ -69,19 +86,31 @@ def run(
     for key in data_files.keys():
         logging.info(f'load a local file for {key}: {data_files[key]}')
 
-    # Loading a dataset from local csv files
-    raw_datasets = load_dataset(
-        'csv', data_files=data_files, cache_dir=model_args.cache_dir
-    )
+    raw_datasets = load_dataset('csv', data_files=data_files, cache_dir=cache_dir)
 
     label_list = raw_datasets['train'].unique('label')
     label_list.sort()  # Let's sort it for determinism
-    num_labels = len(label_list)
+    return raw_datasets, label_list
+
+
+def run(
+    model_args: ModelArguments,
+    data_args: DataTrainingArguments,
+    training_args: TrainingArguments,
+    adapter_args: AdapterArguments,
+) -> None:
+    logging.warning(
+        f'Process rank: {training_args.local_rank}, device: {training_args.device}, n_gpu: {training_args.n_gpu}, '
+        + f"distributed training: {training_args.parallel_mode.value == 'distributed'}, 16-bits training: {training_args.fp16}"
+    )
+    logging.debug(f'Training/evaluation parameters {training_args}')
+
+    raw_datasets, label_list = get_data(data_args, cache_dir=model_args.cache_dir)
 
     # Load pretrained model and tokenizer
     config = AutoConfig.from_pretrained(
         model_args.pretrained_model_name,
-        num_labels=num_labels,
+        num_labels=len(label_list),
         finetuning_task=data_args.task_name,
         cache_dir=model_args.cache_dir,
     )
@@ -94,15 +123,6 @@ def run(
         config=config,
         cache_dir=model_args.cache_dir,
     )
-
-    # Add head
-    model.add_classification_head(
-        data_args.task_name,
-        num_labels=num_labels,
-        id2label={i: v for i, v in enumerate(label_list)},
-    )
-    model.add_adapter(data_args.task_name, config='seq_bn')
-    model.set_active_adapters(data_args.task_name)
 
     # Some models have set the order of the labels to use, so let's make sure we do use it.
     label_to_id = {v: i for i, v in enumerate(label_list)}
@@ -136,11 +156,11 @@ def run(
         result = {}
         for metric in metrics:
             metric_obj = evaluate.load(metric)
-            result[metric] = metric_obj.compute(predictions=preds, references=labels)
+            result.update(metric_obj.compute(predictions=preds, references=labels))
         return result
 
     # Setup adapters
-    setup_adapter_training(model, adapter_args, data_args.task_name)
+    model = setup_adapters(model, adapter_args, data_args.task_name, label_list)
 
     # Get datasets
     train_dataset, predict_dataset = raw_datasets['train'], raw_datasets['test']
@@ -156,14 +176,8 @@ def run(
         data_collator=DataCollatorWithPadding(tokenizer, pad_to_multiple_of=8),
     )
 
-    # Training
     logging.info('*** Training ***')
-    checkpoint = None
-    if training_args.resume_from_checkpoint is not None:
-        checkpoint = training_args.resume_from_checkpoint
-    elif last_checkpoint is not None:
-        checkpoint = last_checkpoint
-    train_result = trainer.train(resume_from_checkpoint=checkpoint)
+    train_result = trainer.train(resume_from_checkpoint=get_checkpoint(training_args))
     metrics = train_result.metrics
     metrics['train_samples'] = len(train_dataset)
 
