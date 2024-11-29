@@ -45,7 +45,6 @@ def run(
     last_checkpoint = None
     if (
         os.path.isdir(training_args.output_dir)
-        and training_args.do_train
         and not training_args.overwrite_output_dir
     ):
         last_checkpoint = get_last_checkpoint(training_args.output_dir)
@@ -128,16 +127,16 @@ def run(
             desc='Running tokenizer on dataset',
         )
 
-    # Get the metric function
-    metric = evaluate.load('accuracy', cache_dir=model_args.cache_dir)
-
-    # You can define your custom compute_metrics function.
+    # Evaluation Metrics
     def compute_metrics(p: EvalPrediction) -> Dict[str, float]:
-        preds = p.predictions[0] if isinstance(p.predictions, tuple) else p.predictions
-        preds = np.argmax(preds, axis=1)
-        result = metric.compute(predictions=preds, references=p.label_ids)
-        if len(result) > 1:
-            result['combined_score'] = np.mean(list(result.values())).item()
+        metrics = ['accuracy']
+        logits, labels = p
+        preds = np.argmax(logits, axis=1)
+
+        result = {}
+        for metric in metrics:
+            metric_obj = evaluate.load(metric)
+            result[metric] = metric_obj.compute(predictions=preds, references=labels)
         return result
 
     # Setup adapters
@@ -169,27 +168,15 @@ def run(
     metrics['train_samples'] = len(train_dataset)
 
     trainer.save_model()  # Saves the tokenizer too for easy upload
-
     trainer.log_metrics('train', metrics)
     trainer.save_metrics('train', metrics)
     trainer.save_state()
 
-    logging.info('*** Predict ***')
-    predictions = trainer.predict(
-        predict_dataset, metric_key_prefix='predict'
-    ).predictions
-    predictions = np.argmax(predictions, axis=1)
-
-    output_predict_file = os.path.join(
-        training_args.output_dir, f'predict_results_{data_args.task_name}.txt'
-    )
-    if trainer.is_world_process_zero():
-        with open(output_predict_file, 'w') as writer:
-            logging.info(f'***** Predict results {data_args.task_name} *****')
-            writer.write('index\tprediction\n')
-            for index, item in enumerate(predictions):
-                item = label_list[item]
-                writer.write(f'{index}\t{item}\n')
+    logging.info('*** Evaluate ***')
+    metrics = trainer.evaluate(predict_dataset)
+    metrics['eval_samples'] = len(predict_dataset)
+    trainer.log_metrics('eval', metrics)
+    trainer.save_metrics('eval', metrics)
 
 
 def main() -> None:
