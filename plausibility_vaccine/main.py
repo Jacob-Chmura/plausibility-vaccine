@@ -264,7 +264,7 @@ def run(config_yaml: Union[str, pathlib.Path]) -> None:
 
     logger.info('*** Predict ***')
     # Removing the `label` columns because it contains -1 and Trainer won't like that.
-    predict_dataset = predict_dataset.remove_columns('label')
+    # predict_dataset = predict_dataset.remove_columns('label')
     predictions = trainer.predict(
         predict_dataset, metric_key_prefix='predict'
     ).predictions
