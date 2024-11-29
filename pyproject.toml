@@ -9,7 +9,12 @@ authors = [
     { name = "Jacob Chmura", email = "jacobpaul.chmura@gmail.com" },
 ]
 dependencies = [
+    "accelerate>=1.1.1",
+    "adapters>=1.0.1",
+    "datasets>=3.1.0",
+    "evaluate>=0.4.3",
     "numpy>=2.0.2",
+    "scikit-learn>=1.5.2",
     "torch>=2.5.1",
 ]
 
