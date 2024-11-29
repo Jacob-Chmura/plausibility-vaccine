@@ -1,5 +1,6 @@
-from plausibility_vaccine.main import hello_torch
+import pytest
 
 
-def test_hello_torch() -> None:
-    assert hello_torch() == 'Hello PyTorch'
+@pytest.mark.skip(reason='This is just a placeholder')
+def test_hello() -> None:
+    pass

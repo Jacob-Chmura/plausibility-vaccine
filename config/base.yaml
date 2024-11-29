@@ -6,12 +6,12 @@ pretrained_model_name: "albert-base-v2"
 # DataTrainingArguments:
 overwrite_cache: false
 task_name: "plausibility"
-train_file:
-validation_file: "data/plausibility_data/pep_3k/valid.tsv"
-test_file: "data/plausibility_data/pep_3k/test.tsv"
+train_file: "data/plausibility_data/pep_3k/valid.csv"
+validation_file:
+test_file: "data/plausibility_data/pep_3k/test.csv"
 
 # TrainingArguments:
-learning_rate: 5e-05
+learning_rate: 0.00005
 local_rank: 0
 log_level: passive
 num_train_epochs: 3.0
