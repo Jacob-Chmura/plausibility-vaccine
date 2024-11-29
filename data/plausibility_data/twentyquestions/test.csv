@@ -1,3 +1,4 @@
+label,subject,verb,object,subject_sense,object_sense
 0,toast,say,something,toast.n.01,none
 1,carnivore,make,noise,carnivore.n.02,noise.n.05
 0,people,wear,drone,people.n.01,monotone.n.01
