@@ -1,6 +1,8 @@
 import logging
 from typing import List, Optional
 
+import transformers
+
 
 def setup_basic_logging(
     log_file_path: Optional[str] = None,
@@ -23,3 +25,11 @@ def setup_basic_logging(
         format='[%(asctime)s] %(levelname)s [%(processName)s %(threadName)s %(name)s.%(funcName)s:%(lineno)d] %(message)s',
         handlers=handlers,
     )
+
+    _configure_transformers_logging(handlers)
+
+
+def _configure_transformers_logging(handlers: List[logging.Handler]) -> None:
+    transformers.utils.logging.disable_default_handler()
+    for handler in handlers:
+        transformers.utils.logging.add_handler(handler)

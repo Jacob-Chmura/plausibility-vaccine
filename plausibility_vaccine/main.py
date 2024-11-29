@@ -1,13 +1,11 @@
 import logging
 import os
-import pathlib
 from typing import Dict, List, Tuple, Union
 
-import datasets
 import evaluate
 import numpy as np
-import transformers
 from adapters import (
+    AdapterArguments,
     AdapterConfig,
     AdapterTrainer,
     AutoAdapterModel,
@@ -21,15 +19,17 @@ from transformers import (
     EvalPrediction,
     PreTrainedModel,
     PreTrainedTokenizer,
-    set_seed,
+    TrainingArguments,
 )
 from transformers.trainer_utils import get_last_checkpoint
 
-from plausibility_vaccine.util.args import parse_args
+from plausibility_vaccine.util.args import (
+    DataTrainingArguments,
+    ModelArguments,
+    parse_args,
+)
 from plausibility_vaccine.util.logging import setup_basic_logging
 from plausibility_vaccine.util.seed import seed_everything
-
-seed = 0
 
 
 def load_pretrained_model(
@@ -58,26 +58,17 @@ def add_plausibility_adapter_head(model: PreTrainedModel) -> PreTrainedModel:
     return model
 
 
-logger = logging.getLogger(__name__)
-
-
-def run(config_yaml: Union[str, pathlib.Path]) -> None:
-    model_args, data_args, training_args, adapter_args = parse_args(config_yaml)
-
-    transformers.utils.logging.set_verbosity_info()
-    log_level = training_args.get_process_log_level()
-    logger.setLevel(log_level)
-    datasets.utils.logging.set_verbosity(log_level)
-    transformers.utils.logging.set_verbosity(log_level)
-    transformers.utils.logging.enable_default_handler()
-    transformers.utils.logging.enable_explicit_format()
-
-    # Log on each process the small summary:
-    logger.warning(
+def run(
+    model_args: ModelArguments,
+    data_args: DataTrainingArguments,
+    training_args: TrainingArguments,
+    adapter_args: AdapterArguments,
+) -> None:
+    logging.warning(
         f'Process rank: {training_args.local_rank}, device: {training_args.device}, n_gpu: {training_args.n_gpu}, '
         + f"distributed training: {training_args.parallel_mode.value == 'distributed'}, 16-bits training: {training_args.fp16}"
     )
-    logger.debug(f'Training/evaluation parameters {training_args}')
+    logging.debug(f'Training/evaluation parameters {training_args}')
 
     # Detecting last checkpoint.
     last_checkpoint = None
@@ -95,13 +86,10 @@ def run(config_yaml: Union[str, pathlib.Path]) -> None:
         elif (
             last_checkpoint is not None and training_args.resume_from_checkpoint is None
         ):
-            logger.info(
+            logging.info(
                 f'Checkpoint detected, resuming training at {last_checkpoint}. To avoid this behavior, change '
                 'the `--output_dir` or add `--overwrite_output_dir` to train from scratch.'
             )
-
-    # Set seed before initializing model.
-    set_seed(training_args.seed)
 
     # Loading a dataset from your local files.
     data_files = {
@@ -109,7 +97,7 @@ def run(config_yaml: Union[str, pathlib.Path]) -> None:
         'test': data_args.test_file,
     }
     for key in data_files.keys():
-        logger.info(f'load a local file for {key}: {data_files[key]}')
+        logging.info(f'load a local file for {key}: {data_files[key]}')
 
     # Loading a dataset from local csv files
     raw_datasets = load_dataset(
@@ -199,7 +187,7 @@ def run(config_yaml: Union[str, pathlib.Path]) -> None:
     )
 
     # Training
-    logger.info('*** Training ***')
+    logging.info('*** Training ***')
     checkpoint = None
     if training_args.resume_from_checkpoint is not None:
         checkpoint = training_args.resume_from_checkpoint
@@ -215,7 +203,7 @@ def run(config_yaml: Union[str, pathlib.Path]) -> None:
     trainer.save_metrics('train', metrics)
     trainer.save_state()
 
-    logger.info('*** Predict ***')
+    logging.info('*** Predict ***')
     predictions = trainer.predict(
         predict_dataset, metric_key_prefix='predict'
     ).predictions
@@ -226,7 +214,7 @@ def run(config_yaml: Union[str, pathlib.Path]) -> None:
     )
     if trainer.is_world_process_zero():
         with open(output_predict_file, 'w') as writer:
-            logger.info(f'***** Predict results {data_args.task_name} *****')
+            logging.info(f'***** Predict results {data_args.task_name} *****')
             writer.write('index\tprediction\n')
             for index, item in enumerate(predictions):
                 item = label_list[item]
@@ -234,9 +222,11 @@ def run(config_yaml: Union[str, pathlib.Path]) -> None:
 
 
 def main() -> None:
+    config_yaml = 'config/base.yaml'
+    model_args, data_args, training_args, adapter_args = parse_args(config_yaml)
     setup_basic_logging()
-    seed_everything(seed)
-    run('config/base.yaml')
+    seed_everything(training_args.seed)
+    run(model_args, data_args, training_args, adapter_args)
 
 
 if __name__ == '__main__':
