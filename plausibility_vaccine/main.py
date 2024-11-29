@@ -1,5 +1,5 @@
 import logging
-import os
+import pathlib
 from typing import Dict, List, Optional, Tuple
 
 import evaluate
@@ -50,13 +50,11 @@ def setup_adapters(
 
 
 def get_checkpoint(training_args: TrainingArguments) -> Optional[str]:
+    output_dir = pathlib.Path(training_args.output_dir)
     last_checkpoint = None
-    if (
-        os.path.isdir(training_args.output_dir)
-        and not training_args.overwrite_output_dir
-    ):
+    if output_dir.is_dir() and not training_args.overwrite_output_dir:
         last_checkpoint = get_last_checkpoint(training_args.output_dir)
-        if last_checkpoint is None and len(os.listdir(training_args.output_dir)) > 0:
+        if last_checkpoint is None and len(list(output_dir.iterdir())) > 0:
             raise ValueError(
                 f'Output directory ({training_args.output_dir}) already exists and is not empty. '
                 'Use --overwrite_output_dir to overcome.'
