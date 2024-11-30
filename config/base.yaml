@@ -1,28 +1,22 @@
 ---
-# ModelArguments
-cache_dir: ".cache"
-pretrained_model_name: "albert-base-v2"
-
-# DataTrainingArguments:
-overwrite_cache: false
-task_name: "plausibility"
-train_file: "data/plausibility_data/pep_3k/valid.csv"
-test_file: "data/plausibility_data/pep_3k/test.csv"
-
-# TrainingArguments:
-learning_rate: 0.00005
-local_rank: 0
-log_level: passive
-num_train_epochs: 3.0
-optim: adamw_torch
-output_dir: "results"
-overwrite_output_dir: false
-per_device_eval_batch_size: 8
-per_device_train_batch_size: 8
-seed: 42
-use_cpu: true
-
-# AdapterArguments:
-adapter_config: 'seq_bn'
-load_adapter: ''
-train_adapter: false
+ModelArguments:
+  cache_dir: ".cache"
+  pretrained_model_name: "albert-base-v2"
+DataTrainingArguments:
+  task_name: "plausibility"
+  train_file: "data/plausibility_data/pep_3k/valid.csv"
+  test_file: "data/plausibility_data/pep_3k/test.csv"
+TrainingArguments:
+  learning_rate: 0.00005
+  num_train_epochs: 3.0
+  optim: adamw_torch
+  output_dir: "results"
+  overwrite_output_dir: false
+  per_device_eval_batch_size: 8
+  per_device_train_batch_size: 8
+  seed: 42
+  use_cpu: true
+AdapterArguments:
+  adapter_config: 'seq_bn'
+  load_adapter: ''
+  train_adapter: false

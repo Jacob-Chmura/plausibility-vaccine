@@ -1,6 +1,6 @@
 import logging
 import pathlib
-from typing import Dict, Optional
+from typing import Dict, Optional, Tuple
 
 import evaluate
 import numpy as np
@@ -10,12 +10,14 @@ from transformers import (
     AutoTokenizer,
     DataCollatorWithPadding,
     EvalPrediction,
+    PreTrainedModel,
+    PreTrainedTokenizer,
     TrainingArguments,
 )
 from transformers.trainer_utils import get_last_checkpoint
 
-from plausibility_vaccine.adapters import setup_adapters
 from plausibility_vaccine.data import get_data, preprocess_function
+from plausibility_vaccine.fine_tune import setup_adapters
 from plausibility_vaccine.util.args import (
     AdapterArguments,
     DataTrainingArguments,
@@ -24,6 +26,27 @@ from plausibility_vaccine.util.args import (
 )
 from plausibility_vaccine.util.logging import setup_basic_logging
 from plausibility_vaccine.util.seed import seed_everything
+
+
+def load_pretrained_model(
+    model_args: ModelArguments, num_labels: int, task_name: str
+) -> Tuple[PreTrainedModel, PreTrainedTokenizer]:
+    config = AutoConfig.from_pretrained(
+        model_args.pretrained_model_name,
+        num_labels=num_labels,
+        finetuning_task=task_name,
+        cache_dir=model_args.cache_dir,
+    )
+    tokenizer = AutoTokenizer.from_pretrained(
+        model_args.pretrained_model_name,
+        cache_dir=model_args.cache_dir,
+    )
+    model = AutoAdapterModel.from_pretrained(
+        model_args.pretrained_model_name,
+        config=config,
+        cache_dir=model_args.cache_dir,
+    )
+    return model, tokenizer
 
 
 def get_checkpoint(training_args: TrainingArguments) -> Optional[str]:
@@ -64,27 +87,14 @@ def run(
 
     raw_datasets, label_list = get_data(data_args, cache_dir=model_args.cache_dir)
 
-    # Load pretrained model and tokenizer
-    config = AutoConfig.from_pretrained(
-        model_args.pretrained_model_name,
-        num_labels=len(label_list),
-        finetuning_task=data_args.task_name,
-        cache_dir=model_args.cache_dir,
-    )
-    tokenizer = AutoTokenizer.from_pretrained(
-        model_args.pretrained_model_name,
-        cache_dir=model_args.cache_dir,
-    )
-    model = AutoAdapterModel.from_pretrained(
-        model_args.pretrained_model_name,
-        config=config,
-        cache_dir=model_args.cache_dir,
+    model, tokenizer = load_pretrained_model(
+        model_args, num_labels=len(label_list), task_name=data_args.task_name
     )
 
     # Some models have set the order of the labels to use, so let's make sure we do use it.
     label_to_id = {v: i for i, v in enumerate(label_list)}
     model.config.label2id = label_to_id
-    model.config.id2label = {id: label for label, id in config.label2id.items()}
+    model.config.id2label = {id: label for label, id in model.config.label2id.items()}
 
     with training_args.main_process_first(desc='dataset map pre-processing'):
         raw_datasets = raw_datasets.map(
@@ -109,7 +119,7 @@ def run(
     model = setup_adapters(model, adapter_args, data_args.task_name, label_list)
 
     # Get datasets
-    train_dataset, predict_dataset = raw_datasets['train'], raw_datasets['test']
+    train_dataset, eval_dataset = raw_datasets['train'], raw_datasets['test']
 
     # Initialize our Trainer
     model.train_adapter(data_args.task_name)
@@ -117,24 +127,26 @@ def run(
         model=model,
         args=training_args,
         train_dataset=train_dataset,
+        eval_dataset=eval_dataset,
         compute_metrics=compute_metrics,
         tokenizer=tokenizer,
         data_collator=DataCollatorWithPadding(tokenizer, pad_to_multiple_of=8),
     )
 
+    run_trainer(trainer, training_args)
+
+
+def run_trainer(trainer: AdapterTrainer, training_args: TrainingArguments) -> None:
     logging.info('*** Training ***')
     train_result = trainer.train(resume_from_checkpoint=get_checkpoint(training_args))
     metrics = train_result.metrics
-    metrics['train_samples'] = len(train_dataset)
-
     trainer.save_model()  # Saves the tokenizer too for easy upload
     trainer.log_metrics('train', metrics)
     trainer.save_metrics('train', metrics)
     trainer.save_state()
 
     logging.info('*** Evaluate ***')
-    metrics = trainer.evaluate(predict_dataset)
-    metrics['eval_samples'] = len(predict_dataset)
+    metrics = trainer.evaluate()
     trainer.log_metrics('eval', metrics)
     trainer.save_metrics('eval', metrics)
 
