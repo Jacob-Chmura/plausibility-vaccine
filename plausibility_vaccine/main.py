@@ -40,12 +40,11 @@ parser.add_argument(
 
 
 def load_pretrained_model(
-    model_args: ModelArguments, label_list: List[str], task_name: str
+    model_args: ModelArguments, label_list: List[str]
 ) -> Tuple[PreTrainedModel, PreTrainedTokenizer]:
     config = AutoConfig.from_pretrained(
         model_args.pretrained_model_name,
         num_labels=len(label_list),
-        finetuning_task=task_name,
         cache_dir=model_args.cache_dir,
     )
     tokenizer = AutoTokenizer.from_pretrained(
@@ -95,21 +94,18 @@ def run(
     training_args: TrainingArguments,
     finetuning_args: FinetuningArguments,
 ) -> None:
-    # TODO: Properly setup multi-training and multi-adapter finetuning
-    downstream_args = finetuning_args.finetuning_args['classification_head']
-    data_args, adapter_args = downstream_args.data_args, downstream_args.adapter_args
-
     logging.warning(
         f'Process rank: {training_args.local_rank}, device: {training_args.device}, n_gpu: {training_args.n_gpu}, '
         + f"distributed training: {training_args.parallel_mode.value == 'distributed'}, 16-bits training: {training_args.fp16}"
     )
     logging.debug(f'Training/evaluation parameters {training_args}')
 
-    raw_datasets, label_list = get_data(data_args, cache_dir=model_args.cache_dir)
+    # TODO: Properly setup multi-training and multi-adapter finetuning
+    downstream_args = finetuning_args.finetuning_args['classification_head']
+    data_args, adapter_args = downstream_args.data_args, downstream_args.adapter_args
 
-    model, tokenizer = load_pretrained_model(
-        model_args, label_list=label_list, task_name=data_args.task_name
-    )
+    raw_datasets, label_list = get_data(data_args, cache_dir=model_args.cache_dir)
+    model, tokenizer = load_pretrained_model(model_args, label_list=label_list)
 
     with training_args.main_process_first(desc='dataset map pre-processing'):
         raw_datasets = raw_datasets.map(
@@ -153,7 +149,7 @@ def run_trainer(trainer: AdapterTrainer, training_args: TrainingArguments) -> No
     logging.info('*** Training ***')
     train_result = trainer.train(resume_from_checkpoint=get_checkpoint(training_args))
     metrics = train_result.metrics
-    trainer.save_model()  # Saves the tokenizer too for easy upload
+    trainer.save_model()
     trainer.log_metrics('train', metrics)
     trainer.save_metrics('train', metrics)
     trainer.save_state()
