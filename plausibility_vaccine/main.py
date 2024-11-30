@@ -153,8 +153,10 @@ def run_trainer(trainer: AdapterTrainer, training_args: TrainingArguments) -> No
 
 def main() -> None:
     config_yaml = 'config/base.yaml'
-    model_args, data_args, training_args, adapter_args = parse_args(config_yaml)
-    setup_basic_logging()
+    logging_args, model_args, data_args, training_args, adapter_args = parse_args(
+        config_yaml
+    )
+    setup_basic_logging(logging_args.log_file_path)
     seed_everything(training_args.seed)
     run(model_args, data_args, training_args, adapter_args)
 

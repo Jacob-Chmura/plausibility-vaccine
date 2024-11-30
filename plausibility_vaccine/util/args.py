@@ -8,6 +8,13 @@ from transformers import HfArgumentParser, TrainingArguments
 
 
 @dataclass
+class LoggingArguments:
+    log_file_path: Optional[str] = field(
+        metadata={'help': 'Path to the log file to use.'},
+    )
+
+
+@dataclass
 class DataTrainingArguments:
     task_name: str = field(
         metadata={'help': 'The name of the task to train on'},
@@ -27,23 +34,34 @@ class ModelArguments:
     )
     cache_dir: Optional[str] = field(
         default=None,
-        metadata={
-            'help': 'Where do you want to store the pretrained models downloaded from huggingface.co'
-        },
+        metadata={'help': 'Directory to store pretrained models from huggingface.co'},
     )
 
 
 def parse_args(
     config_yaml: Union[str, pathlib.Path],
-) -> Tuple[ModelArguments, DataTrainingArguments, TrainingArguments, AdapterArguments]:
+) -> Tuple[
+    LoggingArguments,
+    ModelArguments,
+    DataTrainingArguments,
+    TrainingArguments,
+    AdapterArguments,
+]:
     config_dict = yaml.safe_load(pathlib.Path(config_yaml).read_text())
     config_dict = (
-        config_dict['ModelArguments']
+        config_dict['LoggingArguments']
+        | config_dict['ModelArguments']
         | config_dict['DataTrainingArguments']
         | config_dict['TrainingArguments']
         | config_dict['AdapterArguments']
     )
     parser = HfArgumentParser(
-        (ModelArguments, DataTrainingArguments, TrainingArguments, AdapterArguments)
+        (
+            LoggingArguments,
+            ModelArguments,
+            DataTrainingArguments,
+            TrainingArguments,
+            AdapterArguments,
+        )
     )
     return parser.parse_dict(config_dict, allow_extra_keys=True)

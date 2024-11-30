@@ -1,4 +1,6 @@
 ---
+LoggingArguments:
+  log_file_path: "plausibility_vaccine.log"
 ModelArguments:
   cache_dir: ".cache"
   pretrained_model_name: "albert-base-v2"
