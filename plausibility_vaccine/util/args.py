@@ -2,6 +2,7 @@ import pathlib
 from dataclasses import dataclass, field
 from typing import Optional, Tuple, Union
 
+import yaml
 from adapters import AdapterArguments
 from transformers import HfArgumentParser, TrainingArguments
 
@@ -35,7 +36,14 @@ class ModelArguments:
 def parse_args(
     config_yaml: Union[str, pathlib.Path],
 ) -> Tuple[ModelArguments, DataTrainingArguments, TrainingArguments, AdapterArguments]:
+    config_dict = yaml.safe_load(pathlib.Path(config_yaml).read_text())
+    config_dict = (
+        config_dict['ModelArguments']
+        | config_dict['DataTrainingArguments']
+        | config_dict['TrainingArguments']
+        | config_dict['AdapterArguments']
+    )
     parser = HfArgumentParser(
         (ModelArguments, DataTrainingArguments, TrainingArguments, AdapterArguments)
     )
-    return parser.parse_yaml_file(config_yaml)
+    return parser.parse_dict(config_dict, allow_extra_keys=True)
