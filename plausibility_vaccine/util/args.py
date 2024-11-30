@@ -1,6 +1,6 @@
 import pathlib
 from dataclasses import dataclass, field
-from typing import Optional, Tuple, Union
+from typing import Dict, Optional, Tuple, Union
 
 import yaml
 from adapters import AdapterArguments
@@ -19,7 +19,7 @@ class MetaArguments:
 
 
 @dataclass
-class DataTrainingArguments:
+class DataArguments:
     task_name: str = field(
         metadata={'help': 'The name of the task to train on'},
     )
@@ -42,30 +42,44 @@ class ModelArguments:
     )
 
 
+@dataclass
+class FinetuningArgument:
+    data_args: DataArguments = field(
+        metadata={'help': 'Data arguments for the fine-tuning configuration'},
+    )
+    adapter_args: AdapterArguments = field(
+        metadata={'help': 'Adapter arguments for the fine-tuning configuration'},
+    )
+
+
+@dataclass
+class FinetuningArguments:
+    finetuning_args: Dict[str, FinetuningArgument] = field(
+        metadata={'help': 'List of fine-tuning arguments'},
+    )
+
+
 def parse_args(
     config_yaml: Union[str, pathlib.Path],
 ) -> Tuple[
     MetaArguments,
     ModelArguments,
-    DataTrainingArguments,
     TrainingArguments,
-    AdapterArguments,
+    FinetuningArguments,
 ]:
     config_dict = yaml.safe_load(pathlib.Path(config_yaml).read_text())
     config_dict = (
         config_dict['MetaArguments']
         | config_dict['ModelArguments']
-        | config_dict['DataTrainingArguments']
         | config_dict['TrainingArguments']
-        | config_dict['AdapterArguments']
+        | config_dict['FinetuningArguments']
     )
     parser = HfArgumentParser(
         (
             MetaArguments,
             ModelArguments,
-            DataTrainingArguments,
             TrainingArguments,
-            AdapterArguments,
+            FinetuningArguments,
         )
     )
     return parser.parse_dict(config_dict, allow_extra_keys=True)

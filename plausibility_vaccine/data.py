@@ -4,7 +4,7 @@ from typing import Dict, List, Optional, Tuple
 from datasets import DatasetDict, load_dataset
 from transformers import BatchEncoding, PreTrainedTokenizer
 
-from plausibility_vaccine.util.args import DataTrainingArguments
+from plausibility_vaccine.util.args import DataArguments
 
 
 def preprocess_function(
@@ -24,8 +24,7 @@ def preprocess_function(
 
 
 def get_data(
-    data_args: DataTrainingArguments,
-    cache_dir: Optional[str],
+    data_args: DataArguments, cache_dir: Optional[str]
 ) -> Tuple[DatasetDict, List[str]]:
     data_files = {
         'train': data_args.train_file,

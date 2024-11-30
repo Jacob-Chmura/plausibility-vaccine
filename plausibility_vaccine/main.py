@@ -5,7 +5,7 @@ from typing import Dict, List, Optional, Tuple
 
 import evaluate
 import numpy as np
-from adapters import AdapterArguments, AdapterTrainer, AutoAdapterModel
+from adapters import AdapterTrainer, AutoAdapterModel
 from transformers import (
     AutoConfig,
     AutoTokenizer,
@@ -20,8 +20,7 @@ from transformers.trainer_utils import get_last_checkpoint
 from plausibility_vaccine.data import get_data, preprocess_function
 from plausibility_vaccine.fine_tune import setup_adapters
 from plausibility_vaccine.util.args import (
-    AdapterArguments,
-    DataTrainingArguments,
+    FinetuningArguments,
     ModelArguments,
     parse_args,
 )
@@ -93,10 +92,13 @@ def get_checkpoint(training_args: TrainingArguments) -> Optional[str]:
 
 def run(
     model_args: ModelArguments,
-    data_args: DataTrainingArguments,
     training_args: TrainingArguments,
-    adapter_args: AdapterArguments,
+    finetuning_args: FinetuningArguments,
 ) -> None:
+    # TODO: Properly setup multi-training and multi-adapter finetuning
+    downstream_args = finetuning_args.finetuning_args['classification_head']
+    data_args, adapter_args = downstream_args.data_args, downstream_args.adapter_args
+
     logging.warning(
         f'Process rank: {training_args.local_rank}, device: {training_args.device}, n_gpu: {training_args.n_gpu}, '
         + f"distributed training: {training_args.parallel_mode.value == 'distributed'}, 16-bits training: {training_args.fp16}"
@@ -164,12 +166,10 @@ def run_trainer(trainer: AdapterTrainer, training_args: TrainingArguments) -> No
 
 def main() -> None:
     args = parser.parse_args()
-    meta_args, model_args, data_args, training_args, adapter_args = parse_args(
-        args.config_file
-    )
+    meta_args, model_args, training_args, finetuning_args = parse_args(args.config_file)
     setup_basic_logging(meta_args.log_file_path)
     seed_everything(meta_args.global_seed)
-    run(model_args, data_args, training_args, adapter_args)
+    run(model_args, training_args, finetuning_args)
 
 
 if __name__ == '__main__':

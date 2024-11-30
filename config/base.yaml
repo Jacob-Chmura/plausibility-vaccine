@@ -5,10 +5,6 @@ MetaArguments:
 ModelArguments:
   cache_dir: ".cache"
   pretrained_model_name: "albert-base-v2"
-DataTrainingArguments:
-  task_name: "plausibility"
-  train_file: "data/plausibility_data/pep_3k/valid.csv"
-  test_file: "data/plausibility_data/pep_3k/test.csv"
 TrainingArguments:
   learning_rate: 0.00005
   num_train_epochs: 3.0
@@ -18,7 +14,15 @@ TrainingArguments:
   per_device_eval_batch_size: 8
   per_device_train_batch_size: 8
   use_cpu: true
-AdapterArguments:
-  adapter_config: 'seq_bn'
-  load_adapter: ''
-  train_adapter: false
+FinetuningArguments:
+  finetuning_args:
+    classification_head:
+      FinetuningArgument:
+        DataArguments:
+          task_name: "plausibility"
+          train_file: "data/plausibility_data/pep_3k/valid.csv"
+          test_file: "data/plausibility_data/pep_3k/test.csv"
+        AdapterArguments:
+          adapter_config: 'seq_bn'
+          load_adapter: ''
+          train_adapter: false
