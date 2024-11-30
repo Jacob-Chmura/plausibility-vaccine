@@ -59,14 +59,10 @@ class FinetuningArguments:
     )
 
     def __post_init__(self) -> None:
-        for finetune_name, finetune_args in self.tasks.items():
-            self.tasks[finetune_name] = FinetuningArgument(
-                data_args=DataArguments(
-                    **finetune_args['FinetuningArgument']['data_args']  # type: ignore
-                ),
-                adapter_args=AdapterArguments(
-                    **finetune_args['FinetuningArgument']['adapter_args']  # type: ignore
-                ),
+        for task_name, task_args in self.tasks.items():
+            self.tasks[task_name] = FinetuningArgument(
+                data_args=DataArguments(**task_args['data_args']),  # type: ignore
+                adapter_args=AdapterArguments(**task_args['adapter_args']),  # type: ignore
             )
 
 

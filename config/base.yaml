@@ -17,11 +17,10 @@ TrainingArguments:
 FinetuningArguments:
   tasks:
     classification_head:
-      FinetuningArgument:
-        data_args:
-          task_name: "plausibility"
-          train_file: "data/plausibility_data/pep_3k/valid.csv"
-          test_file: "data/plausibility_data/pep_3k/test.csv"
-        adapter_args:
-          adapter_config: 'seq_bn'
-          train_adapter: true
+      data_args:
+        task_name: "plausibility"
+        train_file: "data/plausibility_data/pep_3k/valid.csv"
+        test_file: "data/plausibility_data/pep_3k/test.csv"
+      adapter_args:
+        adapter_config: 'seq_bn'
+        train_adapter: true
