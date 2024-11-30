@@ -19,7 +19,7 @@ def preprocess_function(
     # Map labels to IDs
     if label_to_id is not None and 'label' in examples:
         result['label'] = [label_to_id[l] for l in examples['label']]
-    return BatchEncoding
+    return result
 
 
 def get_data(
