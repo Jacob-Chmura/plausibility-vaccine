@@ -1,13 +1,25 @@
 import pathlib
 from dataclasses import dataclass, field
-from typing import Optional, Tuple, Union
+from typing import Dict, Optional, Tuple, Union
 
+import yaml
 from adapters import AdapterArguments
 from transformers import HfArgumentParser, TrainingArguments
 
 
 @dataclass
-class DataTrainingArguments:
+class MetaArguments:
+    log_file_path: Optional[str] = field(
+        metadata={'help': 'Path to the log file to use.'},
+    )
+    global_seed: int = field(
+        default=1337,
+        metadata={'help': 'Random seed to use for reproducibiility.'},
+    )
+
+
+@dataclass
+class DataArguments:
     task_name: str = field(
         metadata={'help': 'The name of the task to train on'},
     )
@@ -16,10 +28,6 @@ class DataTrainingArguments:
     )
     test_file: str = field(
         metadata={'help': 'A csv file containing the test data.'},
-    )
-    overwrite_cache: bool = field(
-        default=False,
-        metadata={'help': 'Overwrite the cached preprocessed datasets or not.'},
     )
 
 
@@ -30,16 +38,55 @@ class ModelArguments:
     )
     cache_dir: Optional[str] = field(
         default=None,
-        metadata={
-            'help': 'Where do you want to store the pretrained models downloaded from huggingface.co'
-        },
+        metadata={'help': 'Directory to store pretrained models from huggingface.co'},
     )
+
+
+@dataclass
+class FinetuningArgument:
+    data_args: DataArguments = field(
+        metadata={'help': 'Data arguments for the fine-tuning configuration'},
+    )
+    adapter_args: AdapterArguments = field(
+        metadata={'help': 'Adapter arguments for the fine-tuning configuration'},
+    )
+
+
+@dataclass
+class FinetuningArguments:
+    tasks: Dict[str, FinetuningArgument] = field(
+        metadata={'help': 'List of fine-tuning tasks arguments'},
+    )
+
+    def __post_init__(self) -> None:
+        for task_name, task_args in self.tasks.items():
+            self.tasks[task_name] = FinetuningArgument(
+                data_args=DataArguments(**task_args['data_args']),  # type: ignore
+                adapter_args=AdapterArguments(**task_args['adapter_args']),  # type: ignore
+            )
 
 
 def parse_args(
     config_yaml: Union[str, pathlib.Path],
-) -> Tuple[ModelArguments, DataTrainingArguments, TrainingArguments, AdapterArguments]:
-    parser = HfArgumentParser(
-        (ModelArguments, DataTrainingArguments, TrainingArguments, AdapterArguments)
+) -> Tuple[
+    MetaArguments,
+    ModelArguments,
+    TrainingArguments,
+    FinetuningArguments,
+]:
+    config_dict = yaml.safe_load(pathlib.Path(config_yaml).read_text())
+    config_dict = (
+        config_dict['MetaArguments']
+        | config_dict['ModelArguments']
+        | config_dict['TrainingArguments']
+        | config_dict['FinetuningArguments']
     )
-    return parser.parse_yaml_file(config_yaml)
+    parser = HfArgumentParser(
+        (
+            MetaArguments,
+            ModelArguments,
+            TrainingArguments,
+            FinetuningArguments,
+        )
+    )
+    return parser.parse_dict(config_dict, allow_extra_keys=True)
