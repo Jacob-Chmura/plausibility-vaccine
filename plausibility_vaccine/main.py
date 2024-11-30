@@ -1,26 +1,21 @@
 import logging
 import pathlib
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, Optional
 
 import evaluate
 import numpy as np
-from adapters import (
-    AdapterArguments,
-    AdapterTrainer,
-    AutoAdapterModel,
-    setup_adapter_training,
-)
-from datasets import DatasetDict, load_dataset
+from adapters import AdapterArguments, AdapterTrainer, AutoAdapterModel
 from transformers import (
     AutoConfig,
     AutoTokenizer,
     DataCollatorWithPadding,
     EvalPrediction,
-    PreTrainedModel,
     TrainingArguments,
 )
 from transformers.trainer_utils import get_last_checkpoint
 
+from plausibility_vaccine.adapters import setup_adapters
+from plausibility_vaccine.data import get_data, preprocess_function
 from plausibility_vaccine.util.args import (
     AdapterArguments,
     DataTrainingArguments,
@@ -29,24 +24,6 @@ from plausibility_vaccine.util.args import (
 )
 from plausibility_vaccine.util.logging import setup_basic_logging
 from plausibility_vaccine.util.seed import seed_everything
-
-
-def setup_adapters(
-    model: PreTrainedModel,
-    adapter_args: AdapterArguments,
-    task_name: str,
-    label_list: List[str],
-) -> PreTrainedModel:
-    model.add_classification_head(
-        task_name,
-        num_labels=len(label_list),
-        id2label={i: v for i, v in enumerate(label_list)},
-    )
-    model.add_adapter(task_name, config='seq_bn')
-    model.set_active_adapters(task_name)
-
-    setup_adapter_training(model, adapter_args, task_name)
-    return model
 
 
 def get_checkpoint(training_args: TrainingArguments) -> Optional[str]:
@@ -71,24 +48,6 @@ def get_checkpoint(training_args: TrainingArguments) -> Optional[str]:
     if last_checkpoint is not None:
         checkpoint = last_checkpoint
     return checkpoint
-
-
-def get_data(
-    data_args: DataTrainingArguments,
-    cache_dir: Optional[str],
-) -> Tuple[DatasetDict, List[str]]:
-    data_files = {
-        'train': data_args.train_file,
-        'test': data_args.test_file,
-    }
-    for key in data_files.keys():
-        logging.info(f'load a local file for {key}: {data_files[key]}')
-
-    raw_datasets = load_dataset('csv', data_files=data_files, cache_dir=cache_dir)
-
-    label_list = raw_datasets['train'].unique('label')
-    label_list.sort()  # Let's sort it for determinism
-    return raw_datasets, label_list
 
 
 def run(
@@ -127,21 +86,10 @@ def run(
     model.config.label2id = label_to_id
     model.config.id2label = {id: label for label, id in config.label2id.items()}
 
-    def preprocess_function(examples: Dict[str, List]) -> Dict[str, List]:
-        # Tokenize the texts
-        args = examples['subject'], examples['verb'], examples['object']
-        result = tokenizer(*args, padding='max_length', max_length=8, truncation=True)
-
-        # Map labels to IDs
-        if label_to_id is not None and 'label' in examples:
-            result['label'] = [label_to_id[l] for l in examples['label']]
-        return result
-
     with training_args.main_process_first(desc='dataset map pre-processing'):
         raw_datasets = raw_datasets.map(
-            preprocess_function,
+            lambda batch: preprocess_function(batch, tokenizer, label_to_id),
             batched=True,
-            load_from_cache_file=not data_args.overwrite_cache,
             desc='Running tokenizer on dataset',
         )
 

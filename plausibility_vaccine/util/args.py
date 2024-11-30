@@ -17,10 +17,6 @@ class DataTrainingArguments:
     test_file: str = field(
         metadata={'help': 'A csv file containing the test data.'},
     )
-    overwrite_cache: bool = field(
-        default=False,
-        metadata={'help': 'Overwrite the cached preprocessed datasets or not.'},
-    )
 
 
 @dataclass
