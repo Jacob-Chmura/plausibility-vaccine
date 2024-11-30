@@ -164,11 +164,11 @@ def run_trainer(trainer: AdapterTrainer, training_args: TrainingArguments) -> No
 
 def main() -> None:
     args = parser.parse_args()
-    logging_args, model_args, data_args, training_args, adapter_args = parse_args(
+    meta_args, model_args, data_args, training_args, adapter_args = parse_args(
         args.config_file
     )
-    setup_basic_logging(logging_args.log_file_path)
-    seed_everything(training_args.seed)
+    setup_basic_logging(meta_args.log_file_path)
+    seed_everything(meta_args.global_seed)
     run(model_args, data_args, training_args, adapter_args)
 
 

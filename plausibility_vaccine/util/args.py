@@ -8,9 +8,13 @@ from transformers import HfArgumentParser, TrainingArguments
 
 
 @dataclass
-class LoggingArguments:
+class MetaArguments:
     log_file_path: Optional[str] = field(
         metadata={'help': 'Path to the log file to use.'},
+    )
+    global_seed: int = field(
+        default=1337,
+        metadata={'help': 'Random seed to use for reproducibiility.'},
     )
 
 
@@ -41,7 +45,7 @@ class ModelArguments:
 def parse_args(
     config_yaml: Union[str, pathlib.Path],
 ) -> Tuple[
-    LoggingArguments,
+    MetaArguments,
     ModelArguments,
     DataTrainingArguments,
     TrainingArguments,
@@ -49,7 +53,7 @@ def parse_args(
 ]:
     config_dict = yaml.safe_load(pathlib.Path(config_yaml).read_text())
     config_dict = (
-        config_dict['LoggingArguments']
+        config_dict['MetaArguments']
         | config_dict['ModelArguments']
         | config_dict['DataTrainingArguments']
         | config_dict['TrainingArguments']
@@ -57,7 +61,7 @@ def parse_args(
     )
     parser = HfArgumentParser(
         (
-            LoggingArguments,
+            MetaArguments,
             ModelArguments,
             DataTrainingArguments,
             TrainingArguments,

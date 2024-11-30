@@ -1,5 +1,6 @@
 ---
-LoggingArguments:
+MetaArguments:
+  global_seed: 1337
   log_file_path: "plausibility_vaccine.log"
 ModelArguments:
   cache_dir: ".cache"
@@ -16,7 +17,6 @@ TrainingArguments:
   overwrite_output_dir: false
   per_device_eval_batch_size: 8
   per_device_train_batch_size: 8
-  seed: 42
   use_cpu: true
 AdapterArguments:
   adapter_config: 'seq_bn'
