@@ -24,5 +24,4 @@ FinetuningArguments:
           test_file: "data/plausibility_data/pep_3k/test.csv"
         adapter_args:
           adapter_config: 'seq_bn'
-          load_adapter: ''
-          train_adapter: false
+          train_adapter: true

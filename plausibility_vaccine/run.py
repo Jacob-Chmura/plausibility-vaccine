@@ -34,7 +34,6 @@ def run(
 
     # TODO: Properly setup multi-training and multi-adapter finetuning
     args = finetuning_args.tasks['classification_head']
-    print(args, type(args))
     data_args, adapter_args = args.data_args, args.adapter_args
 
     raw_datasets, label_list = get_data(data_args, cache_dir=model_args.cache_dir)
@@ -62,7 +61,6 @@ def run(
 
     # Setup adapters
     model = setup_adapters(model, adapter_args, data_args.task_name, label_list)
-    model.train_adapter(data_args.task_name)
 
     # Initialize our Trainer
     trainer = AdapterTrainer(
