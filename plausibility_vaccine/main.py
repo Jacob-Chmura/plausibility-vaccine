@@ -1,6 +1,6 @@
 import logging
 import pathlib
-from typing import Dict, Optional, Tuple
+from typing import Dict, List, Optional, Tuple
 
 import evaluate
 import numpy as np
@@ -29,11 +29,11 @@ from plausibility_vaccine.util.seed import seed_everything
 
 
 def load_pretrained_model(
-    model_args: ModelArguments, num_labels: int, task_name: str
+    model_args: ModelArguments, label_list: List[str], task_name: str
 ) -> Tuple[PreTrainedModel, PreTrainedTokenizer]:
     config = AutoConfig.from_pretrained(
         model_args.pretrained_model_name,
-        num_labels=num_labels,
+        num_labels=len(label_list),
         finetuning_task=task_name,
         cache_dir=model_args.cache_dir,
     )
@@ -46,6 +46,12 @@ def load_pretrained_model(
         config=config,
         cache_dir=model_args.cache_dir,
     )
+
+    # Some models have set the order of the labels to use, so let's make sure we do use it.
+    label_to_id = {v: i for i, v in enumerate(label_list)}
+    model.config.label2id = label_to_id
+    model.config.id2label = {id: label for label, id in model.config.label2id.items()}
+
     return model, tokenizer
 
 
@@ -88,24 +94,23 @@ def run(
     raw_datasets, label_list = get_data(data_args, cache_dir=model_args.cache_dir)
 
     model, tokenizer = load_pretrained_model(
-        model_args, num_labels=len(label_list), task_name=data_args.task_name
+        model_args, label_list=label_list, task_name=data_args.task_name
     )
-
-    # Some models have set the order of the labels to use, so let's make sure we do use it.
-    label_to_id = {v: i for i, v in enumerate(label_list)}
-    model.config.label2id = label_to_id
-    model.config.id2label = {id: label for label, id in model.config.label2id.items()}
 
     with training_args.main_process_first(desc='dataset map pre-processing'):
         raw_datasets = raw_datasets.map(
-            lambda batch: preprocess_function(batch, tokenizer, label_to_id),
+            lambda batch: preprocess_function(batch, tokenizer, label_list),
             batched=True,
             desc='Running tokenizer on dataset',
         )
 
+    # Setup adapters
+    model = setup_adapters(model, adapter_args, data_args.task_name, label_list)
+
     # Evaluation Metrics
+    metrics = ['accuracy']
+
     def compute_metrics(p: EvalPrediction) -> Dict[str, float]:
-        metrics = ['accuracy']
         logits, labels = p
         preds = np.argmax(logits, axis=1)
 
@@ -115,19 +120,13 @@ def run(
             result.update(metric_obj.compute(predictions=preds, references=labels))
         return result
 
-    # Setup adapters
-    model = setup_adapters(model, adapter_args, data_args.task_name, label_list)
-
-    # Get datasets
-    train_dataset, eval_dataset = raw_datasets['train'], raw_datasets['test']
-
     # Initialize our Trainer
     model.train_adapter(data_args.task_name)
     trainer = AdapterTrainer(
         model=model,
         args=training_args,
-        train_dataset=train_dataset,
-        eval_dataset=eval_dataset,
+        train_dataset=raw_datasets['train'],
+        eval_dataset=raw_datasets['test'],
         compute_metrics=compute_metrics,
         tokenizer=tokenizer,
         data_collator=DataCollatorWithPadding(tokenizer, pad_to_multiple_of=8),

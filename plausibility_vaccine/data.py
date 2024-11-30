@@ -1,5 +1,5 @@
 import logging
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Dict, List, Optional, Tuple
 
 from datasets import DatasetDict, load_dataset
 from transformers import BatchEncoding, PreTrainedTokenizer
@@ -10,13 +10,14 @@ from plausibility_vaccine.util.args import DataTrainingArguments
 def preprocess_function(
     examples: Dict[str, List],
     tokenizer: PreTrainedTokenizer,
-    label_to_id: Dict[Any, int],
+    label_list: List[str],
 ) -> BatchEncoding:
     # Tokenize the texts
     args = examples['subject'], examples['verb'], examples['object']
     result = tokenizer(*args, padding='max_length', max_length=8, truncation=True)
 
     # Map labels to IDs
+    label_to_id = {v: i for i, v in enumerate(label_list)}
     if label_to_id is not None and 'label' in examples:
         result['label'] = [label_to_id[l] for l in examples['label']]
     return result
