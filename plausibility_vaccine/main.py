@@ -1,3 +1,4 @@
+import argparse
 import logging
 import pathlib
 from typing import Dict, List, Optional, Tuple
@@ -26,6 +27,17 @@ from plausibility_vaccine.util.args import (
 )
 from plausibility_vaccine.util.logging import setup_basic_logging
 from plausibility_vaccine.util.seed import seed_everything
+
+parser = argparse.ArgumentParser(
+    description='Plausibility Vaccine',
+    formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+)
+parser.add_argument(
+    '--config-file',
+    type=str,
+    default='config/base.yaml',
+    help='Path to yaml configuration file to use',
+)
 
 
 def load_pretrained_model(
@@ -151,9 +163,9 @@ def run_trainer(trainer: AdapterTrainer, training_args: TrainingArguments) -> No
 
 
 def main() -> None:
-    config_yaml = 'config/base.yaml'
+    args = parser.parse_args()
     logging_args, model_args, data_args, training_args, adapter_args = parse_args(
-        config_yaml
+        args.config_file
     )
     setup_basic_logging(logging_args.log_file_path)
     seed_everything(training_args.seed)
