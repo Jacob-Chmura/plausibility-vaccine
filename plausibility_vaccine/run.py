@@ -33,7 +33,7 @@ def run(
     logging.debug(f'Training/evaluation parameters {training_args}')
 
     # TODO: Properly setup multi-training and multi-adapter finetuning
-    args = finetuning_args.finetuning_args['classification_head']
+    args = finetuning_args.tasks['classification_head']
     print(args, type(args))
     data_args, adapter_args = args.data_args, args.adapter_args
 

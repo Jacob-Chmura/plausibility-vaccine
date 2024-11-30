@@ -54,13 +54,13 @@ class FinetuningArgument:
 
 @dataclass
 class FinetuningArguments:
-    finetuning_args: Dict[str, FinetuningArgument] = field(
-        metadata={'help': 'List of fine-tuning arguments'},
+    tasks: Dict[str, FinetuningArgument] = field(
+        metadata={'help': 'List of fine-tuning tasks arguments'},
     )
 
     def __post_init__(self) -> None:
-        for finetune_name, finetune_args in self.finetuning_args.items():
-            self.finetuning_args[finetune_name] = FinetuningArgument(
+        for finetune_name, finetune_args in self.tasks.items():
+            self.tasks[finetune_name] = FinetuningArgument(
                 data_args=DataArguments(
                     **finetune_args['FinetuningArgument']['data_args']  # type: ignore
                 ),

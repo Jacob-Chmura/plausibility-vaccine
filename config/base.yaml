@@ -15,13 +15,14 @@ TrainingArguments:
   per_device_train_batch_size: 8
   use_cpu: true
 FinetuningArguments:
-  classification_head:
-    FinetuningArgument:
-      data_args:
-        task_name: "plausibility"
-        train_file: "data/plausibility_data/pep_3k/valid.csv"
-        test_file: "data/plausibility_data/pep_3k/test.csv"
-      adapter_args:
-        adapter_config: 'seq_bn'
-        load_adapter: ''
-        train_adapter: false
+  tasks:
+    classification_head:
+      FinetuningArgument:
+        data_args:
+          task_name: "plausibility"
+          train_file: "data/plausibility_data/pep_3k/valid.csv"
+          test_file: "data/plausibility_data/pep_3k/test.csv"
+        adapter_args:
+          adapter_config: 'seq_bn'
+          load_adapter: ''
+          train_adapter: false
