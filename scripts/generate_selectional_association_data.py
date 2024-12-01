@@ -61,6 +61,8 @@ def main() -> None:
     sa_object = compute_selectional_association(
         verb_counts, verb_object_counts, object_counts, x_name='object'
     )
+    print(len(sa_subject))
+    print(args.subject_save_file)
 
     sa_subject.to_csv(args.subject_save_file, index=False)
     sa_object.to_csv(args.object_save_file, index=False)
