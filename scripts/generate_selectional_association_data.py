@@ -53,83 +53,53 @@ def main() -> None:
             object_counts[obj] += 1
             verb_counts[verb] += 1
 
-    total_subjects = sum(subject_counts.values())
-    total_objects = sum(object_counts.values())
+    # Selectional Association
+    sa_subject = compute_selectional_association(
+        verb_counts, verb_subject_counts, subject_counts, x_name='subject'
+    )
 
+    sa_object = compute_selectional_association(
+        verb_counts, verb_object_counts, object_counts, x_name='object'
+    )
+
+    sa_subject.to_csv(args.subject_save_file, index=False)
+    sa_object.to_csv(args.object_save_file, index=False)
+
+
+def compute_selectional_association(
+    verb_counts: DefaultDict[str, int],
+    verb_x_counts: DefaultDict[Tuple[str, str], int],
+    x_counts: DefaultDict[str, int],
+    x_name: str,
+) -> pd.DataFrame:
     # Compute probabilities
-    p_s_given_v = {
+    p_x_given_v = {
         (verb, subject): count / verb_counts[verb]
-        for (verb, subject), count in verb_subject_counts.items()
+        for (verb, subject), count in verb_x_counts.items()
     }
-    p_s = {subject: count / total_subjects for subject, count in subject_counts.items()}
+    total_x = sum(x_counts.values())
+    p_x = {x: count / total_x for x, count in x_counts.items()}
 
-    p_o_given_v = {
-        (verb, obj): count / verb_counts[verb]
-        for (verb, obj), count in verb_object_counts.items()
-    }
-    p_o = {obj: count / total_objects for obj, count in object_counts.items()}
-
-    ##Selectional Association
-
-    selectional_association_subject = defaultdict(float)
-    selectional_association_object = defaultdict(float)
-
-    # Compute S_R(v) for subjects
-    s_r_subject = {}
+    # Compute S_R(v)
+    s_r: DefaultDict[str, float] = defaultdict(float)
     for verb in verb_counts.keys():
-        s_r_subject[verb] = sum(
-            p_s_given_v[(verb, subject)]
-            * np.log(p_s_given_v[(verb, subject)] / p_s.get(subject, 1e-10))
-            for (v, subject) in p_s_given_v.keys()
+        s_r[verb] = sum(
+            p_x_given_v[(verb, x)] * np.log(p_x_given_v[(verb, x)] / p_x.get(x, 1e-10))
+            for (v, x) in p_x_given_v.keys()
             if v == verb
         )
 
-    # Compute S_R(v) for objects
-    s_r_object = {}
-    for verb in verb_counts.keys():
-        s_r_object[verb] = sum(
-            p_o_given_v[(verb, obj)]
-            * np.log(p_o_given_v[(verb, obj)] / p_o.get(obj, 1e-10))
-            for (v, obj) in p_o_given_v.keys()
-            if v == verb
-        )
+    # Compute selectional association
+    s_a: DefaultDict[Tuple[str, str], float] = defaultdict(float)
+    for (verb, x), p_s_v in p_x_given_v.items():
+        if s_r[verb] > 0:
+            s_a[(verb, x)] = p_s_v * np.log(p_s_v / p_x.get(x, 1e-10)) / s_r[verb]
 
-    # Compute selectional association for subjects
-    for (verb, subject), p_s_v in p_s_given_v.items():
-        if s_r_subject[verb] > 0:
-            selectional_association_subject[(verb, subject)] = (
-                p_s_v * np.log(p_s_v / p_s.get(subject, 1e-10)) / s_r_subject[verb]
-            )
-
-    # Compute selectional association for objects
-    for (verb, obj), p_o_v in p_o_given_v.items():
-        if s_r_object[verb] > 0:
-            selectional_association_object[(verb, obj)] = (
-                p_o_v * np.log(p_o_v / p_o.get(obj, 1e-10)) / s_r_object[verb]
-            )
-
-    selectional_association_df_subject = pd.DataFrame.from_dict(
-        selectional_association_subject,
-        orient='index',
-        columns=['Selectional_Association'],
+    s_a_df: pd.DataFrame = pd.DataFrame.from_dict(
+        s_a, orient='index', columns=['association']
     ).reset_index()
-    selectional_association_df_subject.columns = [
-        'Verb-Subject',
-        'Selectional_Association',
-    ]
-
-    selectional_association_df_object = pd.DataFrame.from_dict(
-        selectional_association_object,
-        orient='index',
-        columns=['Selectional_Association'],
-    ).reset_index()
-    selectional_association_df_object.columns = [
-        'Verb-Object',
-        'Selectional_Association',
-    ]
-
-    selectional_association_df_subject.to_csv(args.subject_save_file, index=False)
-    selectional_association_df_object.to_csv(args.object_save_file, index=False)
+    s_a_df[['verb', x_name]] = pd.DataFrame(s_a_df['index'].tolist())
+    return s_a_df[['verb', x_name, 'association']]
 
 
 if __name__ == '__main__':
