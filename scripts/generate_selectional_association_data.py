@@ -52,19 +52,18 @@ def compute_selectional_association(df: pd.DataFrame, col_name: str) -> pd.DataF
         on=col_name,
     ).rename({'proportion_x': 'p_given_v', 'proportion_y': 'p'}, axis=1)
 
-    def _sr(p_given_v: np.ndarray, p: np.ndarray) -> float:
-        return sum(p_given_v * np.log(p_given_v / p))
+    def kl(p: np.ndarray, q: np.ndarray) -> float:
+        return sum(p * np.log(p / q))
 
     sr_data = (
         data.groupby('verb')
-        .apply(lambda x: _sr(x['p_given_v'], x['p']), include_groups=False)
+        .apply(lambda x: kl(x['p_given_v'], x['p']), include_groups=False)
         .reset_index()
         .rename({0: 'selectional_preference'}, axis=1)
     )
 
     data = pd.merge(data, sr_data, how='left', on='verb')
     data = data[data['selectional_preference'] > 0]
-
     data['association'] = data['p_given_v'] * np.log(data['p_given_v'] / data['p'])
     data['association'] /= data['selectional_preference']
     return data[['verb', col_name, 'association']]
