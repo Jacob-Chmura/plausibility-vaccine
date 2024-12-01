@@ -1,5 +1,5 @@
 import os
-<<<<<<< HEAD:scripts/generate_selectional_association_data.py
+
 from collections import defaultdict
 
 import numpy as np
@@ -7,27 +7,18 @@ import pandas as pd
 
 # Load the dataset from: https://github.com/google-deepmind/svo_probes
 file_path = os.path.join('..', 'data', 'verb_understanding_data', 'svo_probes.csv')
-=======
-from typing import Tuple, Dict
+from typing import Dict, Tuple
 
-
-# Load the dataset from: https://github.com/google-deepmind/svo_probes
-file_path = os.path.join('..', 'data', 'KL-verb-triples', 'svo_probes.csv')
->>>>>>> refs/remotes/origin/kl-verb-branch:plausibility_vaccine/kl_diverge.py
 df = pd.read_csv(file_path)
 
 # Drop unnecessary columns (We may use neg_triplet in the future)
 df = df.drop(columns=['sentence', 'neg_triplet', 'pos_url'])
-<<<<<<< HEAD:scripts/generate_selectional_association_data.py
-=======
 
-verb_subject_counts : defaultdict[Tuple[str,str], int] = defaultdict(int)
-verb_object_counts : defaultdict[Tuple[str, str], int] = defaultdict(int)
-subject_counts : defaultdict[str, int] = defaultdict(int)
-object_counts : defaultdict[str, int] = defaultdict(int)
-verb_counts : defaultdict[str, int] = defaultdict(int)
-
->>>>>>> refs/remotes/origin/kl-verb-branch:plausibility_vaccine/kl_diverge.py
+verb_subject_counts: defaultdict[Tuple[str, str], int] = defaultdict(int)
+verb_object_counts: defaultdict[Tuple[str, str], int] = defaultdict(int)
+subject_counts: defaultdict[str, int] = defaultdict(int)
+object_counts: defaultdict[str, int] = defaultdict(int)
+verb_counts: defaultdict[str, int] = defaultdict(int)
 
 
 # Process the pos_triplet column
@@ -132,50 +123,3 @@ selectional_association_df_subject.to_csv(
 selectional_association_df_object.to_csv(
     selectional_association_object_path, index=False
 )
-
-
-##KL (Unused as of now)
-<<<<<<< HEAD:scripts/generate_selectional_association_data.py
-def compute_KL():
-    kl_subject = {}
-    kl_object = {}
-=======
-def compute_KL() -> Tuple[Dict[str, float], Dict[str, float]]:
-    kl_subject : Dict[str, float] = {}
-    kl_object: Dict[str, float] = {}
->>>>>>> refs/remotes/origin/kl-verb-branch:plausibility_vaccine/kl_diverge.py
-
-    # Compute KL Divergence for subjects
-    for verb in verb_counts.keys():
-        kl_s = 0
-        for (v, subject), p_s_v in p_s_given_v.items():
-            if v == verb:
-                prob_s = p_s.get(subject, 0)
-                if prob_s > 0:  # Avoid division by zero
-                    kl_s += p_s_v * np.log(p_s_v / prob_s)
-        kl_subject[verb] = kl_s
-
-    # Compute KL Divergence for objects
-    for verb in verb_counts.keys():
-        kl_o = 0
-        for (v, obj), p_o_v in p_o_given_v.items():
-            if v == verb:
-                prob_o = p_o.get(obj, 0)
-                if prob_o > 0:  # Avoid division by zero
-                    kl_o += p_o_v * np.log(p_o_v / prob_o)
-        kl_object[verb] = kl_o
-
-    kl_df = pd.DataFrame(
-        {
-            'Verb': kl_subject.keys(),
-            'KL_Divergence_Subject': kl_subject.values(),
-            'KL_Divergence_Object': kl_object.values(),
-        }
-    )
-
-    kl_df.to_csv('kl_divergence_results.csv', index=False)
-<<<<<<< HEAD:scripts/generate_selectional_association_data.py
-=======
-
-    return (kl_subject, kl_object)
->>>>>>> refs/remotes/origin/kl-verb-branch:plausibility_vaccine/kl_diverge.py
