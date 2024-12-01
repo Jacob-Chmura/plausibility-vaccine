@@ -1128,6 +1128,9 @@ dev = [
     { name = "ruff" },
     { name = "types-pyyaml" },
 ]
+verb-data-generation = [
+    { name = "pandas" },
+]
 
 [package.metadata]
 requires-dist = [
@@ -1150,6 +1153,7 @@ dev = [
     { name = "ruff", specifier = ">=0.7.3" },
     { name = "types-pyyaml", specifier = ">=6.0.12.20240917" },
 ]
+verb-data-generation = [{ name = "pandas", specifier = ">=2.2.3" }]
 
 [[package]]
 name = "pluggy"
