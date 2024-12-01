@@ -1,5 +1,4 @@
 import os
-
 from collections import defaultdict
 
 import numpy as np
@@ -7,18 +6,18 @@ import pandas as pd
 
 # Load the dataset from: https://github.com/google-deepmind/svo_probes
 file_path = os.path.join('..', 'data', 'verb_understanding_data', 'svo_probes.csv')
-from typing import Dict, Tuple
+from typing import DefaultDict, Tuple
 
 df = pd.read_csv(file_path)
 
 # Drop unnecessary columns (We may use neg_triplet in the future)
 df = df.drop(columns=['sentence', 'neg_triplet', 'pos_url'])
 
-verb_subject_counts: defaultdict[Tuple[str, str], int] = defaultdict(int)
-verb_object_counts: defaultdict[Tuple[str, str], int] = defaultdict(int)
-subject_counts: defaultdict[str, int] = defaultdict(int)
-object_counts: defaultdict[str, int] = defaultdict(int)
-verb_counts: defaultdict[str, int] = defaultdict(int)
+verb_subject_counts: DefaultDict[Tuple[str, str], int] = defaultdict(int)
+verb_object_counts: DefaultDict[Tuple[str, str], int] = defaultdict(int)
+subject_counts: DefaultDict[str, int] = defaultdict(int)
+object_counts: DefaultDict[str, int] = defaultdict(int)
+verb_counts: DefaultDict[str, int] = defaultdict(int)
 
 
 # Process the pos_triplet column
@@ -48,13 +47,6 @@ p_o_given_v = {
     for (verb, obj), count in verb_object_counts.items()
 }
 p_o = {obj: count / total_objects for obj, count in object_counts.items()}
-
-
-# Optionally we can save results to CSV
-# pd.DataFrame.from_dict(p_s_given_v, orient="index", columns=["P(S|V)"]).to_csv("../data/results/kl-results/p_s_given_v.csv")
-# pd.DataFrame.from_dict(p_s, orient="index", columns=["P(S)"]).to_csv("../data/results/kl-results/p_s.csv")
-# pd.DataFrame.from_dict(p_o_given_v, orient="index", columns=["P(O|V)"]).to_csv("../data/results/kl-results/p_o_given_v.csv")
-# pd.DataFrame.from_dict(p_o, orient="index", columns=["P(O)"]).to_csv("./data/results/kl-results/p_o.csv")
 
 
 ##Selectional Association
