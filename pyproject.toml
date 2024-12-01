@@ -32,6 +32,9 @@ dev = [
     "ruff>=0.7.3",
     "types-pyyaml>=6.0.12.20240917",
 ]
+verb-data-generation = [
+    "pandas>=2.2.3",
+]
 
 [tool.mypy]
 files = ["plausibility_vaccine"]
