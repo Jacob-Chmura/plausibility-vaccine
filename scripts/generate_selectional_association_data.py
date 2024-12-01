@@ -1,4 +1,5 @@
 import os
+<<<<<<< HEAD:scripts/generate_selectional_association_data.py
 from collections import defaultdict
 
 import numpy as np
@@ -6,16 +7,28 @@ import pandas as pd
 
 # Load the dataset from: https://github.com/google-deepmind/svo_probes
 file_path = os.path.join('..', 'data', 'verb_understanding_data', 'svo_probes.csv')
+=======
+from typing import Tuple, Dict
+
+
+# Load the dataset from: https://github.com/google-deepmind/svo_probes
+file_path = os.path.join('..', 'data', 'KL-verb-triples', 'svo_probes.csv')
+>>>>>>> refs/remotes/origin/kl-verb-branch:plausibility_vaccine/kl_diverge.py
 df = pd.read_csv(file_path)
 
 # Drop unnecessary columns (We may use neg_triplet in the future)
 df = df.drop(columns=['sentence', 'neg_triplet', 'pos_url'])
+<<<<<<< HEAD:scripts/generate_selectional_association_data.py
+=======
 
-verb_subject_counts = defaultdict(int)
-verb_object_counts = defaultdict(int)
-subject_counts = defaultdict(int)
-object_counts = defaultdict(int)
-verb_counts = defaultdict(int)
+verb_subject_counts : defaultdict[Tuple[str,str], int] = defaultdict(int)
+verb_object_counts : defaultdict[Tuple[str, str], int] = defaultdict(int)
+subject_counts : defaultdict[str, int] = defaultdict(int)
+object_counts : defaultdict[str, int] = defaultdict(int)
+verb_counts : defaultdict[str, int] = defaultdict(int)
+
+>>>>>>> refs/remotes/origin/kl-verb-branch:plausibility_vaccine/kl_diverge.py
+
 
 # Process the pos_triplet column
 for triplet in df['pos_triplet']:
@@ -122,9 +135,15 @@ selectional_association_df_object.to_csv(
 
 
 ##KL (Unused as of now)
+<<<<<<< HEAD:scripts/generate_selectional_association_data.py
 def compute_KL():
     kl_subject = {}
     kl_object = {}
+=======
+def compute_KL() -> Tuple[Dict[str, float], Dict[str, float]]:
+    kl_subject : Dict[str, float] = {}
+    kl_object: Dict[str, float] = {}
+>>>>>>> refs/remotes/origin/kl-verb-branch:plausibility_vaccine/kl_diverge.py
 
     # Compute KL Divergence for subjects
     for verb in verb_counts.keys():
@@ -155,3 +174,8 @@ def compute_KL():
     )
 
     kl_df.to_csv('kl_divergence_results.csv', index=False)
+<<<<<<< HEAD:scripts/generate_selectional_association_data.py
+=======
+
+    return (kl_subject, kl_object)
+>>>>>>> refs/remotes/origin/kl-verb-branch:plausibility_vaccine/kl_diverge.py
