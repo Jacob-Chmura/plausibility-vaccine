@@ -29,7 +29,7 @@ class DataArguments:
     train_file: str = field(
         metadata={'help': 'A csv file containing the training data.'},
     )
-    test_file: str = field(
+    test_file: Optional[str] = field(
         metadata={'help': 'A csv file containing the test data.'},
     )
 
