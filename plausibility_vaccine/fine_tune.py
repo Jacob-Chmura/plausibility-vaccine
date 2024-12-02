@@ -31,6 +31,7 @@ def setup_adapters(
         model = _setup_adapter_fusion(model, task_name, label_list, fusion_list)
 
     logging.info('Model Adapter Summary:\n%s', model.adapter_summary())
+    logging.info('Full Model:\n%s', model)
     return model
 
 
@@ -71,6 +72,7 @@ def _setup_adapter_fusion(
         num_labels, id2label = 1, None
     else:
         num_labels, id2label = len(label_list), {i: v for i, v in enumerate(label_list)}
+    model.add_adapter(task_name)
     model.add_classification_head(task_name, num_labels=num_labels, id2label=id2label)
     model.train_adapter(task_name)
 
