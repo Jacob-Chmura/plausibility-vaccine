@@ -20,16 +20,16 @@ FinetuningArguments:
       data_args:
         task_name: verb_subject_association
         is_regression: true
-        train_file: data/verb_understanding_data/selectional_association_subject.csv
-        test_file:
+        train_file: data/verb_understanding_data/selectional_association_subject/train.csv
+        test_file: data/verb_understanding_data/selectional_association_subject/test.csv
       adapter_args:
         adapter_config: seq_bn
     verb_object_association:
       data_args:
         task_name: verb_object_association
         is_regression: true
-        train_file: data/verb_understanding_data/selectional_association_object.csv"
-        test_file:
+        train_file: data/verb_understanding_data/selectional_association_object/train.csv
+        test_file: data/verb_understanding_data/selectional_association_object/test.csv
       adapter_args:
         adapter_config: seq_bn
   downstream_tasks:

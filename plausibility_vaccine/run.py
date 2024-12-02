@@ -92,7 +92,7 @@ def _run_task(
         model=model,
         args=training_args,
         train_dataset=raw_datasets['train'],
-        eval_dataset=raw_datasets.get('test'),
+        eval_dataset=raw_datasets['test'],
         compute_metrics=compute_metrics,
         tokenizer=tokenizer,
         data_collator=DataCollatorWithPadding(tokenizer, pad_to_multiple_of=8),
