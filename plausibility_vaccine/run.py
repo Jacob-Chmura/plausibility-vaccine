@@ -81,12 +81,11 @@ def _run_task(
         for metric in metrics:
             metric_obj = evaluate.load(metric)
             result.update(metric_obj.compute(predictions=preds, references=labels))
-        print(result)
-        exit()
         return result
 
     # Setup adapters
-    model = setup_adapters(model, adapter_args, data_args.task_name, label_list)
+    fusion = task_args.fusion
+    model = setup_adapters(model, adapter_args, data_args.task_name, label_list, fusion)
 
     # Initialize our Trainer
     trainer = AdapterTrainer(

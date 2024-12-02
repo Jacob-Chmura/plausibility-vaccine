@@ -1,6 +1,6 @@
 import pathlib
 from dataclasses import dataclass, field
-from typing import Dict, Optional, Tuple, Union
+from typing import Dict, List, Optional, Tuple, Union
 
 import yaml
 from adapters import AdapterArguments
@@ -53,6 +53,10 @@ class FinetuningArgument:
     adapter_args: AdapterArguments = field(
         metadata={'help': 'Adapter arguments for the fine-tuning configuration'},
     )
+    fusion: Optional[List[str]] = field(
+        default=None,
+        metadata={'help': 'List of Adapters to fuse for fine-tuning configuration'},
+    )
 
 
 @dataclass
@@ -72,6 +76,7 @@ class FinetuningArguments:
                 tasks[task_name] = FinetuningArgument(
                     data_args=DataArguments(**task_args['data_args']),  # type: ignore
                     adapter_args=AdapterArguments(**task_args['adapter_args']),  # type: ignore
+                    fusion=task_args.get('fusion'),  # type: ignore
                 )
             return tasks
 
