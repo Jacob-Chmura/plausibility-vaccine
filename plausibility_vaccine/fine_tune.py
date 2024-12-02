@@ -31,7 +31,7 @@ def setup_adapters(
         model = _setup_adapter_fusion(model, task_name, label_list, fusion_list)
 
     logging.info('Model Adapter Summary:\n%s', model.adapter_summary())
-    logging.info('Full Model:\n%s', model)
+    logging.debug('Full Model:\n%s', model)
     return model
 
 
