@@ -43,4 +43,4 @@ FinetuningArguments:
         adapter_config: seq_bn
       fusion:
         - verb_subject_association
-        - verb_subject_association
+        - verb_object_association
