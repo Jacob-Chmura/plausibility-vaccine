@@ -23,7 +23,6 @@ FinetuningArguments:
         test_file: "data/plausibility_data/pep_3k/test.csv"
       adapter_args:
         adapter_config: 'seq_bn'
-        train_adapter: true
     verb_subject_association:
       data_args:
         task_name: "verb_subject_association"
@@ -31,7 +30,6 @@ FinetuningArguments:
         test_file:
       adapter_args:
         adapter_config: 'seq_bn'
-        train_adapter: true
     verb_object_association:
       data_args:
         task_name: "verb_object_association"
@@ -39,4 +37,3 @@ FinetuningArguments:
         test_file:
       adapter_args:
         adapter_config: 'seq_bn'
-        train_adapter: true
