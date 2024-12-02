@@ -15,16 +15,22 @@ parser.add_argument(
     help='Path to file containing raw svo probes data in CSV format',
 )
 parser.add_argument(
-    '--subject-save-file',
+    '--subject-save-dir',
     type=str,
-    default='../data/verb_understanding_data/selectional_association_subject/train.csv',
-    help='Path to save subject selectional association data in CSV format',
+    default='../data/verb_understanding_data/selectional_association_subject',
+    help='Path to save subject selectional association data',
 )
 parser.add_argument(
-    '--object-save-file',
+    '--object-save-dir',
     type=str,
-    default='../data/verb_understanding_data/selectional_association_object/train.csv',
-    help='Path to save object selectional association data in CSV format',
+    default='../data/verb_understanding_data/selectional_association_object',
+    help='Path to save object selectional association data',
+)
+parser.add_argument(
+    '--test-frac',
+    type=float,
+    default=0.2,
+    help='The proportion of the dataset to include in the test split',
 )
 
 
@@ -40,8 +46,8 @@ def main() -> None:
     sa_subject = compute_selectional_association(df, col_name='subject')
     sa_object = compute_selectional_association(df, col_name='object')
 
-    sa_subject.to_csv(args.subject_save_file, index=False)
-    sa_object.to_csv(args.object_save_file, index=False)
+    save_data(sa_subject, test_frac=args.test_frac, save_dir_str=args.subject_save_dir)
+    save_data(sa_object, test_frac=args.test_frac, save_dir_str=args.object_save_dir)
 
 
 def compute_selectional_association(df: pd.DataFrame, col_name: str) -> pd.DataFrame:
@@ -67,6 +73,17 @@ def compute_selectional_association(df: pd.DataFrame, col_name: str) -> pd.DataF
     data['label'] = data['p_given_v'] * np.log(data['p_given_v'] / data['p'])
     data['label'] /= data['label']
     return data[['verb', col_name, 'label']]
+
+
+def save_data(df: pd.DataFrame, test_frac: float, save_dir_str: str) -> None:
+    save_dir = pathlib.Path(save_dir_str)
+    save_dir.mkdir(parents=True, exist_ok=True)
+
+    df_test = df.sample(frac=test_frac)
+    df_train = df.drop(df_test.index)
+
+    df_train.to_csv(save_dir / 'train.csv', index=False)
+    df_test.to_csv(save_dir / 'test.csv', index=False)
 
 
 if __name__ == '__main__':
