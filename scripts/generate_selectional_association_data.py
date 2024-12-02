@@ -32,6 +32,12 @@ parser.add_argument(
     default=0.2,
     help='The proportion of the dataset to include in the test split',
 )
+parser.add_argument(
+    '--rng',
+    type=int,
+    default=1337,
+    help='The random state to use when splitting data, for reproducibility',
+)
 
 
 def main() -> None:
@@ -46,8 +52,18 @@ def main() -> None:
     sa_subject = compute_selectional_association(df, col_name='subject')
     sa_object = compute_selectional_association(df, col_name='object')
 
-    save_data(sa_subject, test_frac=args.test_frac, save_dir_str=args.subject_save_dir)
-    save_data(sa_object, test_frac=args.test_frac, save_dir_str=args.object_save_dir)
+    save_data(
+        sa_subject,
+        test_frac=args.test_frac,
+        save_dir_str=args.subject_save_dir,
+        rng=args.rng,
+    )
+    save_data(
+        sa_object,
+        test_frac=args.test_frac,
+        save_dir_str=args.object_save_dir,
+        rng=args.rng,
+    )
 
 
 def compute_selectional_association(df: pd.DataFrame, col_name: str) -> pd.DataFrame:
@@ -75,11 +91,11 @@ def compute_selectional_association(df: pd.DataFrame, col_name: str) -> pd.DataF
     return data[['verb', col_name, 'label']]
 
 
-def save_data(df: pd.DataFrame, test_frac: float, save_dir_str: str) -> None:
+def save_data(df: pd.DataFrame, test_frac: float, save_dir_str: str, rng: int) -> None:
     save_dir = pathlib.Path(save_dir_str)
     save_dir.mkdir(parents=True, exist_ok=True)
 
-    df_test = df.sample(frac=test_frac)
+    df_test = df.sample(frac=test_frac, random_state=rng)
     df_train = df.drop(df_test.index)
 
     df_train.to_csv(save_dir / 'train.csv', index=False)
