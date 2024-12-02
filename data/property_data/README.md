@@ -2,7 +2,7 @@
 
 ______________________________________________________________________
 
-This data was generated as follows.
+This [prompt data](./prompt_data.csv) was generated as follows.
 
 **Model**: [gpt-4o](https://platform.openai.com/docs/models#gpt-4o)
 
@@ -28,4 +28,6 @@ Generate the data in CSV format. Write one item per line with the item and it's 
 
 _Note_: the LLM had to be repeatedly prompted until about 1000 distinct items were generated. To maintain attention, the property attributes were generated in baches of 100 items.
 
-The datasets were generated from the [raw prompt data](./prompt_data.csv) using [this script](../../scripts/generate_property_data.py)
+#### Property Sub-Directories
+
+Each of the sub-directories were auto-generated from the [raw prompt data](./prompt_data.csv) using [this script](../../scripts/generate_property_data.py)
