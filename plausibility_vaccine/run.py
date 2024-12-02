@@ -18,7 +18,11 @@ from transformers.trainer_utils import get_last_checkpoint
 
 from plausibility_vaccine.data import get_data, preprocess_function
 from plausibility_vaccine.fine_tune import setup_adapters
-from plausibility_vaccine.util.args import FinetuningArguments, ModelArguments
+from plausibility_vaccine.util.args import (
+    FinetuningArgument,
+    FinetuningArguments,
+    ModelArguments,
+)
 
 
 def run(
@@ -32,15 +36,22 @@ def run(
     )
     logging.debug(f'Training/evaluation parameters {training_args}')
 
-    for task_name, task_args in finetuning_args.pretraining_tasks.items():
-        logging.info('Setting up pre-training for task: %s', task_name)
-    exit()
+    for _, task_args in finetuning_args.pretraining_tasks.items():
+        _run_task(model_args, training_args, task_args)
 
-    # TODO: Properly setup multi-training and multi-adapter finetuning
-    args = finetuning_args.tasks['classification_head']
-    data_args, adapter_args = args.data_args, args.adapter_args
+    for _, task_args in finetuning_args.downstream_tasks.items():
+        _run_task(model_args, training_args, task_args)
 
-    raw_datasets, label_list = get_data(data_args, cache_dir=model_args.cache_dir)
+
+def _run_task(
+    model_args: ModelArguments,
+    training_args: TrainingArguments,
+    task_args: FinetuningArgument,
+) -> None:
+    logging.info('Setting up pre-training for task: %s', task_args.data_args.task_name)
+    data_args, adapter_args = task_args.data_args, task_args.adapter_args
+    raw_datasets, label_list = get_data(data_args)
+
     model, tokenizer = _load_pretrained_model(model_args, label_list=label_list)
 
     with training_args.main_process_first(desc='dataset map pre-processing'):
@@ -51,11 +62,20 @@ def run(
         )
 
     # Evaluation Metrics
-    metrics = ['accuracy']
+    if data_args.is_regression:
+        metrics = ['accuracy']
+    else:
+        metrics = ['mse']
+
+    logging.info('Using evaluation metrics: %s', metrics)
 
     def compute_metrics(p: EvalPrediction) -> Dict[str, float]:
         logits, labels = p
-        preds = np.argmax(logits, axis=1)
+
+        if data_args.is_regression:
+            preds = np.squeeze(logits)
+        else:
+            preds = np.argmax(logits, axis=1)
 
         result = {}
         for metric in metrics:
@@ -71,21 +91,22 @@ def run(
         model=model,
         args=training_args,
         train_dataset=raw_datasets['train'],
-        eval_dataset=raw_datasets['test'],
+        eval_dataset=raw_datasets.get('test'),
         compute_metrics=compute_metrics,
         tokenizer=tokenizer,
         data_collator=DataCollatorWithPadding(tokenizer, pad_to_multiple_of=8),
     )
-
     _run_trainer(trainer, training_args)
 
 
 def _load_pretrained_model(
-    model_args: ModelArguments, label_list: List[str]
+    model_args: ModelArguments, label_list: Optional[List[str]]
 ) -> Tuple[PreTrainedModel, PreTrainedTokenizer]:
+    logging.info(f'Loading pre-trained model: {model_args}, label_list: {label_list}')
+
     config = AutoConfig.from_pretrained(
         model_args.pretrained_model_name,
-        num_labels=len(label_list),
+        num_labels=len(label_list) if label_list is not None else 1,
         cache_dir=model_args.cache_dir,
     )
     tokenizer = AutoTokenizer.from_pretrained(
@@ -99,10 +120,15 @@ def _load_pretrained_model(
     )
 
     # Some models have set the order of the labels to use, so let's make sure we do use it.
-    label_to_id = {v: i for i, v in enumerate(label_list)}
-    model.config.label2id = label_to_id
-    model.config.id2label = {id: label for label, id in model.config.label2id.items()}
+    if label_list is not None:
+        label_to_id = {v: i for i, v in enumerate(label_list)}
+        model.config.label2id = label_to_id
+        model.config.id2label = {
+            id: label for label, id in model.config.label2id.items()
+        }
 
+    logging.debug('Loaded pre-trained model: %s', model)
+    logging.debug('Loaded pre-trained tokenizer: %s', tokenizer)
     return model, tokenizer
 
 

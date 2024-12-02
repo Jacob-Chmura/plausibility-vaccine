@@ -22,5 +22,6 @@ def setup_adapters(
     model.add_classification_head(task_name, num_labels=num_labels, id2label=id2label)
 
     logging.info('Adding adapter for task: %s', task_name)
+    adapter_args.train_adapter = True
     setup_adapter_training(model, adapter_args, task_name)
     return model

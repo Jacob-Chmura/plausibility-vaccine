@@ -10,7 +10,7 @@ from plausibility_vaccine.util.args import DataArguments
 def preprocess_function(
     examples: Dict[str, List],
     tokenizer: PreTrainedTokenizer,
-    label_list: List[str],
+    label_list: Optional[List[str]],
 ) -> BatchEncoding:
     # TODO: Make this configurable instead of hard coding these heuristics
     if 'association' in examples:
