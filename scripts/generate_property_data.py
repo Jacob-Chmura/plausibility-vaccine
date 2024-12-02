@@ -25,6 +25,12 @@ parser.add_argument(
     default=0.2,
     help='The proportion of the dataset to include in the test split',
 )
+parser.add_argument(
+    '--rng',
+    type=int,
+    default=1337,
+    help='The random state to use when splitting data, for reproducibility',
+)
 
 
 def main() -> None:
@@ -32,7 +38,7 @@ def main() -> None:
     prompt_data = pathlib.Path(args.prompt_file)
     df = pd.read_csv(prompt_data)
 
-    df_test = df.sample(frac=args.test_frac)
+    df_test = df.sample(frac=args.test_frac, random_state=args.rng)
     df_train = df.drop(df_test.index)
 
     property_cols = [c for c in df.columns if c != 'Item']
