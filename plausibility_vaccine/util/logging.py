@@ -16,7 +16,7 @@ def setup_basic_logging(
     handlers.append(stream_handler)
 
     if log_file_path is not None:
-        file_handler = logging.FileHandler(filename=log_file_path)
+        file_handler = logging.FileHandler(filename=log_file_path, mode='w')
         file_handler.setLevel(log_file_logging_level)
         handlers.append(file_handler)
 

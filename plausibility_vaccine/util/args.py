@@ -1,6 +1,6 @@
 import pathlib
 from dataclasses import dataclass, field
-from typing import Dict, Optional, Tuple, Union
+from typing import Dict, List, Optional, Tuple, Union
 
 import yaml
 from adapters import AdapterArguments
@@ -22,6 +22,9 @@ class MetaArguments:
 class DataArguments:
     task_name: str = field(
         metadata={'help': 'The name of the task to train on'},
+    )
+    is_regression: bool = field(
+        metadata={'help': 'Is the task a regression or classification problem'},
     )
     train_file: str = field(
         metadata={'help': 'A csv file containing the training data.'},
@@ -50,20 +53,35 @@ class FinetuningArgument:
     adapter_args: AdapterArguments = field(
         metadata={'help': 'Adapter arguments for the fine-tuning configuration'},
     )
+    fusion: Optional[List[str]] = field(
+        default=None,
+        metadata={'help': 'List of Adapters to fuse for fine-tuning configuration'},
+    )
 
 
 @dataclass
 class FinetuningArguments:
-    tasks: Dict[str, FinetuningArgument] = field(
-        metadata={'help': 'List of fine-tuning tasks arguments'},
+    pretraining_tasks: Dict[str, FinetuningArgument] = field(
+        metadata={'help': 'List of fine-tuning tasks to pre-train on'},
+    )
+    downstream_tasks: Dict[str, FinetuningArgument] = field(
+        metadata={'help': 'List of fine-tuning tasks to downstream train on'},
     )
 
     def __post_init__(self) -> None:
-        for task_name, task_args in self.tasks.items():
-            self.tasks[task_name] = FinetuningArgument(
-                data_args=DataArguments(**task_args['data_args']),  # type: ignore
-                adapter_args=AdapterArguments(**task_args['adapter_args']),  # type: ignore
-            )
+        def _remap_nested_args(
+            tasks: Dict[str, FinetuningArgument],
+        ) -> Dict[str, FinetuningArgument]:
+            for task_name, task_args in tasks.items():
+                tasks[task_name] = FinetuningArgument(
+                    data_args=DataArguments(**task_args['data_args']),  # type: ignore
+                    adapter_args=AdapterArguments(**task_args['adapter_args']),  # type: ignore
+                    fusion=task_args.get('fusion'),  # type: ignore
+                )
+            return tasks
+
+        self.pretraining_tasks = _remap_nested_args(self.pretraining_tasks)
+        self.downstream_tasks = _remap_nested_args(self.downstream_tasks)
 
 
 def parse_args(
