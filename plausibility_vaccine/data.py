@@ -1,5 +1,5 @@
 import logging
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Tuple
 
 from datasets import DatasetDict, load_dataset
 from transformers import BatchEncoding, PreTrainedTokenizer
@@ -23,9 +23,7 @@ def preprocess_function(
     return result
 
 
-def get_data(
-    data_args: DataArguments, cache_dir: Optional[str]
-) -> Tuple[DatasetDict, List[str]]:
+def get_data(data_args: DataArguments) -> Tuple[DatasetDict, List[str]]:
     data_files = {
         'train': data_args.train_file,
         'test': data_args.test_file,
@@ -33,9 +31,7 @@ def get_data(
     for key in data_files.keys():
         logging.info(f'load a local file for {key}: {data_files[key]}')
 
-    raw_datasets: DatasetDict = load_dataset(
-        'csv', data_files=data_files, cache_dir=cache_dir
-    )
+    raw_datasets: DatasetDict = load_dataset('csv', data_files=data_files)
 
     label_list = raw_datasets['train'].unique('label')
     label_list.sort()  # Let's sort it for determinism
