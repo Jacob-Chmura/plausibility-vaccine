@@ -23,6 +23,9 @@ class DataArguments:
     task_name: str = field(
         metadata={'help': 'The name of the task to train on'},
     )
+    is_regression: bool = field(
+        metadata={'help': 'Is the task a regression or classification problem'},
+    )
     train_file: str = field(
         metadata={'help': 'A csv file containing the training data.'},
     )
@@ -44,9 +47,6 @@ class ModelArguments:
 
 @dataclass
 class FinetuningArgument:
-    is_regression: bool = field(
-        metadata={'help': 'Is the task a regression or classification problem'},
-    )
     data_args: DataArguments = field(
         metadata={'help': 'Data arguments for the fine-tuning configuration'},
     )
@@ -70,7 +70,6 @@ class FinetuningArguments:
         ) -> Dict[str, FinetuningArgument]:
             for task_name, task_args in tasks.items():
                 tasks[task_name] = FinetuningArgument(
-                    is_regression=task_args['is_regression'],  # type: ignore
                     data_args=DataArguments(**task_args['data_args']),  # type: ignore
                     adapter_args=AdapterArguments(**task_args['adapter_args']),  # type: ignore
                 )

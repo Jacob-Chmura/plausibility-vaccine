@@ -17,26 +17,26 @@ TrainingArguments:
 FinetuningArguments:
   pretraining_tasks:
     verb_subject_association:
-      is_regression: true
       data_args:
         task_name: "verb_subject_association"
+        is_regression: true
         train_file: "data/verb_understanding_data/selectional_association_subject.csv"
         test_file:
       adapter_args:
         adapter_config: 'seq_bn'
     verb_object_association:
-      is_regression: true
       data_args:
         task_name: "verb_object_association"
+        is_regression: true
         train_file: "data/verb_understanding_data/selectional_association_object.csv"
         test_file:
       adapter_args:
         adapter_config: 'seq_bn'
   downstream_tasks:
     classification_head:
-      is_regression: false
       data_args:
         task_name: "plausibility"
+        is_regression: false
         train_file: "data/plausibility_data/pep_3k/valid.csv"
         test_file: "data/plausibility_data/pep_3k/test.csv"
       adapter_args:
