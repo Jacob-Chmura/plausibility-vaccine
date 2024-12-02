@@ -1,5 +1,4 @@
 import logging
-import pathlib
 from typing import Dict, List, Optional, Tuple
 
 import evaluate
@@ -14,7 +13,6 @@ from transformers import (
     PreTrainedTokenizer,
     TrainingArguments,
 )
-from transformers.trainer_utils import get_last_checkpoint
 
 from plausibility_vaccine.data import get_data, preprocess_function
 from plausibility_vaccine.fine_tune import setup_adapters
@@ -97,7 +95,7 @@ def _run_task(
         tokenizer=tokenizer,
         data_collator=DataCollatorWithPadding(tokenizer, pad_to_multiple_of=8),
     )
-    _run_trainer(trainer, training_args)
+    _run_trainer(trainer)
 
 
 def _load_pretrained_model(
@@ -133,33 +131,9 @@ def _load_pretrained_model(
     return model, tokenizer
 
 
-def _get_checkpoint(training_args: TrainingArguments) -> Optional[str]:
-    output_dir = pathlib.Path(training_args.output_dir)
-    last_checkpoint = None
-    if output_dir.is_dir() and not training_args.overwrite_output_dir:
-        last_checkpoint = get_last_checkpoint(training_args.output_dir)
-        if last_checkpoint is None and len(list(output_dir.iterdir())) > 0:
-            raise ValueError(
-                f'Output directory ({training_args.output_dir}) already exists and is not empty. '
-                'Use --overwrite_output_dir to overcome.'
-            )
-        elif (
-            last_checkpoint is not None and training_args.resume_from_checkpoint is None
-        ):
-            logging.info(
-                f'Checkpoint detected, resuming training at {last_checkpoint}. To avoid this behavior, change '
-                'the `--output_dir` or add `--overwrite_output_dir` to train from scratch.'
-            )
-
-    checkpoint = None
-    if last_checkpoint is not None:
-        checkpoint = last_checkpoint
-    return checkpoint
-
-
-def _run_trainer(trainer: AdapterTrainer, training_args: TrainingArguments) -> None:
+def _run_trainer(trainer: AdapterTrainer) -> None:
     logging.info('*** Training ***')
-    train_result = trainer.train(resume_from_checkpoint=_get_checkpoint(training_args))
+    train_result = trainer.train()
     metrics = train_result.metrics
     trainer.save_model()
     trainer.log_metrics('train', metrics)

@@ -36,6 +36,7 @@ def _setup_adapter_pretraining(
     logging.info('Adding adapter for task: %s', task_name)
     adapter_args.train_adapter = True
     setup_adapter_training(model, adapter_args, task_name)
+    logging.info('Model Active Adapters: %s', model.active_adapters)
     return model
 
 
@@ -50,4 +51,5 @@ def _setup_adapter_fusion(
     logging.info('Adding fusion adapter for task: %s', task_name)
     model.add_adapter_fusion(fusion_list, 'dynamic')
     model.train_adapter_fusion(fusion_list)
+    logging.info('Model Active Adapters: %s', model.active_adapters)
     return model
