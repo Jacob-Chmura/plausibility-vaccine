@@ -15,7 +15,7 @@ from transformers import (
 )
 
 from plausibility_vaccine.data import get_data, preprocess_function
-from plausibility_vaccine.fine_tune import setup_adapters
+from plausibility_vaccine.fine_tune import save_delete_adapter, setup_adapters
 from plausibility_vaccine.util.args import (
     FinetuningArgument,
     FinetuningArguments,
@@ -35,6 +35,7 @@ def run(
     logging.debug(f'Training/evaluation parameters {training_args}')
 
     for _, task_args in finetuning_args.pretraining_tasks.items():
+        break
         _run_task(model_args, training_args, task_args)
 
     for _, task_args in finetuning_args.downstream_tasks.items():
@@ -96,6 +97,9 @@ def _run_task(
         data_collator=DataCollatorWithPadding(tokenizer, pad_to_multiple_of=8),
     )
     _run_trainer(trainer)
+
+    # Save and deactivate the trained adapters to restore the base model
+    save_delete_adapter(model, data_args.task_name)
 
 
 def _load_pretrained_model(
