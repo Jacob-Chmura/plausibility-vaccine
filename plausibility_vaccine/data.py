@@ -12,13 +12,21 @@ def preprocess_function(
     tokenizer: PreTrainedTokenizer,
     label_list: List[str],
 ) -> BatchEncoding:
+    # TODO: Make this configurable instead of hard coding these heuristics
+    if 'association' in examples:
+        y_col = 'association'
+        x_cols = [col for col in examples if col != y_col]
+    else:
+        y_col = 'label'
+        x_cols = ['subject', 'verb', 'object']
+
     # Tokenize the texts
-    args = examples['subject'], examples['verb'], examples['object']
+    args = [examples[x_col] for x_col in x_cols]
     result = tokenizer(*args, padding='max_length', max_length=8, truncation=True)
 
     # Map labels to IDs
-    label_to_id = {v: i for i, v in enumerate(label_list)}
-    if label_to_id is not None and 'label' in examples:
+    if label_list is not None and y_col == 'label':
+        label_to_id = {v: i for i, v in enumerate(label_list)}
         result['label'] = [label_to_id[l] for l in examples['label']]
     return result
 
