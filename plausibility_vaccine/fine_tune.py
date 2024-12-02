@@ -77,9 +77,8 @@ def _setup_adapter_fusion(
     model.train_adapter(task_name)
 
     logging.info('Adding fusion adapter for task: %s', task_name)
-    model.add_adapter_fusion(fusion_list)
-    model.set_active_adapters(fusion_list)
-    model.train_adapter_fusion(Fuse(fusion_list))
+    model.add_adapter_fusion(fusion_list, 'dynamic')
+    model.train_adapter_fusion(Fuse(*fusion_list))
     return model
 
 
