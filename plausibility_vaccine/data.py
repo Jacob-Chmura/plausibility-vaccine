@@ -12,8 +12,8 @@ def preprocess_function(
     tokenizer: PreTrainedTokenizer,
     label_list: Optional[List[str]],
 ) -> BatchEncoding:
-    # TODO: Make this configurable instead of hard coding these heuristics
     y_col = 'label'
+    # TODO: Make this configurable instead of hard coding these heuristics
     if 'subject_sense' in examples:
         x_cols = ['subject', 'verb', 'object']
     else:
@@ -31,22 +31,12 @@ def preprocess_function(
 
 
 def get_data(data_args: DataArguments) -> Tuple[DatasetDict, Optional[List[str]]]:
-    data_files = {'train': data_args.train_file}
-    if data_args.test_file is None:
-        # TODO: Probably want to do our own train/test split with the single file
-        logging.warning('Test file for %s is None', data_args.task_name)
-    else:
-        data_files['test'] = data_args.test_file
-
+    data_files = {'train': data_args.train_file, 'test': data_args.test_file}
     for key in data_files.keys():
         logging.info(f'Loading a local file for {key}: {data_files[key]}')
 
     raw_datasets: DatasetDict = load_dataset('csv', data_files=data_files)
     logging.info('Loaded datasets: %s', raw_datasets)
-
-    # TODO: Rename the column in the actual raw data
-    raw_datasets = raw_datasets.rename_column('association', 'label')
-    logging.warning('Renamed column "association" to "label"')
 
     if data_args.is_regression:
         label_list = None
