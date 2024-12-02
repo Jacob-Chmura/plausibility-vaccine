@@ -17,13 +17,13 @@ parser.add_argument(
 parser.add_argument(
     '--subject-save-file',
     type=str,
-    default='../data/verb_understanding_data/selectional_association_subject.csv',
+    default='../data/verb_understanding_data/selectional_association_subject/train.csv',
     help='Path to save subject selectional association data in CSV format',
 )
 parser.add_argument(
     '--object-save-file',
     type=str,
-    default='../data/verb_understanding_data/selectional_association_object.csv',
+    default='../data/verb_understanding_data/selectional_association_object/train.csv',
     help='Path to save object selectional association data in CSV format',
 )
 
@@ -64,9 +64,9 @@ def compute_selectional_association(df: pd.DataFrame, col_name: str) -> pd.DataF
 
     data = pd.merge(data, sr_data, how='left', on='verb')
     data = data[data['selectional_preference'] > 0]
-    data['association'] = data['p_given_v'] * np.log(data['p_given_v'] / data['p'])
-    data['association'] /= data['selectional_preference']
-    return data[['verb', col_name, 'association']]
+    data['label'] = data['p_given_v'] * np.log(data['p_given_v'] / data['p'])
+    data['label'] /= data['label']
+    return data[['verb', col_name, 'label']]
 
 
 if __name__ == '__main__':
