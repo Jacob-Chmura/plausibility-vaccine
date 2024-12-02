@@ -13,19 +13,18 @@ def preprocess_function(
     label_list: Optional[List[str]],
 ) -> BatchEncoding:
     # TODO: Make this configurable instead of hard coding these heuristics
-    if 'association' in examples:
-        y_col = 'association'
-        x_cols = [col for col in examples if col != y_col]
-    else:
-        y_col = 'label'
+    y_col = 'label'
+    if 'subject_sense' in examples:
         x_cols = ['subject', 'verb', 'object']
+    else:
+        x_cols = [col for col in examples if col != y_col]
 
     # Tokenize the texts
     args = [examples[x_col] for x_col in x_cols]
     result = tokenizer(*args, padding='max_length', max_length=8, truncation=True)
 
     # Map labels to IDs
-    if label_list is not None and y_col == 'label':
+    if label_list is not None:
         label_to_id = {v: i for i, v in enumerate(label_list)}
         result['label'] = [label_to_id[l] for l in examples['label']]
     return result
@@ -44,6 +43,10 @@ def get_data(data_args: DataArguments) -> Tuple[DatasetDict, Optional[List[str]]
 
     raw_datasets: DatasetDict = load_dataset('csv', data_files=data_files)
     logging.info('Loaded datasets: %s', raw_datasets)
+
+    # TODO: Rename the column in the actual raw data
+    raw_datasets = raw_datasets.rename_column('association', 'label')
+    logging.warning('Renamed column "association" to "label"')
 
     if data_args.is_regression:
         label_list = None

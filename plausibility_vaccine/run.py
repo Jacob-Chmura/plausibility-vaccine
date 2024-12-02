@@ -81,6 +81,8 @@ def _run_task(
         for metric in metrics:
             metric_obj = evaluate.load(metric)
             result.update(metric_obj.compute(predictions=preds, references=labels))
+        print(result)
+        exit()
         return result
 
     # Setup adapters
