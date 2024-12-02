@@ -44,6 +44,9 @@ class ModelArguments:
 
 @dataclass
 class FinetuningArgument:
+    is_regression: bool = field(
+        metadata={'help': 'Is the task a regression or classification problem'},
+    )
     data_args: DataArguments = field(
         metadata={'help': 'Data arguments for the fine-tuning configuration'},
     )
@@ -54,16 +57,27 @@ class FinetuningArgument:
 
 @dataclass
 class FinetuningArguments:
-    tasks: Dict[str, FinetuningArgument] = field(
-        metadata={'help': 'List of fine-tuning tasks arguments'},
+    pretraining_tasks: Dict[str, FinetuningArgument] = field(
+        metadata={'help': 'List of fine-tuning tasks to pre-train on'},
+    )
+    downstream_tasks: Dict[str, FinetuningArgument] = field(
+        metadata={'help': 'List of fine-tuning tasks to downstream train on'},
     )
 
     def __post_init__(self) -> None:
-        for task_name, task_args in self.tasks.items():
-            self.tasks[task_name] = FinetuningArgument(
-                data_args=DataArguments(**task_args['data_args']),  # type: ignore
-                adapter_args=AdapterArguments(**task_args['adapter_args']),  # type: ignore
-            )
+        def _remap_nested_args(
+            tasks: Dict[str, FinetuningArgument],
+        ) -> Dict[str, FinetuningArgument]:
+            for task_name, task_args in tasks.items():
+                tasks[task_name] = FinetuningArgument(
+                    is_regression=task_args['is_regression'],  # type: ignore
+                    data_args=DataArguments(**task_args['data_args']),  # type: ignore
+                    adapter_args=AdapterArguments(**task_args['adapter_args']),  # type: ignore
+                )
+            return tasks
+
+        self.pretraining_tasks = _remap_nested_args(self.pretraining_tasks)
+        self.downstream_tasks = _remap_nested_args(self.downstream_tasks)
 
 
 def parse_args(

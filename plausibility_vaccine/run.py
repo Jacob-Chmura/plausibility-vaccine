@@ -26,11 +26,15 @@ def run(
     training_args: TrainingArguments,
     finetuning_args: FinetuningArguments,
 ) -> None:
-    logging.warning(
+    logging.info(
         f'Process rank: {training_args.local_rank}, device: {training_args.device}, n_gpu: {training_args.n_gpu}, '
         + f"distributed training: {training_args.parallel_mode.value == 'distributed'}, 16-bits training: {training_args.fp16}"
     )
     logging.debug(f'Training/evaluation parameters {training_args}')
+
+    for task_name, task_args in finetuning_args.pretraining_tasks.items():
+        logging.info('Setting up pre-training for task: %s', task_name)
+    exit()
 
     # TODO: Properly setup multi-training and multi-adapter finetuning
     args = finetuning_args.tasks['classification_head']
