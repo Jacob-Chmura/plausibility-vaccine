@@ -87,7 +87,7 @@ def compute_selectional_association(df: pd.DataFrame, col_name: str) -> pd.DataF
     data = pd.merge(data, sr_data, how='left', on='verb')
     data = data[data['selectional_preference'] > 0]
     data['label'] = data['p_given_v'] * np.log(data['p_given_v'] / data['p'])
-    data['label'] /= data['label']
+    data['label'] /= data['selectional_preference']
     return data[['verb', col_name, 'label']]
 
 
