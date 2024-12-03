@@ -124,3 +124,13 @@ FinetuningArguments:
       fusion:
         - verb_subject_association
         - verb_object_association
+        - mobility_property_prediction
+        - opacity_property_prediction
+        - phase_property_prediction
+        - rigidity_property_prediction
+        - sentience_property_prediction
+        - shape_property_prediction
+        - size_property_prediction
+        - temperature_property_prediction
+        - texture_property_prediction
+        - weight_property_prediction

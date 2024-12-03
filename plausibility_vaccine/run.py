@@ -36,8 +36,6 @@ def run(
 
     for task_name, task_args in finetuning_args.pretraining_tasks.items():
         logging.info('Running %s', task_name)
-        if 'property' not in task_name:
-            continue
         _run_task(model_args, training_args, task_args)
 
     for _, task_args in finetuning_args.downstream_tasks.items():
