@@ -32,6 +32,86 @@ FinetuningArguments:
         test_file: data/verb_understanding_data/selectional_association_object/test.csv
       adapter_args:
         adapter_config: seq_bn
+    mobility_property_prediction:
+      data_args:
+        task_name: mobility_property_prediction
+        is_regression: false
+        train_file: data/property_data/Mobility/train.csv
+        test_file: data/property_data/Mobility/test.csv
+      adapter_args:
+        adapter_config: seq_bn
+    opacity_property_prediction:
+      data_args:
+        task_name: opacity_property_prediction
+        is_regression: false
+        train_file: data/property_data/Opacity/train.csv
+        test_file: data/property_data/Opacity/test.csv
+      adapter_args:
+        adapter_config: seq_bn
+    phase_property_prediction:
+      data_args:
+        task_name: phase_property_prediction
+        is_regression: false
+        train_file: data/property_data/Phase/train.csv
+        test_file: data/property_data/Phase/test.csv
+      adapter_args:
+        adapter_config: seq_bn
+    rigidity_property_prediction:
+      data_args:
+        task_name: rigidity_property_prediction
+        is_regression: false
+        train_file: data/property_data/Rigidity/train.csv
+        test_file: data/property_data/Rigidity/test.csv
+      adapter_args:
+        adapter_config: seq_bn
+    sentience_property_prediction:
+      data_args:
+        task_name: sentience_property_prediction
+        is_regression: false
+        train_file: data/property_data/Sentience/train.csv
+        test_file: data/property_data/Sentience/test.csv
+      adapter_args:
+        adapter_config: seq_bn
+    shape_property_prediction:
+      data_args:
+        task_name: shape_property_prediction
+        is_regression: false
+        train_file: data/property_data/Shape/train.csv
+        test_file: data/property_data/Shape/test.csv
+      adapter_args:
+        adapter_config: seq_bn
+    size_property_prediction:
+      data_args:
+        task_name: size_property_prediction
+        is_regression: false
+        train_file: data/property_data/Size/train.csv
+        test_file: data/property_data/Size/test.csv
+      adapter_args:
+        adapter_config: seq_bn
+    temperature_property_prediction:
+      data_args:
+        task_name: temperature_property_prediction
+        is_regression: false
+        train_file: data/property_data/Temperature/train.csv
+        test_file: data/property_data/Temperature/test.csv
+      adapter_args:
+        adapter_config: seq_bn
+    texture_property_prediction:
+      data_args:
+        task_name: texture_property_prediction
+        is_regression: false
+        train_file: data/property_data/Texture/train.csv
+        test_file: data/property_data/Texture/test.csv
+      adapter_args:
+        adapter_config: seq_bn
+    weight_property_prediction:
+      data_args:
+        task_name: weight_property_prediction
+        is_regression: false
+        train_file: data/property_data/Weight/train.csv
+        test_file: data/property_data/Weight/test.csv
+      adapter_args:
+        adapter_config: seq_bn
   downstream_tasks:
     classification_head:
       data_args:
@@ -44,3 +124,13 @@ FinetuningArguments:
       fusion:
         - verb_subject_association
         - verb_object_association
+        - mobility_property_prediction
+        - opacity_property_prediction
+        - phase_property_prediction
+        - rigidity_property_prediction
+        - sentience_property_prediction
+        - shape_property_prediction
+        - size_property_prediction
+        - temperature_property_prediction
+        - texture_property_prediction
+        - weight_property_prediction
