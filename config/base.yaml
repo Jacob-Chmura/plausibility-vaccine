@@ -13,124 +13,161 @@ TrainingArguments:
   overwrite_output_dir: false
   per_device_eval_batch_size: 8
   per_device_train_batch_size: 8
-  use_cpu: true
+  use_cpu: false
 FinetuningArguments:
   pretraining_tasks:
-    verb_subject_association:
+    verb_subject_score:
       data_args:
-        task_name: verb_subject_association
+        task_name: verb_subject_score
         is_regression: true
         train_file: data/verb_understanding_data/selectional_association_subject/train.csv
         test_file: data/verb_understanding_data/selectional_association_subject/test.csv
       adapter_args:
         adapter_config: seq_bn
-    verb_object_association:
+    verb_object_score:
       data_args:
-        task_name: verb_object_association
+        task_name: verb_object_score
         is_regression: true
         train_file: data/verb_understanding_data/selectional_association_object/train.csv
         test_file: data/verb_understanding_data/selectional_association_object/test.csv
       adapter_args:
         adapter_config: seq_bn
-    mobility_property_prediction:
+    mobility_pred:
       data_args:
-        task_name: mobility_property_prediction
+        task_name: mobility_pred
         is_regression: false
         train_file: data/property_data/Mobility/train.csv
         test_file: data/property_data/Mobility/test.csv
       adapter_args:
         adapter_config: seq_bn
-    opacity_property_prediction:
+    opacity_pred:
       data_args:
-        task_name: opacity_property_prediction
+        task_name: opacity_pred
         is_regression: false
         train_file: data/property_data/Opacity/train.csv
         test_file: data/property_data/Opacity/test.csv
       adapter_args:
         adapter_config: seq_bn
-    phase_property_prediction:
+    phase_pred:
       data_args:
-        task_name: phase_property_prediction
+        task_name: phase_pred
         is_regression: false
         train_file: data/property_data/Phase/train.csv
         test_file: data/property_data/Phase/test.csv
       adapter_args:
         adapter_config: seq_bn
-    rigidity_property_prediction:
+    rigidity_pred:
       data_args:
-        task_name: rigidity_property_prediction
+        task_name: rigidity_pred
         is_regression: false
         train_file: data/property_data/Rigidity/train.csv
         test_file: data/property_data/Rigidity/test.csv
       adapter_args:
         adapter_config: seq_bn
-    sentience_property_prediction:
+    sentience_pred:
       data_args:
-        task_name: sentience_property_prediction
+        task_name: sentience_pred
         is_regression: false
         train_file: data/property_data/Sentience/train.csv
         test_file: data/property_data/Sentience/test.csv
       adapter_args:
         adapter_config: seq_bn
-    shape_property_prediction:
+    shape_pred:
       data_args:
-        task_name: shape_property_prediction
+        task_name: shape_pred
         is_regression: false
         train_file: data/property_data/Shape/train.csv
         test_file: data/property_data/Shape/test.csv
       adapter_args:
         adapter_config: seq_bn
-    size_property_prediction:
+    size_pred:
       data_args:
-        task_name: size_property_prediction
+        task_name: size_pred
         is_regression: false
         train_file: data/property_data/Size/train.csv
         test_file: data/property_data/Size/test.csv
       adapter_args:
         adapter_config: seq_bn
-    temperature_property_prediction:
+    temperature_pred:
       data_args:
-        task_name: temperature_property_prediction
+        task_name: temperature_pred
         is_regression: false
         train_file: data/property_data/Temperature/train.csv
         test_file: data/property_data/Temperature/test.csv
       adapter_args:
         adapter_config: seq_bn
-    texture_property_prediction:
+    texture_pred:
       data_args:
-        task_name: texture_property_prediction
+        task_name: texture_pred
         is_regression: false
         train_file: data/property_data/Texture/train.csv
         test_file: data/property_data/Texture/test.csv
       adapter_args:
         adapter_config: seq_bn
-    weight_property_prediction:
+    weight_pred:
       data_args:
-        task_name: weight_property_prediction
+        task_name: weight_pred
         is_regression: false
         train_file: data/property_data/Weight/train.csv
         test_file: data/property_data/Weight/test.csv
       adapter_args:
         adapter_config: seq_bn
   downstream_tasks:
-    classification_head:
+    pep_plausibility_adapter:
       data_args:
-        task_name: plausibility
+        task_name: pep_plausibility_adapter
         is_regression: false
         train_file: data/plausibility_data/pep_3k/valid.csv
         test_file: data/plausibility_data/pep_3k/test.csv
       adapter_args:
         adapter_config: seq_bn
       fusion:
-        - verb_subject_association
-        - verb_object_association
-        - mobility_property_prediction
-        - opacity_property_prediction
-        - phase_property_prediction
-        - rigidity_property_prediction
-        - sentience_property_prediction
-        - shape_property_prediction
-        - size_property_prediction
-        - temperature_property_prediction
-        - texture_property_prediction
-        - weight_property_prediction
+        - verb_subject_score
+        - verb_object_score
+        - mobility_pred
+        - opacity_pred
+        - phase_pred
+        - rigidity_pred
+        - sentience_pred
+        - shape_pred
+        - size_pred
+        - temperature_pred
+        - texture_pred
+        - weight_pred
+    pep_plausibility_base:
+      data_args:
+        task_name: pep_plausibility_base
+        is_regression: false
+        train_file: data/plausibility_data/pep_3k/valid.csv
+        test_file: data/plausibility_data/pep_3k/test.csv
+      adapter_args:
+        adapter_config: seq_bn
+    20q_plausibility_adapter:
+      data_args:
+        task_name: 20q_plausibility_adapter
+        is_regression: false
+        train_file: data/plausibility_data/twentyquestions/valid.csv
+        test_file: data/plausibility_data/twentyquestions/test.csv
+      adapter_args:
+        adapter_config: seq_bn
+      fusion:
+        - verb_subject_score
+        - verb_object_score
+        - mobility_pred
+        - opacity_pred
+        - phase_pred
+        - rigidity_pred
+        - sentience_pred
+        - shape_pred
+        - size_pred
+        - temperature_pred
+        - texture_pred
+        - weight_pred
+    20q_plausibility_base:
+      data_args:
+        task_name: 20q_plausibility_base
+        is_regression: false
+        train_file: data/plausibility_data/twentyquestions/valid.csv
+        test_file: data/plausibility_data/twentyquestions/test.csv
+      adapter_args:
+        adapter_config: seq_bn
