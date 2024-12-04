@@ -1,3 +1,4 @@
+import copy
 import logging
 from typing import Dict, List, Optional, Tuple
 
@@ -63,9 +64,9 @@ def _run_task(
 
     # Evaluation Metrics
     if data_args.is_regression:
-        metrics = ['accuracy']
-    else:
         metrics = ['mse']
+    else:
+        metrics = ['accuracy']
 
     logging.info('Using evaluation metrics: %s', metrics)
 
@@ -88,9 +89,12 @@ def _run_task(
     model = setup_adapters(model, adapter_args, data_args.task_name, label_list, fusion)
 
     # Initialize our Trainer
+    training_args_ = copy.deepcopy(training_args)
+    training_args_.output_dir += f'/{data_args.task_name}'
+
     trainer = AdapterTrainer(
         model=model,
-        args=training_args,
+        args=training_args_,
         train_dataset=raw_datasets['train'],
         eval_dataset=raw_datasets['test'],
         compute_metrics=compute_metrics,
