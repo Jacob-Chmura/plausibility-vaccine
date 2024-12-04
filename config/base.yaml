@@ -113,9 +113,9 @@ FinetuningArguments:
       adapter_args:
         adapter_config: seq_bn
   downstream_tasks:
-    classification_head:
+    pep_plausibility_adapter:
       data_args:
-        task_name: plausibility
+        task_name: pep_plausibility_adapter
         is_regression: false
         train_file: data/plausibility_data/pep_3k/valid.csv
         test_file: data/plausibility_data/pep_3k/test.csv
@@ -134,3 +134,40 @@ FinetuningArguments:
         - temperature_property_prediction
         - texture_property_prediction
         - weight_property_prediction
+    pep_plausibility_no_adapter:
+      data_args:
+        task_name: pep_plausibility_no_adapter
+        is_regression: false
+        train_file: data/plausibility_data/pep_3k/valid.csv
+        test_file: data/plausibility_data/pep_3k/test.csv
+      adapter_args:
+        adapter_config: seq_bn
+    20q_plausibility_adapter:
+      data_args:
+        task_name: 20q_plausibility_adapter
+        is_regression: false
+        train_file: data/plausibility_data/twentyquestions/valid.csv
+        test_file: data/plausibility_data/twentyquestions/test.csv
+      adapter_args:
+        adapter_config: seq_bn
+      fusion:
+        - verb_subject_association
+        - verb_object_association
+        - mobility_property_prediction
+        - opacity_property_prediction
+        - phase_property_prediction
+        - rigidity_property_prediction
+        - sentience_property_prediction
+        - shape_property_prediction
+        - size_property_prediction
+        - temperature_property_prediction
+        - texture_property_prediction
+        - weight_property_prediction
+    20q_plausibility_no_adapter:
+      data_args:
+        task_name: 20q_plausibility_no_adapter
+        is_regression: false
+        train_file: data/plausibility_data/twentyquestions/valid.csv
+        test_file: data/plausibility_data/twentyquestions/test.csv
+      adapter_args:
+        adapter_config: seq_bn
