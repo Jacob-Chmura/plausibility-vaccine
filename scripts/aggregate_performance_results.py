@@ -22,7 +22,7 @@ def main() -> None:
     if not results_dir.is_dir():
         raise FileNotFoundError(f'Results directory: {results_dir.resolve()}')
 
-    dfs = []
+    plausibility_dfs, property_adapters_dfs, verb_adapters_dfs = [], [], []
     for result_dir in results_dir.iterdir():
         if result_dir.is_dir():
             with open(result_dir / 'eval_results.json') as f:
@@ -30,10 +30,20 @@ def main() -> None:
 
             result_df = pd.DataFrame.from_dict(result_data, orient='index').T
             result_df['task'] = result_dir.name
-            dfs.append(result_df)
+            if 'plausibility' in result_dir.name:
+                plausibility_dfs.append(result_df)
+            elif 'verb' in result_dir.name:
+                verb_adapters_dfs.append(result_df)
+            else:
+                property_adapters_dfs.append(result_df)
 
-    dfs = pd.concat(dfs)
-    print(dfs)
+    plausibility_dfs = pd.concat(plausibility_dfs)
+    property_adapters_dfs = pd.concat(property_adapters_dfs)
+    verb_adapters_dfs = pd.concat(verb_adapters_dfs)
+
+    print(plausibility_dfs)
+    print(property_adapters_dfs)
+    print(verb_adapters_dfs)
 
 
 if __name__ == '__main__':
