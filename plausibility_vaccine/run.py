@@ -66,7 +66,7 @@ def _run_task(
     if data_args.is_regression:
         metrics = ['mse']
     else:
-        metrics = ['accuracy']
+        metrics = ['accuracy', 'precision', 'recall', 'f1']
 
     logging.info('Using evaluation metrics: %s', metrics)
 
@@ -81,7 +81,10 @@ def _run_task(
         result = {}
         for metric in metrics:
             metric_obj = evaluate.load(metric)
-            result.update(metric_obj.compute(predictions=preds, references=labels))
+            kwargs = {'predictions': preds, 'references': labels}
+            if metric in ['precision', 'recall', 'f1']:
+                kwargs['average'] = 'micro'
+            result.update(metric_obj.compute(**kwargs))
         return result
 
     # Setup adapters
