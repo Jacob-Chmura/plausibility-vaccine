@@ -37,9 +37,9 @@ def main() -> None:
             else:
                 property_adapters_dfs.append(result_df)
 
-    plausibility_dfs = pd.concat(plausibility_dfs)
-    property_adapters_dfs = pd.concat(property_adapters_dfs)
-    verb_adapters_dfs = pd.concat(verb_adapters_dfs)
+    plausibility_dfs = pd.concat(plausibility_dfs).sort_values('task')
+    property_adapters_dfs = pd.concat(property_adapters_dfs).sort_values('task')
+    verb_adapters_dfs = pd.concat(verb_adapters_dfs).sort_values('task')
 
     print(plausibility_dfs)
     print(property_adapters_dfs)
