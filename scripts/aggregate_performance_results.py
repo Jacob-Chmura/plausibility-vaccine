@@ -3,6 +3,7 @@ import json
 import pathlib
 
 import pandas as pd
+from tabulate import tabulate
 
 parser = argparse.ArgumentParser(
     description='Aggregate performance results',
@@ -22,7 +23,13 @@ def main() -> None:
     if not results_dir.is_dir():
         raise FileNotFoundError(f'Results directory: {results_dir.resolve()}')
 
-    pep_dfs, q_dfs, property_adapters_dfs, verb_adapters_dfs = [], [], [], []
+    pep_dfs, q_dfs, property_adapters_dfs, verb_adapters_dfs, combined_df = (
+        [],
+        [],
+        [],
+        [],
+        [],
+    )
     for result_dir in results_dir.iterdir():
         if result_dir.is_dir():
             with open(result_dir / 'eval_results.json') as f:
@@ -36,6 +43,8 @@ def main() -> None:
                 q_dfs.append(result_df)
             elif 'verb' in result_dir.name:
                 verb_adapters_dfs.append(result_df)
+            elif 'comb' in results_dir.name:
+                combined_df.append(result_df)
             else:
                 property_adapters_dfs.append(result_df)
 
@@ -44,10 +53,11 @@ def main() -> None:
     property_adapters_dfs = pd.concat(property_adapters_dfs).sort_values('task')
     verb_adapters_dfs = pd.concat(verb_adapters_dfs).sort_values('task')
 
-    print(pep_dfs)
-    print(q_dfs)
-    print(property_adapters_dfs)
-    print(verb_adapters_dfs)
+    print(tabulate(pep_dfs, headers='keys', tablefmt='grid'))
+    print(tabulate(q_dfs, headers='keys', tablefmt='grid'))
+    print(tabulate(combined_df, headers='keys', tablefmt='grid'))
+    print(tabulate(property_adapters_dfs, headers='keys', tablefmt='grid'))
+    print(tabulate(verb_adapters_dfs, headers='keys', tablefmt='grid'))
 
 
 if __name__ == '__main__':
