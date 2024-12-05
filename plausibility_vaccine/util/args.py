@@ -79,7 +79,7 @@ class FinetuningArguments:
             for task_name, task_args in tasks.items():
                 adapter_args = None
                 if task_args['adapter_args'] is not None:  # type: ignore
-                    adapter_args = (AdapterArguments(**task_args['adapter_args']),)  # type: ignore
+                    adapter_args = AdapterArguments(**task_args['adapter_args'])  # type: ignore
 
                 tasks[task_name] = FinetuningArgument(
                     data_args=DataArguments(**task_args['data_args']),  # type: ignore
