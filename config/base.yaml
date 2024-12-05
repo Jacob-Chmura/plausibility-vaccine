@@ -4,8 +4,8 @@ MetaArguments:
   log_file_path: plausibility_vaccine.log
 ModelArguments:
   cache_dir: .cache
-  #pretrained_model_name: albert-base-v2
-  pretrained_model_name: roberta-base
+  pretrained_model_name: albert-base-v2
+  #pretrained_model_name: roberta-base
 TrainingArguments:
   learning_rate: 0.0001
   num_train_epochs: 10.0
@@ -114,9 +114,49 @@ FinetuningArguments:
       adapter_args:
         adapter_config: seq_bn[reduction_factor=64]
   downstream_tasks:
-    pep_plausibility_adapter:
+    pep_plausibility_finetune_mlp_base:
       data_args:
-        task_name: pep_plausibility_adapter
+        task_name: pep_plausibility_finetune_mlp_base
+        is_regression: false
+        train_file: data/plausibility_data/pep_3k/valid.csv
+        test_file: data/plausibility_data/pep_3k/test.csv
+      adapter_args:
+        adapter_config:
+      use_adapter_for_task: false
+    pep_plausibility_finetune_adapter_base:
+      data_args:
+        task_name: pep_plausibility_finetune_adapter_base
+        is_regression: false
+        train_file: data/plausibility_data/pep_3k/valid.csv
+        test_file: data/plausibility_data/pep_3k/test.csv
+      adapter_args:
+        adapter_config: seq_bn[reduction_factor=64]
+      use_adapter_for_task: true
+    pep_plausibility_finetune_mlp_use_adapters:
+      data_args:
+        task_name: pep_plausibility_funetune_mlp_use_adapters
+        is_regression: false
+        train_file: data/plausibility_data/pep_3k/valid.csv
+        test_file: data/plausibility_data/pep_3k/test.csv
+      adapter_args:
+        adapter_config:
+      fusion:
+        - verb_subject_score
+        - verb_object_score
+        - mobility_pred
+        - opacity_pred
+        - phase_pred
+        - rigidity_pred
+        - sentience_pred
+        - shape_pred
+        - size_pred
+        - temperature_pred
+        - texture_pred
+        - weight_pred
+      use_adapter_for_task: false
+    pep_plausibility_finetune_adapter_use_adapters:
+      data_args:
+        task_name: pep_plausibility_finetune_adapter_use_adapters
         is_regression: false
         train_file: data/plausibility_data/pep_3k/valid.csv
         test_file: data/plausibility_data/pep_3k/test.csv
@@ -135,17 +175,50 @@ FinetuningArguments:
         - temperature_pred
         - texture_pred
         - weight_pred
-    pep_plausibility_base:
+      use_adapter_for_task: true
+    20q_plausibility_finetune_mlp_base:
       data_args:
-        task_name: pep_plausibility_base
+        task_name: 20q_plausibility_finetune_mlp_base
         is_regression: false
-        train_file: data/plausibility_data/pep_3k/valid.csv
-        test_file: data/plausibility_data/pep_3k/test.csv
+        train_file: data/plausibility_data/twentyquestions/valid.csv
+        test_file: data/plausibility_data/twentyquestions/test.csv
+      adapter_args:
+        adapter_config:
+      use_adapter_for_task: false
+    20q_plausibility_finetune_adapter_base:
+      data_args:
+        task_name: 20q_plausibility_finetune_adapter_base
+        is_regression: false
+        train_file: data/plausibility_data/twentyquestions/valid.csv
+        test_file: data/plausibility_data/twentyquestions/test.csv
       adapter_args:
         adapter_config: seq_bn[reduction_factor=64]
-    20q_plausibility_adapter:
+      use_adapter_for_task: true
+    20q_plausibility_finetune_mlp_use_adapters:
       data_args:
-        task_name: 20q_plausibility_adapter
+        task_name: 20q_plausibility_finetune_mlp_use_adapters
+        is_regression: false
+        train_file: data/plausibility_data/twentyquestions/valid.csv
+        test_file: data/plausibility_data/twentyquestions/test.csv
+      adapter_args:
+        adapter_config:
+      fusion:
+        - verb_subject_score
+        - verb_object_score
+        - mobility_pred
+        - opacity_pred
+        - phase_pred
+        - rigidity_pred
+        - sentience_pred
+        - shape_pred
+        - size_pred
+        - temperature_pred
+        - texture_pred
+        - weight_pred
+      use_adapter_for_task: false
+    20q_plausibility_finetune_adapter_use_adapters:
+      data_args:
+        task_name: 20q_plausibility_finetune_adapter_use_adapters
         is_regression: false
         train_file: data/plausibility_data/twentyquestions/valid.csv
         test_file: data/plausibility_data/twentyquestions/test.csv
@@ -164,11 +237,4 @@ FinetuningArguments:
         - temperature_pred
         - texture_pred
         - weight_pred
-    20q_plausibility_base:
-      data_args:
-        task_name: 20q_plausibility_base
-        is_regression: false
-        train_file: data/plausibility_data/twentyquestions/valid.csv
-        test_file: data/plausibility_data/twentyquestions/test.csv
-      adapter_args:
-        adapter_config: seq_bn[reduction_factor=64]
+      use_adapter_for_task: true

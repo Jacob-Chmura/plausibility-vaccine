@@ -1,22 +1,20 @@
 import copy
 import logging
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, Union
 
 import evaluate
 import numpy as np
-from adapters import AdapterTrainer, AutoAdapterModel
+from adapters import AdapterTrainer
 from transformers import (
-    AutoConfig,
-    AutoTokenizer,
     DataCollatorWithPadding,
     EvalPrediction,
-    PreTrainedModel,
-    PreTrainedTokenizer,
+    Trainer,
     TrainingArguments,
 )
 
+from plausibility_vaccine.adapter import save_delete_adapter, setup_adapters
 from plausibility_vaccine.data import get_data, preprocess_function
-from plausibility_vaccine.fine_tune import save_delete_adapter, setup_adapters
+from plausibility_vaccine.fine_tune import load_pretrained_model
 from plausibility_vaccine.util.args import (
     FinetuningArgument,
     FinetuningArguments,
@@ -53,7 +51,11 @@ def _run_task(
     data_args, adapter_args = task_args.data_args, task_args.adapter_args
     raw_datasets, label_list = get_data(data_args)
 
-    model, tokenizer = _load_pretrained_model(model_args, label_list=label_list)
+    model, tokenizer = load_pretrained_model(
+        model_args,
+        label_list=label_list,
+        use_adapter_for_task=task_args.use_adapter_for_task,
+    )
 
     with training_args.main_process_first(desc='dataset map pre-processing'):
         raw_datasets = raw_datasets.map(
@@ -88,14 +90,24 @@ def _run_task(
         return result
 
     # Setup adapters
-    fusion = task_args.fusion
-    model = setup_adapters(model, adapter_args, data_args.task_name, label_list, fusion)
+    model = setup_adapters(
+        model,
+        adapter_args,
+        data_args.task_name,
+        label_list,
+        task_args.fusion,
+        task_args.use_adapter_for_task,
+    )
 
     # Initialize our Trainer
     training_args_ = copy.deepcopy(training_args)
     training_args_.output_dir += f'/{data_args.task_name}'
 
-    trainer = AdapterTrainer(
+    if task_args.use_adapter_for_task:
+        trainer_class = AdapterTrainer
+    else:
+        trainer_class = Trainer
+    trainer = trainer_class(
         model=model,
         args=training_args_,
         train_dataset=raw_datasets['train'],
@@ -107,43 +119,11 @@ def _run_task(
     _run_trainer(trainer)
 
     # Save and deactivate the trained adapters to restore the base model
-    save_delete_adapter(model, data_args.task_name)
+    if task_args.use_adapter_for_task:
+        save_delete_adapter(model, data_args.task_name)
 
 
-def _load_pretrained_model(
-    model_args: ModelArguments, label_list: Optional[List[str]]
-) -> Tuple[PreTrainedModel, PreTrainedTokenizer]:
-    logging.info(f'Loading pre-trained model: {model_args}, label_list: {label_list}')
-
-    config = AutoConfig.from_pretrained(
-        model_args.pretrained_model_name,
-        num_labels=len(label_list) if label_list is not None else 1,
-        cache_dir=model_args.cache_dir,
-    )
-    tokenizer = AutoTokenizer.from_pretrained(
-        model_args.pretrained_model_name,
-        cache_dir=model_args.cache_dir,
-    )
-    model = AutoAdapterModel.from_pretrained(
-        model_args.pretrained_model_name,
-        config=config,
-        cache_dir=model_args.cache_dir,
-    )
-
-    # Some models have set the order of the labels to use, so let's make sure we do use it.
-    if label_list is not None:
-        label_to_id = {v: i for i, v in enumerate(label_list)}
-        model.config.label2id = label_to_id
-        model.config.id2label = {
-            id: label for label, id in model.config.label2id.items()
-        }
-
-    logging.debug('Loaded pre-trained model: %s', model)
-    logging.debug('Loaded pre-trained tokenizer: %s', tokenizer)
-    return model, tokenizer
-
-
-def _run_trainer(trainer: AdapterTrainer) -> None:
+def _run_trainer(trainer: Union[AdapterTrainer, Trainer]) -> None:
     logging.info('*** Training ***')
     train_result = trainer.train()
     metrics = train_result.metrics

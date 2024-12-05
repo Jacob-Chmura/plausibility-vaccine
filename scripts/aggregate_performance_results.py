@@ -22,7 +22,7 @@ def main() -> None:
     if not results_dir.is_dir():
         raise FileNotFoundError(f'Results directory: {results_dir.resolve()}')
 
-    plausibility_dfs, property_adapters_dfs, verb_adapters_dfs = [], [], []
+    pep_dfs, q_dfs, property_adapters_dfs, verb_adapters_dfs = [], [], [], []
     for result_dir in results_dir.iterdir():
         if result_dir.is_dir():
             with open(result_dir / 'eval_results.json') as f:
@@ -30,18 +30,22 @@ def main() -> None:
 
             result_df = pd.DataFrame.from_dict(result_data, orient='index').T
             result_df['task'] = result_dir.name
-            if 'plausibility' in result_dir.name:
-                plausibility_dfs.append(result_df)
+            if 'pep' in result_dir.name:
+                pep_dfs.append(result_df)
+            elif '20q' in result_dir.name:
+                q_dfs.append(result_df)
             elif 'verb' in result_dir.name:
                 verb_adapters_dfs.append(result_df)
             else:
                 property_adapters_dfs.append(result_df)
 
-    plausibility_dfs = pd.concat(plausibility_dfs)
-    property_adapters_dfs = pd.concat(property_adapters_dfs)
-    verb_adapters_dfs = pd.concat(verb_adapters_dfs)
+    pep_dfs = pd.concat(pep_dfs).sort_values('eval_accuracy')
+    q_dfs = pd.concat(q_dfs).sort_values('eval_accuracy')
+    property_adapters_dfs = pd.concat(property_adapters_dfs).sort_values('task')
+    verb_adapters_dfs = pd.concat(verb_adapters_dfs).sort_values('task')
 
-    print(plausibility_dfs)
+    print(pep_dfs)
+    print(q_dfs)
     print(property_adapters_dfs)
     print(verb_adapters_dfs)
 
