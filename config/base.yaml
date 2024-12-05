@@ -135,7 +135,7 @@ FinetuningArguments:
         - temperature_pred
         - texture_pred
         - weight_pred
-    pep_plausibility_base:
+    pep_plausibility_base_adapter:
       data_args:
         task_name: pep_plausibility_base
         is_regression: false
@@ -164,7 +164,7 @@ FinetuningArguments:
         - temperature_pred
         - texture_pred
         - weight_pred
-    20q_plausibility_base:
+    20q_plausibility_base_adapter:
       data_args:
         task_name: 20q_plausibility_base
         is_regression: false
