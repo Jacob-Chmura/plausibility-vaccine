@@ -38,7 +38,8 @@ def main() -> None:
 
 def analyze_plausibility_datasets(datasets_dir: str) -> None:
     df = _read_subdirectory_dataset_csvs(datasets_dir)
-    print(df.groupby(['task', 'split'])['label'].value_counts(normalize=True))
+    print('------------- Plausibility Data -------------')
+    print(df.groupby(['task', 'split'])['label'].value_counts(normalize=True).round(3))
     print()
 
 
@@ -56,6 +57,7 @@ def analyze_property_datasets(datasets_dir: str) -> None:
         'Weight': ['watch', 'book', 'man', 'jeep', 'stadium'],
     }
 
+    print('------------- Property Data -------------')
     df = _read_subdirectory_dataset_csvs(datasets_dir)
     for task_name, df_task in df.groupby('task'):
         df_task = (
@@ -67,13 +69,23 @@ def analyze_property_datasets(datasets_dir: str) -> None:
         df_task['label'] = df_task['label'].apply(
             lambda x: PROPERTY_LABEL_BINS[task_name][x - 1]
         )
-        print(df_task)
+        print(df_task.round(3))
         print()
 
 
 def analyze_verb_datasets(datasets_dir: str) -> None:
     df = _read_subdirectory_dataset_csvs(datasets_dir)
-    print(df.head())
+
+    print('------------- Verb Data -------------')
+    for _, df_task in df.groupby('task'):
+        df_task = df_task.dropna(axis='columns')
+        print(
+            df_task.groupby('task')['label']
+            .describe(percentiles=[0.05, 0.1, 0.25, 0.5, 0.75, 0.9, 0.95])
+            .reset_index()
+            .round(3)
+        )
+        print()
 
 
 def _read_subdirectory_dataset_csvs(datasets_dir_str: str) -> pd.DataFrame:
