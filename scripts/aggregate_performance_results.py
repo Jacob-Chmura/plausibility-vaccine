@@ -48,10 +48,14 @@ def main() -> None:
             else:
                 property_adapters_dfs.append(result_df)
 
-    pep_dfs = pd.concat(pep_dfs).sort_values('eval_accuracy')
-    q_dfs = pd.concat(q_dfs).sort_values('eval_accuracy')
-    property_adapters_dfs = pd.concat(property_adapters_dfs).sort_values('task')
-    verb_adapters_dfs = pd.concat(verb_adapters_dfs).sort_values('task')
+    if pep_dfs:
+        pep_dfs = pd.concat(pep_dfs).sort_values('eval_accuracy')
+    if q_dfs:
+        q_dfs = pd.concat(q_dfs).sort_values('eval_accuracy')
+    if property_adapters_dfs:
+        property_adapters_dfs = pd.concat(property_adapters_dfs).sort_values('task')
+    if verb_adapters_dfs:
+        verb_adapters_dfs = pd.concat(verb_adapters_dfs).sort_values('task')
 
     print(tabulate(pep_dfs, headers='keys', tablefmt='grid'))
     print(tabulate(q_dfs, headers='keys', tablefmt='grid'))
