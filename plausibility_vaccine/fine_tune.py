@@ -1,88 +1,66 @@
 import logging
-import pathlib
-from typing import List, Optional
+from typing import List, Optional, Tuple
 
-from adapters import AdapterArguments, setup_adapter_training
-from adapters.composition import Fuse
-from transformers import PreTrainedModel
+from adapters import AutoAdapterModel
+from transformers import (
+    AutoConfig,
+    AutoModelForSequenceClassification,
+    AutoTokenizer,
+    PreTrainedModel,
+    PreTrainedTokenizer,
+)
 
-from plausibility_vaccine.util.args import AdapterArguments
-
-
-def save_delete_adapter(model: PreTrainedModel, adapter_name: str) -> None:
-    save_path = _get_adapter_weight_path(adapter_name)
-    logging.info(f'Saving adapter {adapter_name} to {save_path}')
-    model.save_adapter(save_path, adapter_name)
-
-    logging.info(f'Deleting adapter {adapter_name} from base model')
-    model.delete_adapter(adapter_name)
+from plausibility_vaccine.util.args import ModelArguments
 
 
-def setup_adapters(
-    model: PreTrainedModel,
-    adapter_args: AdapterArguments,
-    task_name: str,
+def load_pretrained_model(
+    model_args: ModelArguments,
     label_list: Optional[List[str]],
-    fusion_list: Optional[List[str]],
-) -> PreTrainedModel:
-    if fusion_list is None:
-        model = _setup_adapter_pretraining(model, adapter_args, task_name, label_list)
+    use_adapter_for_task: bool,
+) -> Tuple[PreTrainedModel, PreTrainedTokenizer]:
+    logging.info(f'Loading pre-trained model: {model_args}, label_list: {label_list}')
+
+    config = AutoConfig.from_pretrained(
+        model_args.pretrained_model_name,
+        num_labels=len(label_list) if label_list is not None else 1,
+        cache_dir=model_args.cache_dir,
+    )
+    tokenizer = AutoTokenizer.from_pretrained(
+        model_args.pretrained_model_name,
+        cache_dir=model_args.cache_dir,
+    )
+
+    if use_adapter_for_task:
+        model = AutoAdapterModel.from_pretrained(
+            model_args.pretrained_model_name,
+            config=config,
+            cache_dir=model_args.cache_dir,
+        )
     else:
-        model = _setup_adapter_fusion(model, task_name, label_list, fusion_list)
+        model = AutoModelForSequenceClassification.from_pretrained(
+            model_args.pretrained_model_name,
+            config=config,
+            cache_dir=model_args.cache_dir,
+        )
+        model = _freeze_pretrained_model_gradients(model)
 
-    logging.info('Model Adapter Summary:\n%s', model.adapter_summary())
-    logging.debug('Full Model:\n%s', model)
+    # Some models have set the order of the labels to use, so let's make sure we do use it.
+    if label_list is not None:
+        label_to_id = {v: i for i, v in enumerate(label_list)}
+        model.config.label2id = label_to_id
+        model.config.id2label = {
+            id: label for label, id in model.config.label2id.items()
+        }
+
+    logging.debug('Loaded pre-trained model: %s', model)
+    logging.debug('Loaded pre-trained tokenizer: %s', tokenizer)
+    return model, tokenizer
+
+
+def _freeze_pretrained_model_gradients(model: PreTrainedModel) -> PreTrainedModel:
+    logging.info('Freezing pretrained model weights')
+    for name, param in model.named_parameters():
+        if not name.startswith('classifier'):
+            param.requires_grad = False
+            logging.debug('Froze parameters: %s', name)
     return model
-
-
-def _setup_adapter_pretraining(
-    model: PreTrainedModel,
-    adapter_args: AdapterArguments,
-    task_name: str,
-    label_list: Optional[List[str]],
-) -> PreTrainedModel:
-    if label_list is None:
-        num_labels, id2label = 1, None
-    else:
-        num_labels, id2label = len(label_list), {i: v for i, v in enumerate(label_list)}
-    logging.info('Adding classification head adapter for task: %s', task_name)
-    model.add_classification_head(task_name, num_labels=num_labels, id2label=id2label)
-
-    logging.info('Adding adapter for task: %s', task_name)
-    adapter_args.train_adapter = True
-    setup_adapter_training(model, adapter_args, task_name)
-    return model
-
-
-def _setup_adapter_fusion(
-    model: PreTrainedModel,
-    task_name: str,
-    label_list: Optional[List[str]],
-    fusion_list: List[str],
-) -> PreTrainedModel:
-    for task in fusion_list:
-        # TODO: Need to push config through
-        adapter_weight_path = _get_adapter_weight_path(task)
-        logging.info('Loading pre-trained adapter: %s', adapter_weight_path)
-        model.load_adapter(str(adapter_weight_path), with_head=False)
-
-    # Add Classification Head
-    logging.info('Adding classification head adapter for task: %s', task_name)
-    if label_list is None:
-        num_labels, id2label = 1, None
-    else:
-        num_labels, id2label = len(label_list), {i: v for i, v in enumerate(label_list)}
-    model.add_adapter(task_name)
-    model.add_classification_head(task_name, num_labels=num_labels, id2label=id2label)
-    model.train_adapter(task_name)
-
-    logging.info('Adding fusion adapter for task: %s', task_name)
-    model.add_adapter_fusion(fusion_list, 'dynamic')
-    model.train_adapter_fusion(Fuse(*fusion_list))
-    return model
-
-
-def _get_adapter_weight_path(adapter_name: str) -> pathlib.Path:
-    adapter_weight_path = pathlib.Path('weights') / adapter_name
-    adapter_weight_path.mkdir(parents=True, exist_ok=True)
-    return adapter_weight_path
