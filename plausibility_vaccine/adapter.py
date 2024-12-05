@@ -38,7 +38,7 @@ def setup_adapters(
         model = _setup_adapter_fusion(
             model, task_name, label_list, fusion_list, use_adapter_for_task
         )
-    if use_adapter_for_task:
+    elif use_adapter_for_task:
         model = _setup_adapter_pretraining(model, adapter_args, task_name, label_list)
 
     logging.debug('Full Model:\n%s', model)
