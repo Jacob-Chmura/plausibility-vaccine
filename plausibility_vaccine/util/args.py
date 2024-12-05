@@ -50,8 +50,12 @@ class FinetuningArgument:
     data_args: DataArguments = field(
         metadata={'help': 'Data arguments for the fine-tuning configuration'},
     )
-    adapter_args: AdapterArguments = field(
+    adapter_args: Optional[AdapterArguments] = field(
         metadata={'help': 'Adapter arguments for the fine-tuning configuration'},
+    )
+    use_adapter_for_task: bool = field(
+        default=False,
+        metadata={'help': 'Use an adapter for finetuning, or adds a dense nn layer'},
     )
     fusion: Optional[List[str]] = field(
         default=None,
@@ -73,9 +77,14 @@ class FinetuningArguments:
             tasks: Dict[str, FinetuningArgument],
         ) -> Dict[str, FinetuningArgument]:
             for task_name, task_args in tasks.items():
+                adapter_args = None
+                if task_args['adapter_args'] is not None:  # type: ignore
+                    adapter_args = (AdapterArguments(**task_args['adapter_args']),)  # type: ignore
+
                 tasks[task_name] = FinetuningArgument(
                     data_args=DataArguments(**task_args['data_args']),  # type: ignore
-                    adapter_args=AdapterArguments(**task_args['adapter_args']),  # type: ignore
+                    adapter_args=adapter_args,
+                    use_adapter_for_task=task_args.get('use_adapter_for_task'),  # type: ignore
                     fusion=task_args.get('fusion'),  # type: ignore
                 )
             return tasks

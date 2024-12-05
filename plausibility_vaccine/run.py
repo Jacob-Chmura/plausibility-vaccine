@@ -1,6 +1,6 @@
 import copy
 import logging
-from typing import Dict
+from typing import Dict, Union
 
 import evaluate
 import numpy as np
@@ -8,6 +8,7 @@ from adapters import AdapterTrainer
 from transformers import (
     DataCollatorWithPadding,
     EvalPrediction,
+    Trainer,
     TrainingArguments,
 )
 
@@ -34,11 +35,9 @@ def run(
 
     for task_name, task_args in finetuning_args.pretraining_tasks.items():
         logging.info('Running %s', task_name)
-        # _run_task(model_args, training_args, task_args)
+        _run_task(model_args, training_args, task_args)
 
     for task_name, task_args in finetuning_args.downstream_tasks.items():
-        if 'base' not in task_name:
-            continue
         logging.info('Running %s', task_name)
         _run_task(model_args, training_args, task_args)
 
@@ -52,7 +51,11 @@ def _run_task(
     data_args, adapter_args = task_args.data_args, task_args.adapter_args
     raw_datasets, label_list = get_data(data_args)
 
-    model, tokenizer = load_pretrained_model(model_args, label_list=label_list)
+    model, tokenizer = load_pretrained_model(
+        model_args,
+        label_list=label_list,
+        use_adapter_for_task=task_args.use_adapter_for_task,
+    )
 
     with training_args.main_process_first(desc='dataset map pre-processing'):
         raw_datasets = raw_datasets.map(
@@ -87,14 +90,20 @@ def _run_task(
         return result
 
     # Setup adapters
-    fusion = task_args.fusion
-    model = setup_adapters(model, adapter_args, data_args.task_name, label_list, fusion)
+    if task_args.use_adapter_for_task:
+        model = setup_adapters(
+            model, adapter_args, data_args.task_name, label_list, task_args.fusion
+        )
 
     # Initialize our Trainer
     training_args_ = copy.deepcopy(training_args)
     training_args_.output_dir += f'/{data_args.task_name}'
 
-    trainer = AdapterTrainer(
+    if task_args.use_adapter_for_task:
+        trainer_class = AdapterTrainer
+    else:
+        trainer_class = Trainer
+    trainer = trainer_class(
         model=model,
         args=training_args_,
         train_dataset=raw_datasets['train'],
@@ -106,10 +115,11 @@ def _run_task(
     _run_trainer(trainer)
 
     # Save and deactivate the trained adapters to restore the base model
-    save_delete_adapter(model, data_args.task_name)
+    if task_args.use_adapter_for_task:
+        save_delete_adapter(model, data_args.task_name)
 
 
-def _run_trainer(trainer: AdapterTrainer) -> None:
+def _run_trainer(trainer: Union[AdapterTrainer, Trainer]) -> None:
     logging.info('*** Training ***')
     train_result = trainer.train()
     metrics = train_result.metrics
