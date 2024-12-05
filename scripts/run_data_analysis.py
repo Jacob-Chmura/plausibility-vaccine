@@ -39,17 +39,36 @@ def main() -> None:
 def analyze_plausibility_datasets(datasets_dir: str) -> None:
     df = _read_subdirectory_dataset_csvs(datasets_dir)
     print(df.groupby(['task', 'split'])['label'].value_counts(normalize=True))
+    print()
 
 
 def analyze_property_datasets(datasets_dir: str) -> None:
+    PROPERTY_LABEL_BINS = {
+        'Mobility': ['rock', 'tree', 'mushroom', 'animal', 'man', 'car'],
+        'Opacity': ['glass', 'paper', 'cloud', 'man', 'wall'],
+        'Phase': ['smoke', 'milk', 'wood', 'diamond'],
+        'Rigidity': ['water', 'skin', 'leather', 'wood', 'metal'],
+        'Sentience': ['rock', 'tree', 'ant', 'cat', 'chimp', 'man'],
+        'Shape': ['square', 'sphere', 'ant', 'man', 'cloud'],
+        'Size': ['ant', 'cat', 'person', 'jeep', 'stadium'],
+        'Temperature': ['ice', 'soup', 'fire', 'lava', 'sun'],
+        'Texture': ['glass', 'carpet', 'book', 'ant', 'man', 'sandpaper'],
+        'Weight': ['watch', 'book', 'man', 'jeep', 'stadium'],
+    }
+
     df = _read_subdirectory_dataset_csvs(datasets_dir)
-    for _, df_task in df.groupby('task'):
-        print(
+    for task_name, df_task in df.groupby('task'):
+        df_task = (
             df_task.groupby(['task'])['label']
             .value_counts(normalize=True)
             .reset_index()
             .sort_values('label')
         )
+        df_task['label'] = df_task['label'].apply(
+            lambda x: PROPERTY_LABEL_BINS[task_name][x - 1]
+        )
+        print(df_task)
+        print()
 
 
 def analyze_verb_datasets(datasets_dir: str) -> None:
