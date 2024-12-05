@@ -90,10 +90,14 @@ def _run_task(
         return result
 
     # Setup adapters
-    if task_args.use_adapter_for_task:
-        model = setup_adapters(
-            model, adapter_args, data_args.task_name, label_list, task_args.fusion
-        )
+    model = setup_adapters(
+        model,
+        adapter_args,
+        data_args.task_name,
+        label_list,
+        task_args.fusion,
+        task_args.use_adapter_for_task,
+    )
 
     # Initialize our Trainer
     training_args_ = copy.deepcopy(training_args)
