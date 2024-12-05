@@ -5,7 +5,6 @@ MetaArguments:
 ModelArguments:
   cache_dir: .cache
   pretrained_model_name: albert-base-v2
-  #pretrained_model_name: roberta-base
 TrainingArguments:
   learning_rate: 0.0001
   num_train_epochs: 10.0
