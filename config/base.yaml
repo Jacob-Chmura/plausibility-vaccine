@@ -114,27 +114,27 @@ FinetuningArguments:
       adapter_args:
         adapter_config: seq_bn[reduction_factor=64]
   downstream_tasks:
-    pep_plausibility_base_finetune:
+    pep_plausibility_base_finetune_mlp:
       data_args:
-        task_name: pep_plausibility_base_finetune
+        task_name: pep_plausibility_base_finetune_mlp
         is_regression: false
         train_file: data/plausibility_data/pep_3k/valid.csv
         test_file: data/plausibility_data/pep_3k/test.csv
       adapter_args:
         adapter_config:
       use_adapter_for_task: false
-    pep_plausibility_base_adapter:
+    pep_plausibility_base_finetune_adapter:
       data_args:
-        task_name: pep_plausibility_base_adapter
+        task_name: pep_plausibility_base_finetune_adapter
         is_regression: false
         train_file: data/plausibility_data/pep_3k/valid.csv
         test_file: data/plausibility_data/pep_3k/test.csv
       adapter_args:
         adapter_config: seq_bn[reduction_factor=64]
       use_adapter_for_task: true
-    pep_plausibility_adapter_base_finetune:
+    pep_plausibility_adapter_finetune_mlp:
       data_args:
-        task_name: pep_plausibility_adapter_base_finetune
+        task_name: pep_plausibility_adapter_finetune_mlp
         is_regression: false
         train_file: data/plausibility_data/pep_3k/valid.csv
         test_file: data/plausibility_data/pep_3k/test.csv
@@ -154,9 +154,9 @@ FinetuningArguments:
         - texture_pred
         - weight_pred
       use_adapter_for_task: false
-    pep_plausibility_adapter_base_adapter:
+    pep_plausibility_adapter_finetune_adapter:
       data_args:
-        task_name: pep_plausibility_adapter_base_adapter
+        task_name: pep_plausibility_adapter_finetune_adapter
         is_regression: false
         train_file: data/plausibility_data/pep_3k/valid.csv
         test_file: data/plausibility_data/pep_3k/test.csv
@@ -176,27 +176,27 @@ FinetuningArguments:
         - texture_pred
         - weight_pred
       use_adapter_for_task: true
-    20q_plausibility_base_finetune:
+    20q_plausibility_base_finetune_mlp:
       data_args:
-        task_name: 20q_plausibility_base_finetune
+        task_name: 20q_plausibility_base_finetune_mlp
         is_regression: false
         train_file: data/plausibility_data/twentyquestions/valid.csv
         test_file: data/plausibility_data/twentyquestions/test.csv
       adapter_args:
         adapter_config:
       use_adapter_for_task: false
-    20q_plausibility_base_adapter:
+    20q_plausibility_base_finetune_adapter:
       data_args:
-        task_name: 20q_plausibility_base_adapter
+        task_name: 20q_plausibility_base_finetune_adapter
         is_regression: false
         train_file: data/plausibility_data/twentyquestions/valid.csv
         test_file: data/plausibility_data/twentyquestions/test.csv
       adapter_args:
         adapter_config: seq_bn[reduction_factor=64]
       use_adapter_for_task: true
-    20q_plausibility_adapter_base_finetune:
+    20q_plausibility_adapter_finetune_mlp:
       data_args:
-        task_name: 20q_plausibility_adapter_base_finetune
+        task_name: 20q_plausibility_adapter_finetune_mlp
         is_regression: false
         train_file: data/plausibility_data/twentyquestions/valid.csv
         test_file: data/plausibility_data/twentyquestions/test.csv
@@ -216,9 +216,9 @@ FinetuningArguments:
         - texture_pred
         - weight_pred
       use_adapter_for_task: false
-    20q_plausibility_adapter_base_adapter:
+    20q_plausibility_adapter_finetune_adapter:
       data_args:
-        task_name: 20q_plausibility_adapter_base_adapter
+        task_name: 20q_plausibility_adapter_finetune_adapter
         is_regression: false
         train_file: data/plausibility_data/twentyquestions/valid.csv
         test_file: data/plausibility_data/twentyquestions/test.csv
