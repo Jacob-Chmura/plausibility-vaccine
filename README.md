@@ -31,9 +31,9 @@ _Plausibility Vaccine_ is a library that investigates parameter-efficient finetu
 
 ### Prerequisites
 
-The project uses [uv](https://docs.astral.sh/uv/) to manage and lock project dependencies for a consistent and reproducible environment. If you do not have `uv` intalled on your system, visit [this page](https://docs.astral.sh/uv/getting-started/installation/) for installation instructions.
+The project uses [uv](https://docs.astral.sh/uv/) to manage and lock project dependencies for a consistent and reproducible environment. If you do not have `uv` installed on your system, visit [this page](https://docs.astral.sh/uv/getting-started/installation/) for installation instructions.
 
-**Note**: If you have `pip` already installed you can just invoke:
+**Note**: If you have `pip` you can just invoke:
 
 ```sh
 pip install uv
@@ -48,7 +48,7 @@ git clone https://github.com/Jacob-Chmura/plausibility-vaccine.git
 # Enter the repo directory
 cd plausibility-vaccine
 
-# Install dependencies into an isolation environment
+# Install dependencies into an isolated environment
 uv sync
 ```
 
