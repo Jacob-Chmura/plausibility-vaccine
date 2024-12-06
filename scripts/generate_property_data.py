@@ -1,7 +1,8 @@
 import argparse
-import pathlib
 
 import pandas as pd
+
+from plausibility_vaccine.util.path import get_root_dir
 
 parser = argparse.ArgumentParser(
     description='Generate Prompt Data',
@@ -10,13 +11,13 @@ parser = argparse.ArgumentParser(
 parser.add_argument(
     '--prompt-file',
     type=str,
-    default='../data/property_data/prompt_data.csv',
+    default='data/property_data/prompt_data.csv',
     help='Path to file containing raw prompt data in CSV format',
 )
 parser.add_argument(
     '--save-root-dir',
     type=str,
-    default='../data/property_data/',
+    default='data/property_data/',
     help='Path to root direcotry to save all property datasets',
 )
 parser.add_argument(
@@ -35,7 +36,7 @@ parser.add_argument(
 
 def main() -> None:
     args = parser.parse_args()
-    prompt_data = pathlib.Path(args.prompt_file)
+    prompt_data = get_root_dir() / args.prompt_file
     df = pd.read_csv(prompt_data)
 
     df_test = df.sample(frac=args.test_frac, random_state=args.rng)
@@ -43,7 +44,7 @@ def main() -> None:
 
     property_cols = [c for c in df.columns if c != 'Item']
     for property in property_cols:
-        save_dir = pathlib.Path(args.save_root_dir) / property
+        save_dir = get_root_dir() / args.save_root_dir / property
         save_dir.mkdir(parents=True, exist_ok=True)
 
         prop_train = df_train[['Item', property]].rename({property: 'label'}, axis=1)

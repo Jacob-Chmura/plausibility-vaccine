@@ -6,6 +6,8 @@ import yaml
 from adapters import AdapterArguments
 from transformers import HfArgumentParser, TrainingArguments
 
+from plausibility_vaccine.util.path import get_root_dir
+
 
 @dataclass
 class MetaArguments:
@@ -16,6 +18,10 @@ class MetaArguments:
         default=1337,
         metadata={'help': 'Random seed to use for reproducibiility.'},
     )
+
+    def __post_init__(self) -> None:
+        if self.log_file_path is not None:
+            self.log_file_path = str(get_root_dir() / self.log_file_path)
 
 
 @dataclass
@@ -33,6 +39,10 @@ class DataArguments:
         metadata={'help': 'A csv file containing the test data.'},
     )
 
+    def __post_init__(self) -> None:
+        self.train_file = str(get_root_dir() / self.train_file)
+        self.test_file = str(get_root_dir() / self.test_file)
+
 
 @dataclass
 class ModelArguments:
@@ -43,6 +53,10 @@ class ModelArguments:
         default=None,
         metadata={'help': 'Directory to store pretrained models from huggingface.co'},
     )
+
+    def __post_init__(self) -> None:
+        if self.cache_dir is not None:
+            self.cache_dir = str(get_root_dir() / self.cache_dir)
 
 
 @dataclass
