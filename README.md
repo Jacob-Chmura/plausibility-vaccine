@@ -27,8 +27,6 @@
 
 _Plausibility Vaccine_ is a library that investigates parameter-efficient finetuning and modular transfer of prompted physical property knowledge for modelling event plausibility.
 
-TODO: Add charts
-
 ## Getting Started
 
 ### Prerequisites
@@ -55,6 +53,28 @@ uv sync
 ```
 
 ## Usage
+
+### Running Plausibility Vaccine
+
+_Full End-to-End Experiments_
+
+```sh
+./run_plausibility_vaccine.sh
+```
+
+_Baseline Experiments Only_
+
+```sh
+./run_plausibility_vaccine.sh config/baseline.yaml
+```
+
+_Pre-training Adapters Only_
+
+```sh
+./run_plausibility_vaccine.sh config/pretraining.yaml
+```
+
+### Running Analysis of Results
 
 TODO
 
