@@ -1,7 +1,8 @@
 import argparse
-import pathlib
 
 import pandas as pd
+
+from plausibility_vaccine.util.path import get_root_dir
 
 pd.options.display.max_rows = 100
 
@@ -12,19 +13,19 @@ parser = argparse.ArgumentParser(
 parser.add_argument(
     '--plausibility-datasets-dir',
     type=str,
-    default='../data/plausibility_data/',
+    default='data/plausibility_data/',
     help='Path to root directory containing plausibility data',
 )
 parser.add_argument(
     '--property-datasets-dir',
     type=str,
-    default='../data/property_data/',
+    default='data/property_data/',
     help='Path to root directory containing property data',
 )
 parser.add_argument(
     '--verb-datasets-dir',
     type=str,
-    default='../data/verb_understanding_data/',
+    default='data/verb_understanding_data/',
     help='Path to root directory containing verb data',
 )
 
@@ -89,7 +90,7 @@ def analyze_verb_datasets(datasets_dir: str) -> None:
 
 
 def _read_subdirectory_dataset_csvs(datasets_dir_str: str) -> pd.DataFrame:
-    datasets_dir = pathlib.Path(datasets_dir_str)
+    datasets_dir = get_root_dir() / datasets_dir_str
     if not datasets_dir.is_dir():
         raise FileNotFoundError(f'Directory: {datasets_dir.resolve()}')
 
