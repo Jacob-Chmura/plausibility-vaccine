@@ -1,7 +1,7 @@
 <a id="readme-top"></a>
 
 <div align="center">
-  <h3 style="font-size:3vw;padding:0;margin:0">Plausibility Vaccine</h3>
+  <h1 style="font-size:3vw;padding:0;margin:0;display:inline">Plausibility Vaccine</h3>
   <h3 style="margin:0">Injecting LLM Knowledge for Event Plausibility</h3>
   <a href="https://github.com/Jacob-Chmura/plausibility-vaccine"><strong>Read the paper»</strong></a>
 </div>
