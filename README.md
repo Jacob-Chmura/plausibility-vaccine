@@ -23,15 +23,9 @@
 
 </div>
 
-<!-- ABOUT THE PROJECT -->
-
 ## About The Project
 
 TODO
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-<!-- GETTING STARTED -->
 
 ## Getting Started
 
@@ -48,37 +42,29 @@ TODO
 git clone https://github.com/Jacob-Chmura/plausibility-vaccine.git
 ```
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-<!-- USAGE EXAMPLES -->
-
 ## Usage
 
 TODO
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-<!-- LICENSE -->
 
 ## License
 
 Distributed under the MIT License. See `LICENSE.txt` for more information.
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-<!-- CONTACT -->
-
 ## Contact
 
 Jacob Chmura - jacobpaul.chmura@gmail.com
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-<!-- CITATION -->
-
 ## Citation
 
-TODO
+```
+@article{chmura-etal-2024-plausibility,
+  title   = "Plausibility Vaccine: Injecting LLM Knowledge for Event Plausibility",
+  author  = "Chmura, Jacob and Dauvet, Jonah, and Sabry, Sebastian"
+  journal = "arXiv preprint arXiv:TODO.TODO",
+  url     = "TODO"
+  year    = "2024",
+}
+```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
