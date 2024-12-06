@@ -25,13 +25,26 @@
 
 ## About The Project
 
-TODO
+_Plausibility Vaccine_ is a library that investigates parameter-efficient finetuning and modular transfer of prompted physical property knowledge for modelling event plausibility.
+
+TODO: Add charts
 
 ## Getting Started
 
 ### Prerequisites
 
-TODO
+The project uses [uv](https://docs.astral.sh/uv/) to manager and lock project dependencies and environments. See the installation instructions below for more details.
+
+For completeness, the _core_ dependencies are listed below:
+
+- `Python>=3.9`
+- `accelerate>=1.1.1`
+- `adapters>=1.0.1`
+- `datasets>=3.1.0`
+- `evaluate>=0.4.3`
+- `numpy>=2.0.2`
+- `scikit-learn>=1.5.2`
+- `torch>=2.5.1`
 
 ### Installation
 
