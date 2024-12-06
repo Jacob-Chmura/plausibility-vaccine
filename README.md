@@ -1,6 +1,12 @@
 <a id="readme-top"></a>
 
-<!-- PROJECT SHIELDS -->
+<div align="center">
+  <h3 style="font-size:3vw;padding:0;margin:0">Plausibility Vaccine</h3>
+  <h3 style="margin:0">Injecting LLM Knowledge for Event Plausibility</h3>
+  <a href="https://github.com/Jacob-Chmura/plausibility-vaccine"><strong>Read the paper»</strong></a>
+</div>
+
+<br />
 
 <div align="center">
 
@@ -13,22 +19,8 @@
 <div align="center">
 
 <a href="">![example workflow](https://github.com/Jacob-Chmura/plausibility-vaccine/actions/workflows/ruff.yml/badge.svg)</a>
-<a href="">![example workflow](https://github.com/Jacob-Chmura/plausibility-vaccine/actions/workflows/mypy.yml/badge.svg)</a>
-<a href="">![example workflow](https://github.com/Jacob-Chmura/plausibility-vaccine/actions/workflows/testing.yml/badge.svg)</a>
+<a href="">![example workflow](https://github.com/Jacob-Chmura/plausibility-vaccine/actions/workflows/mypy.yml/badge.svg)</a> <a href="">![example workflow](https://github.com/Jacob-Chmura/plausibility-vaccine/actions/workflows/testing.yml/badge.svg)</a>
 
-</div>
-
-<!-- PROJECT LOGO -->
-
-<br />
-<div align="center">
-  <h3 align="center">Plausibility Vaccine</h3>
-
-<p align="center">
-    Injecting LLM Knowledge for Event Plausibility
-    <br />
-    <a href="https://github.com/Jacob-Chmura/plausibility-vaccine"><strong>Read the paper»</strong></a>
-    <br />
 </div>
 
 <!-- ABOUT THE PROJECT -->
@@ -89,8 +81,6 @@ Jacob Chmura - jacobpaul.chmura@gmail.com
 TODO
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-<!-- MARKDOWN LINKS & IMAGES -->
 
 [contributors-shield]: https://img.shields.io/github/contributors/Jacob-Chmura/plausibility-vaccine.svg?style=for-the-badge
 [contributors-url]: https://github.com/Jacob-Chmura/plausibility-vaccine/graphs/contributors
