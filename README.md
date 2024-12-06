@@ -33,26 +33,25 @@ TODO: Add charts
 
 ### Prerequisites
 
-The project uses [uv](https://docs.astral.sh/uv/) to manager and lock project dependencies and environments. See the installation instructions below for more details.
+The project uses [uv](https://docs.astral.sh/uv/) to manage and lock project dependencies for a consistent and reproducible environment. If you do not have `uv` intalled on your system, visit [this page](https://docs.astral.sh/uv/getting-started/installation/) for installation instructions.
 
-For completeness, the _core_ dependencies are listed below:
+**Note**: If you have `pip` already installed you can just invoke:
 
-- `Python>=3.9`
-- `accelerate>=1.1.1`
-- `adapters>=1.0.1`
-- `datasets>=3.1.0`
-- `evaluate>=0.4.3`
-- `numpy>=2.0.2`
-- `scikit-learn>=1.5.2`
-- `torch>=2.5.1`
+```sh
+pip install uv
+```
 
 ### Installation
-
-TODO
 
 ```sh
 # Clone the repo
 git clone https://github.com/Jacob-Chmura/plausibility-vaccine.git
+
+# Enter the repo directory
+cd plausibility-vaccine
+
+# Install dependencies into an isolation environment
+uv sync
 ```
 
 ## Usage
