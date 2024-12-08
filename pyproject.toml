@@ -35,6 +35,10 @@ dev = [
 verb-data-generation = [
     "pandas>=2.2.3",
 ]
+data-generation = [
+    "matplotlib>=3.9.3",
+    "pyqt6>=6.7.1",
+]
 
 [tool.mypy]
 files = ["plausibility_vaccine"]
