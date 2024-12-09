@@ -74,9 +74,21 @@ _Pre-training Adapters Only_
 ./run_plausibility_vaccine.sh config/pretraining.yaml
 ```
 
-### Running Analysis of Results
+### Running Analytics
 
-TODO
+_All Analytics_
+
+**Note**: requires that you have previously ran `plausibility_vaccine.sh` and have generated results
+
+```sh
+./run_analytics.sh
+```
+
+_Non-result Dependent Analytics_
+
+```sh
+./run_analytics.sh --no-results
+```
 
 ## License
 
