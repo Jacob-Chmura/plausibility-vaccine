@@ -74,7 +74,7 @@ _Pre-training Adapters Only_
 ./run_plausibility_vaccine.sh config/pretraining.yaml
 ```
 
-### Running Analysis of Results
+### Running Analytics
 
 _All Analytics_
 
