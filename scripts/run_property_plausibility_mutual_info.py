@@ -1,4 +1,5 @@
 import argparse
+import pathlib
 from typing import Dict, List
 
 import matplotlib.pyplot as plt
@@ -26,6 +27,12 @@ parser.add_argument(
     default='data/property_data/',
     help='Path to root directory containing property data',
 )
+parser.add_argument(
+    '--artifacts-dir',
+    type=str,
+    default='artifacts',
+    help='Path to artifact directory containing plots',
+)
 
 
 def main() -> None:
@@ -34,7 +41,7 @@ def main() -> None:
         args.plausibility_datasets_dir, args.property_datasets_dir
     )
     mi_df = compute_mutual_info_scores(df)
-    plot_mi_df(mi_df)
+    plot_mi_df(mi_df, args.artifacts_dir)
 
 
 def get_merged_plausibility_property_data(
@@ -91,7 +98,10 @@ def compute_mutual_info_scores(df: pd.DataFrame, n_samples: int = 50) -> pd.Data
     return mi_df
 
 
-def plot_mi_df(df: pd.DataFrame) -> None:
+def plot_mi_df(df: pd.DataFrame, artifacts_dir_str: str) -> None:
+    artifacts_dir = pathlib.Path(artifacts_dir_str)
+    artifacts_dir.mkdir(parents=True, exist_ok=True)
+
     df['group'] = df.apply(
         lambda x: x.entity[0].upper() + x.entity[1:] + ' ' + x.property, axis=1
     )
@@ -135,7 +145,10 @@ def plot_mi_df(df: pd.DataFrame) -> None:
     leg = ax.get_legend()
     leg.legend_handles[0].set_color(palette_object[1])
     leg.legend_handles[1].set_color(palette_subject[1])
-    plt.savefig('foo.png')
+
+    plt.savefig(
+        artifacts_dir / 'property_mutual_info.png', dpi=200, bbox_inches='tight'
+    )
     plt.close()
 
 
