@@ -25,6 +25,21 @@ main() {
         echo "Skipping analytics that require having previously run Plausibility Vaccine!"
     fi
 
+    echo "Running data analysis"
+    uv run scripts/run_data_analysis.py
+
+    echo "Running word sense analysis"
+    uv run scripts/run_word_sense_analysis.py
+
+    echo "Running property-plausibility mutual information analysis"
+    uv run scripts/run_property_plausibility_mutual_info.py
+
+    if [[ ${RESULTS} -eq 0 ]]; then
+        exit 0
+    fi
+
+    echo "Running performance analysis"
+    uv run scripts/aggregate_performance_results.py
 }
 
 parse_args() {
