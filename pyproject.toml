@@ -35,6 +35,10 @@ dev = [
 verb-data-generation = [
     "pandas>=2.2.3",
 ]
+analytics = [
+    "nltk>=3.9.1",
+    "pandas>=2.2.3",
+]
 
 [tool.mypy]
 files = ["plausibility_vaccine"]
