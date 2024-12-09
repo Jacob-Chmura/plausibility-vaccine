@@ -1,5 +1,6 @@
 import argparse
 import pathlib
+import warnings
 from typing import Dict, List
 
 import matplotlib.pyplot as plt
@@ -43,19 +44,16 @@ parser.add_argument(
 
 def main() -> None:
     args = parser.parse_args()
-    df = get_merged_plausibility_property_data(
-        args.plausibility_datasets_dir, args.property_datasets_dir
-    )
+    plausibility_df = _read_subdirectory_dataset_csvs(args.plausibility_datasets_dir)
+    property_df = _read_subdirectory_dataset_csvs(args.property_datasets_dir)
+    df = get_merged_plausibility_property_data(plausibility_df, property_df)
     mi_df = compute_mutual_info_scores(df, args.n_mutual_info_samples)
     plot_mi_df(mi_df, args.artifacts_dir)
 
 
 def get_merged_plausibility_property_data(
-    plausibility_datasets_dir: str, property_datasets_dir: str
+    plausibility_data: pd.DataFrame, property_data: pd.DataFrame
 ) -> pd.DataFrame:
-    plausibility_data = _read_subdirectory_dataset_csvs(plausibility_datasets_dir)
-    property_data = _read_subdirectory_dataset_csvs(property_datasets_dir)
-
     plausibility_data = plausibility_data[plausibility_data.split == 'train']
     plausibility_data = plausibility_data.rename({'label': 'plausibility'}, axis=1)
     property_data['Item'] = property_data['Item'].apply(lambda x: x.lower())
@@ -75,7 +73,7 @@ def get_merged_plausibility_property_data(
 
     df = pd.concat(dfs)
     df['property_label'] = df['label'].astype(int)
-    return df[['task', 'plausibility', 'property_label', 'property', 'entity']]
+    return df
 
 
 def compute_mutual_info_scores(df: pd.DataFrame, n_samples: int) -> pd.DataFrame:
@@ -96,9 +94,8 @@ def compute_mutual_info_scores(df: pd.DataFrame, n_samples: int) -> pd.DataFrame
             mi_data['mi'].append(mi)
     mi_df = pd.DataFrame(mi_data)
     mi_df = mi_df.groupby(groups)['mi'].mean().reset_index()
-    mi_df2 = (
-        mi_df.groupby('task')['mi'].max().reset_index().rename({'mi': 'max_mi'}, axis=1)
-    )
+    mi_df2 = mi_df.groupby('task')['mi'].max().reset_index()
+    mi_df2 = mi_df2.rename({'mi': 'max_mi'}, axis=1)
     mi_df = pd.merge(mi_df, mi_df2, how='left', on=['task'])
     mi_df['norm_mi'] = mi_df['mi'] / mi_df['max_mi']
     return mi_df
@@ -118,13 +115,12 @@ def plot_mi_df(df: pd.DataFrame, artifacts_dir_str: str) -> None:
         .reset_index()
         .sort_values(by='norm_mi', ascending=False)
     )
-    labels = df2.group.values
 
     palette_object = sns.color_palette('Blues_r', 13)
     palette_subject = sns.color_palette('Greens_r', 13)
     palette = []
     o_idx, s_idx = 0, 0
-    for l in labels:
+    for l in df2.group.values:
         if l.startswith('Subject'):
             palette.append(palette_subject[s_idx])
             s_idx += 1
@@ -132,14 +128,16 @@ def plot_mi_df(df: pd.DataFrame, artifacts_dir_str: str) -> None:
             palette.append(palette_object[o_idx])
             o_idx += 1
 
-    g = sns.catplot(
-        data=df2,
-        x='norm_mi',
-        y='group',
-        kind='bar',
-        palette=palette,
-        legend=False,
-    )
+    with warnings.catch_warnings():
+        warnings.simplefilter(action='ignore', category=FutureWarning)
+        g = sns.catplot(
+            data=df2,
+            x='norm_mi',
+            y='group',
+            kind='bar',
+            palette=palette,
+            legend=False,
+        )
     for _, a in enumerate(g.axes.flatten()):
         a.grid(alpha=0.3)
         a.set_ylabel('')
