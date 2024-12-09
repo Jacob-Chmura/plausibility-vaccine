@@ -29,7 +29,7 @@ def compute_sense_rank_table(df: pd.DataFrame, top_n: int = 3) -> None:
     def _sense_rank(x: pd.Series, col: str) -> int:
         word, word_sense = x[col], x[f'{col}_sense']
         synsets = [syn.name() for syn in wordnet.synsets(word, pos='n')]
-        return synsets.index(word_sense) if word_sense in synsets else -1
+        return synsets.index(word_sense) if word_sense in synsets else 0
 
     for col in ['subject', 'object']:
         df[f'{col}_synset_rank'] = df.apply(lambda x: _sense_rank(x, col), axis=1)
