@@ -76,7 +76,19 @@ _Pre-training Adapters Only_
 
 ### Running Analysis of Results
 
-TODO
+_All Analytics_
+
+**Note**: requires that you have previously ran `plausibility_vaccine.sh` and have generated results
+
+```sh
+./run_analytics.sh
+```
+
+_Non-result Dependent Analytics_
+
+```sh
+./run_analytics.sh --no-results
+```
 
 ## License
 
