@@ -103,7 +103,9 @@ def save_data(df: pd.DataFrame, test_frac: float, save_dir_str: str, rng: int) -
     df_train = df.drop(df_test.index)
 
     df_train.to_csv(save_dir / 'train.csv', index=False)
-    df_test.to_csv(save_dir / 'test.csv', index=False)
+
+    if len(df_test):
+        df_test.to_csv(save_dir / 'test.csv', index=False)
 
 
 if __name__ == '__main__':
