@@ -39,7 +39,7 @@ main() {
     fi
 
     echo "Running performance analysis"
-    uv run scripts/aggregate_performance_results.py
+    uv run scripts/run_performance_aggregation.py
 }
 
 parse_args() {
