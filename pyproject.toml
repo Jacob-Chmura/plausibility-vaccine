@@ -36,6 +36,8 @@ verb-data-generation = [
     "pandas>=2.2.3",
 ]
 data-generation = [
+    "bertviz>=1.4.0",
+    "ipython>=8.18.1",
     "matplotlib>=3.9.3",
     "pyqt6>=6.7.1",
 ]
