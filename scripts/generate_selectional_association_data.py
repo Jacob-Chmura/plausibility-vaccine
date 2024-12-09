@@ -44,11 +44,14 @@ parser.add_argument(
 def main() -> None:
     args = parser.parse_args()
     probe_data = get_root_dir() / args.svo_probes_file
-    df = pd.read_csv(probe_data, usecols=['pos_triplet'])
 
-    # Process the pos_triplet column
-    df['pos_triplet'] = df['pos_triplet'].apply(lambda x: x.split(','))
-    df = pd.DataFrame(df['pos_triplet'].tolist(), columns=['subject', 'verb', 'object'])
+    svo_cols = ['subject', 'verb', 'object']
+    df = pd.read_csv(probe_data, usecols=lambda x: x in ['pos_triplet'] + svo_cols)
+
+    if not all([x in df.columns for x in svo_cols]):
+        # Process the pos_triplet column
+        df['pos_triplet'] = df['pos_triplet'].apply(lambda x: x.split(','))
+        df = pd.DataFrame(df['pos_triplet'].tolist(), columns=svo_cols)
 
     sa_subject = compute_selectional_association(df, col_name='subject')
     sa_object = compute_selectional_association(df, col_name='object')
@@ -100,7 +103,9 @@ def save_data(df: pd.DataFrame, test_frac: float, save_dir_str: str, rng: int) -
     df_train = df.drop(df_test.index)
 
     df_train.to_csv(save_dir / 'train.csv', index=False)
-    df_test.to_csv(save_dir / 'test.csv', index=False)
+
+    if len(df_test):
+        df_test.to_csv(save_dir / 'test.csv', index=False)
 
 
 if __name__ == '__main__':
