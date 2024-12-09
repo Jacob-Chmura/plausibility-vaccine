@@ -33,6 +33,12 @@ parser.add_argument(
     default='artifacts',
     help='Path to artifact directory containing plots',
 )
+parser.add_argument(
+    '--n-mutual-info-samples',
+    type=int,
+    default=50,
+    help='The amount of re-sample to estimate mutual information statistics',
+)
 
 
 def main() -> None:
@@ -40,7 +46,7 @@ def main() -> None:
     df = get_merged_plausibility_property_data(
         args.plausibility_datasets_dir, args.property_datasets_dir
     )
-    mi_df = compute_mutual_info_scores(df)
+    mi_df = compute_mutual_info_scores(df, args.n_mutual_info_samples)
     plot_mi_df(mi_df, args.artifacts_dir)
 
 
@@ -72,7 +78,7 @@ def get_merged_plausibility_property_data(
     return df[['task', 'plausibility', 'property_label', 'property', 'entity']]
 
 
-def compute_mutual_info_scores(df: pd.DataFrame, n_samples: int = 50) -> pd.DataFrame:
+def compute_mutual_info_scores(df: pd.DataFrame, n_samples: int) -> pd.DataFrame:
     mi_data: Dict[str, List[float]] = {
         'task': [],
         'entity': [],
