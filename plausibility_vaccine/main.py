@@ -3,6 +3,7 @@ import argparse
 from plausibility_vaccine.run import run
 from plausibility_vaccine.util.args import parse_args
 from plausibility_vaccine.util.logging import setup_basic_logging
+from plausibility_vaccine.util.path import get_root_dir
 from plausibility_vaccine.util.seed import seed_everything
 
 parser = argparse.ArgumentParser(
@@ -19,7 +20,8 @@ parser.add_argument(
 
 def main() -> None:
     args = parser.parse_args()
-    meta_args, model_args, training_args, finetuning_args = parse_args(args.config_file)
+    config_file_path = get_root_dir() / args.config_file
+    meta_args, model_args, training_args, finetuning_args = parse_args(config_file_path)
     setup_basic_logging(meta_args.log_file_path)
     seed_everything(meta_args.global_seed)
     run(model_args, training_args, finetuning_args)

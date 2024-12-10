@@ -1,9 +1,10 @@
 import argparse
 import json
-import pathlib
 
 import pandas as pd
 from tabulate import tabulate
+
+from plausibility_vaccine.util.path import get_root_dir
 
 parser = argparse.ArgumentParser(
     description='Aggregate performance results',
@@ -12,14 +13,14 @@ parser = argparse.ArgumentParser(
 parser.add_argument(
     '--results-dir',
     type=str,
-    default='../results',
+    default='results',
     help='Path to root directory containing results',
 )
 
 
 def main() -> None:
     args = parser.parse_args()
-    results_dir = pathlib.Path(args.results_dir)
+    results_dir = get_root_dir() / args.results_dir
     if not results_dir.is_dir():
         raise FileNotFoundError(f'Results directory: {results_dir.resolve()}')
 

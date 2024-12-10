@@ -1,8 +1,9 @@
 import argparse
-import pathlib
 
 import numpy as np
 import pandas as pd
+
+from plausibility_vaccine.util.path import get_root_dir
 
 parser = argparse.ArgumentParser(
     description='Generate Selectional Association Data',
@@ -11,19 +12,19 @@ parser = argparse.ArgumentParser(
 parser.add_argument(
     '--svo-probes-file',
     type=str,
-    default='../data/verb_understanding_data/svo_probes.csv',
+    default='data/verb_understanding_data/svo_probes.csv',
     help='Path to file containing raw svo probes data in CSV format',
 )
 parser.add_argument(
     '--subject-save-dir',
     type=str,
-    default='../data/verb_understanding_data/selectional_association_subject',
+    default='data/verb_understanding_data/selectional_association_subject',
     help='Path to save subject selectional association data',
 )
 parser.add_argument(
     '--object-save-dir',
     type=str,
-    default='../data/verb_understanding_data/selectional_association_object',
+    default='data/verb_understanding_data/selectional_association_object',
     help='Path to save object selectional association data',
 )
 parser.add_argument(
@@ -42,12 +43,15 @@ parser.add_argument(
 
 def main() -> None:
     args = parser.parse_args()
-    probe_data = pathlib.Path(args.svo_probes_file)
-    df = pd.read_csv(probe_data, usecols=['pos_triplet'])
+    probe_data = get_root_dir() / args.svo_probes_file
 
-    # Process the pos_triplet column
-    df['pos_triplet'] = df['pos_triplet'].apply(lambda x: x.split(','))
-    df = pd.DataFrame(df['pos_triplet'].tolist(), columns=['subject', 'verb', 'object'])
+    svo_cols = ['subject', 'verb', 'object']
+    df = pd.read_csv(probe_data, usecols=lambda x: x in ['pos_triplet'] + svo_cols)
+
+    if not all([x in df.columns for x in svo_cols]):
+        # Process the pos_triplet column
+        df['pos_triplet'] = df['pos_triplet'].apply(lambda x: x.split(','))
+        df = pd.DataFrame(df['pos_triplet'].tolist(), columns=svo_cols)
 
     sa_subject = compute_selectional_association(df, col_name='subject')
     sa_object = compute_selectional_association(df, col_name='object')
@@ -92,14 +96,16 @@ def compute_selectional_association(df: pd.DataFrame, col_name: str) -> pd.DataF
 
 
 def save_data(df: pd.DataFrame, test_frac: float, save_dir_str: str, rng: int) -> None:
-    save_dir = pathlib.Path(save_dir_str)
+    save_dir = get_root_dir() / save_dir_str
     save_dir.mkdir(parents=True, exist_ok=True)
 
     df_test = df.sample(frac=test_frac, random_state=rng)
     df_train = df.drop(df_test.index)
 
     df_train.to_csv(save_dir / 'train.csv', index=False)
-    df_test.to_csv(save_dir / 'test.csv', index=False)
+
+    if len(df_test):
+        df_test.to_csv(save_dir / 'test.csv', index=False)
 
 
 if __name__ == '__main__':
