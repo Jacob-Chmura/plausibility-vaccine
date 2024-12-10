@@ -1,0 +1,12 @@
+\begin{tabular}{rllr}
+\hline
+    & Task   & Bin Label   &   Proportion \\
+\hline
+  0 & Weight & stadium     &        0.208 \\
+  1 & Weight & watch       &        0.245 \\
+  2 & Weight & book        &        0.325 \\
+  3 & Weight & man         &        0.149 \\
+  4 & Weight & jeep        &        0.055 \\
+  5 & Weight & stadium     &        0.018 \\
+\hline
+\end{tabular}

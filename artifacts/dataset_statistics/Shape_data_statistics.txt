@@ -1,0 +1,11 @@
+\begin{tabular}{rllr}
+\hline
+    & Task   & Bin Label   &   Proportion \\
+\hline
+  0 & Shape  & square      &        0.178 \\
+  1 & Shape  & sphere      &        0.096 \\
+  2 & Shape  & ant         &        0.215 \\
+  3 & Shape  & man         &        0.341 \\
+  4 & Shape  & cloud       &        0.169 \\
+\hline
+\end{tabular}

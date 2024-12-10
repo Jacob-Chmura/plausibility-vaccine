@@ -1,0 +1,12 @@
+\begin{tabular}{rllr}
+\hline
+    & Task    & Bin Label   &   Proportion \\
+\hline
+  0 & Texture & glass       &        0.123 \\
+  1 & Texture & carpet      &        0.185 \\
+  2 & Texture & book        &        0.375 \\
+  3 & Texture & ant         &        0.236 \\
+  4 & Texture & man         &        0.08  \\
+  5 & Texture & sandpaper   &        0.001 \\
+\hline
+\end{tabular}

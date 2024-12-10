@@ -1,0 +1,12 @@
+\begin{tabular}{rllr}
+\hline
+    & Task   & Bin Label   &   Proportion \\
+\hline
+  0 & Size   & stadium     &        0.008 \\
+  1 & Size   & ant         &        0.313 \\
+  2 & Size   & cat         &        0.462 \\
+  3 & Size   & person      &        0.175 \\
+  4 & Size   & jeep        &        0.029 \\
+  5 & Size   & stadium     &        0.011 \\
+\hline
+\end{tabular}

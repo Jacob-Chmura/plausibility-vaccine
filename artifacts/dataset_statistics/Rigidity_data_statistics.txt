@@ -1,0 +1,11 @@
+\begin{tabular}{rllr}
+\hline
+    & Task     & Bin Label   &   Proportion \\
+\hline
+  0 & Rigidity & water       &        0.143 \\
+  1 & Rigidity & skin        &        0.319 \\
+  2 & Rigidity & leather     &        0.237 \\
+  3 & Rigidity & wood        &        0.169 \\
+  4 & Rigidity & metal       &        0.132 \\
+\hline
+\end{tabular}

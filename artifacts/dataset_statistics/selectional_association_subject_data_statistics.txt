@@ -1,0 +1,7 @@
+\begin{tabular}{rlrrrrrrrrrrrr}
+\hline
+    & Task                            &   Count &   Mean &   Std &    Min &     1\% &    10\% &   25\% &   50\% &   75\% &   90\% &   99\% &   Max \\
+\hline
+  0 & selectional\_association\_subject &    1835 &  0.229 & 0.324 & -0.209 & -0.081 & -0.014 & 0.008 & 0.075 & 0.336 & 0.917 &     1 &  1.05 \\
+\hline
+\end{tabular}
