@@ -38,7 +38,7 @@ class DataArguments:
     test_file: Union[str, List[str]] = field(
         metadata={'help': 'A csv or list of csv files containing the test data.'},
     )
-    num_test_cv: int = field(
+    num_test_shards: int = field(
         metadata={'help': 'Number of test splits to do for uncertainty estimates.'},
         default=1,
     )
