@@ -46,6 +46,9 @@ def generate_perf_tables(perf_df: pd.DataFrame) -> Dict[str, str]:
 
     perf_df = pd.melt(perf_df[keep_cols], 'task')
     perf_df['metric'] = perf_df['variable'].apply(lambda x: x.split('_')[-1])
+    perf_df['train_data'] = perf_df['variable'].apply(
+        lambda x: 'Combined' if 'combined' in x else 'Individual'
+    )
     perf_df['shard'] = perf_df['variable'].apply(
         lambda x: x.split('_')[1].split('-')[-1]
     )
@@ -62,7 +65,13 @@ def generate_perf_tables(perf_df: pd.DataFrame) -> Dict[str, str]:
     perf_df['task'] = perf_df['task'].apply(lambda x: x.split('_')[0])
     perf_df = perf_df.drop('variable', axis=1)
 
-    group_cols = ['task', 'adapter_fusion', 'finetune_plausibility', 'metric']
+    group_cols = [
+        'task',
+        'adapter_fusion',
+        'train_data',
+        'finetune_plausibility',
+        'metric',
+    ]
     mu = perf_df.groupby(group_cols)['value'].mean().reset_index()
     std = perf_df.groupby(group_cols)['value'].std().reset_index()
 
