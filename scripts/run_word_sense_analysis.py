@@ -1,7 +1,10 @@
 import argparse
+import pathlib
+from typing import Dict
 
 import pandas as pd
 from nltk.corpus import wordnet
+from tabulate import tabulate
 
 from plausibility_vaccine.util.path import get_root_dir
 
@@ -17,20 +20,28 @@ parser.add_argument(
     default='data/plausibility_data/',
     help='Path to root directory containing plausibility data',
 )
+parser.add_argument(
+    '--artifacts-dir',
+    type=str,
+    default='artifacts',
+    help='Path to artifact directory containing plots',
+)
 
 
 def main() -> None:
     args = parser.parse_args()
     df = _read_subdirectory_dataset_csvs(args.plausibility_datasets_dir)
-    compute_sense_rank_table(df)
+    latex_tables = compute_sense_rank_latex_tables(df)
+    save_latex_tables(latex_tables, args.artifacts_dir)
 
 
-def compute_sense_rank_table(df: pd.DataFrame, top_n: int = 3) -> None:
+def compute_sense_rank_latex_tables(df: pd.DataFrame, top_n: int = 3) -> Dict[str, str]:
     def _sense_rank(x: pd.Series, col: str) -> int:
         word, word_sense = x[col], x[f'{col}_sense']
         synsets = [syn.name() for syn in wordnet.synsets(word, pos='n')]
         return synsets.index(word_sense) if word_sense in synsets else 0
 
+    tables = {}
     for col in ['subject', 'object']:
         df[f'{col}_synset_rank'] = df.apply(lambda x: _sense_rank(x, col), axis=1)
         groups = df.groupby('task')[f'{col}_synset_rank'].value_counts(normalize=True)
@@ -51,8 +62,21 @@ def compute_sense_rank_table(df: pd.DataFrame, top_n: int = 3) -> None:
 
         rank_df = pd.concat(rank_groups)
         rank_df = rank_df.pivot(index='task', columns=f'{col}_synset_rank')
-        print(rank_df['proportion'].round(2))
-        print()
+        table_data = rank_df['proportion'].round(2)
+
+        headers = [col] + [f'Sense Rank {i+1}' for i in range(top_n)] + ['Other']
+        print(tabulate(table_data, headers=headers, tablefmt='fancy_grid'))
+        tables[col] = tabulate(table_data, headers=headers, tablefmt='latex')
+    return tables
+
+
+def save_latex_tables(latex_tables: Dict[str, str], artifacts_dir_str: str) -> None:
+    artifacts_dir = pathlib.Path(artifacts_dir_str)
+    artifacts_dir.mkdir(parents=True, exist_ok=True)
+
+    for table_name, table_latex in latex_tables.items():
+        with open(artifacts_dir / f'{table_name}_word_sense_dist.txt', 'w') as f:
+            f.write(table_latex)
 
 
 def _read_subdirectory_dataset_csvs(datasets_dir_str: str) -> pd.DataFrame:
