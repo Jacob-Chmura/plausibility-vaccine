@@ -9,7 +9,7 @@ from tabulate import tabulate
 from plausibility_vaccine.util.path import get_root_dir
 
 parser = argparse.ArgumentParser(
-    description='Aggregate performance results',
+    description='Aggregate pretrained adapter performance results',
     formatter_class=argparse.ArgumentDefaultsHelpFormatter,
 )
 parser.add_argument(
@@ -131,6 +131,12 @@ def parse_adapter_results(
                 verb_adapters_dfs.append(result_df)
             elif 'pred' in result_dir.name:
                 property_adapters_dfs.append(result_df)
+
+    if not len(property_adapters_dfs):
+        raise ValueError('No property adapter pretraining results found!')
+
+    if not len(verb_adapters_dfs):
+        raise ValueError('No verb adapter pretraining results found!')
 
     property_perf = pd.concat(property_adapters_dfs).sort_values('task')
     verb_perf = pd.concat(verb_adapters_dfs).sort_values('task')

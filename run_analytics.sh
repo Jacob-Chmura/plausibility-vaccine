@@ -41,11 +41,11 @@ main() {
         exit 0
     fi
 
-    echo "Running Adapter Pretraining analysis"
+    echo "Running Adapter Pretraining Performance analysis"
     uv run scripts/run_pretraining_performance_analysis.py
 
-    echo "Running performance analysis"
-    uv run scripts/run_performance_aggregation.py
+    echo "Running Downstream Performance analysis"
+    uv run scripts/run_downstream_performance_anslysis.py
 }
 
 parse_args() {
