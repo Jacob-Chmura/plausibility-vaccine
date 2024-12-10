@@ -4,6 +4,7 @@ import pathlib
 from typing import Dict
 
 import pandas as pd
+from tabulate import tabulate
 
 from plausibility_vaccine.util.path import get_root_dir
 
@@ -32,44 +33,57 @@ def main() -> None:
         raise FileNotFoundError(f'Results directory: {results_dir.resolve()}')
 
     perf_df = parse_downstream_results(results_dir)
-    generate_perf_tables(perf_df)
-    # save_latex_tables(latex_tables, args.artifacts_dir)
+    latex_tables = generate_perf_tables(perf_df)
+    save_latex_tables(latex_tables, args.artifacts_dir)
 
 
 def generate_perf_tables(perf_df: pd.DataFrame) -> Dict[str, str]:
-    return {}
-    # metrics = ['accuracy', 'f1', 'precision', 'recall']
-    # keep_cols = ['task']
-    # for c in property_perf.columns:
-    #    if any([metric in c for metric in metrics]):
-    #        keep_cols.append(c)
+    metrics = ['accuracy', 'f1', 'precision', 'recall']
+    keep_cols = ['task']
+    for c in perf_df.columns:
+        if any([metric in c for metric in metrics]):
+            keep_cols.append(c)
 
-    # property_perf = pd.melt(property_perf[keep_cols], 'task')
-    # property_perf['metric'] = property_perf['variable'].apply(
-    #    lambda x: x.split('_')[-1]
-    # )
-    # property_perf['shard'] = property_perf['variable'].apply(
-    #    lambda x: x.split('_')[1].split('-')[-1]
-    # )
-    # property_perf['task'] = property_perf['task'].apply(lambda x: x.split('_')[0])
-    # property_perf = property_perf.drop('variable', axis=1)
+    perf_df = pd.melt(perf_df[keep_cols], 'task')
+    perf_df['metric'] = perf_df['variable'].apply(lambda x: x.split('_')[-1])
+    perf_df['shard'] = perf_df['variable'].apply(
+        lambda x: x.split('_')[1].split('-')[-1]
+    )
+    perf_df['finetune_plausibility'] = perf_df['task'].apply(
+        lambda x: 'MLP' if 'mlp' in x else 'Adapter'
+    )
+    perf_df['adapter_fusion'] = perf_df['task'].apply(
+        lambda x: 'No Adapters'
+        if 'base' in x
+        else 'Property Adapters'
+        if 'property' in x
+        else 'Property + Verb Adapters'
+    )
+    perf_df['task'] = perf_df['task'].apply(lambda x: x.split('_')[0])
+    perf_df = perf_df.drop('variable', axis=1)
 
-    # mu = property_perf.groupby(['task', 'metric'])['value'].mean().reset_index()
-    # std = property_perf.groupby(['task', 'metric'])['value'].std().reset_index()
+    group_cols = ['task', 'adapter_fusion', 'finetune_plausibility', 'metric']
+    mu = perf_df.groupby(group_cols)['value'].mean().reset_index()
+    std = perf_df.groupby(group_cols)['value'].std().reset_index()
 
-    # mu = mu.rename({'value': 'mu'}, axis=1)
-    # std = std.rename({'value': 'std'}, axis=1)
+    mu = mu.rename({'value': 'mu'}, axis=1)
+    std = std.rename({'value': 'std'}, axis=1)
 
-    # data = pd.merge(mu, std, how='left', on=['task', 'metric'])
-    # data['value'] = data.apply(lambda x: f'{x["mu"]:.2} ± {x["std"]:.2}', axis=1)
-    # data = data.drop(['mu', 'std'], axis=1)
-    # table_data = data.pivot_table(
-    #    values=['value'], index=['task'], columns='metric', aggfunc='first'
-    # )
+    data = pd.merge(mu, std, how='left', on=group_cols)
+    data['value'] = data.apply(lambda x: f'{x["mu"]:.2} ± {x["std"]:.2}', axis=1)
+    data = data.drop(['mu', 'std'], axis=1)
+    table_data = data.pivot_table(
+        values=['value'],
+        index=['task', 'adapter_fusion', 'finetune_plausibility'],
+        columns='metric',
+        aggfunc='first',
+    ).reset_index()
 
-    # headers = ['Task'] + [metric[0].upper() + metric[1:] for metric in metrics]
-    # print(tabulate(table_data, headers, tablefmt='fancy_grid'))
-    # return {'property_adapters': tabulate(table_data, headers, tablefmt='latex')}
+    headers = ['Task', 'Adapter Fusion', 'FineTune Plausibility'] + [
+        metric[0].upper() + metric[1:] for metric in metrics
+    ]
+    print(tabulate(table_data, headers, tablefmt='fancy_grid'))
+    return {'property_adapters': tabulate(table_data, headers, tablefmt='latex')}
 
 
 def save_latex_tables(latex_tables: Dict[str, str], artifacts_dir_str: str) -> None:
@@ -101,11 +115,7 @@ def parse_downstream_results(results_dir: pathlib.Path) -> pd.DataFrame:
     if not len(twenty_dfs):
         raise ValueError('No 20q plausibility results found!')
 
-    pep_dfs = pd.concat(pep_dfs).sort_values('task')
-    twenty_dfs = pd.concat(twenty_dfs).sort_values('task')
-    print(pep_dfs)
-    print(twenty_dfs)
-    exit()
+    return pd.concat(pep_dfs + twenty_dfs).sort_values('task')
 
 
 if __name__ == '__main__':
