@@ -1,0 +1,11 @@
+\begin{tabular}{rllr}
+\hline
+    & Task      & Bin Label   &   Proportion \\
+\hline
+  0 & Sentience & rock        &        0.689 \\
+  1 & Sentience & tree        &        0.062 \\
+  2 & Sentience & ant         &        0.111 \\
+  3 & Sentience & cat         &        0.132 \\
+  4 & Sentience & chimp       &        0.007 \\
+\hline
+\end{tabular}

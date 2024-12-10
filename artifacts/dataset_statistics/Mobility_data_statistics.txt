@@ -1,0 +1,11 @@
+\begin{tabular}{rllr}
+\hline
+    & Task     & Bin Label   &   Proportion \\
+\hline
+  0 & Mobility & rock        &        0.591 \\
+  1 & Mobility & tree        &        0.046 \\
+  2 & Mobility & mushroom    &        0.004 \\
+  3 & Mobility & animal      &        0.222 \\
+  4 & Mobility & man         &        0.137 \\
+\hline
+\end{tabular}

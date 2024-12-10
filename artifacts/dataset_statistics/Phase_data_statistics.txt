@@ -1,0 +1,10 @@
+\begin{tabular}{rllr}
+\hline
+    & Task   & Bin Label   &   Proportion \\
+\hline
+  0 & Phase  & smoke       &        0.049 \\
+  1 & Phase  & milk        &        0.088 \\
+  2 & Phase  & wood        &        0.841 \\
+  3 & Phase  & diamond     &        0.022 \\
+\hline
+\end{tabular}

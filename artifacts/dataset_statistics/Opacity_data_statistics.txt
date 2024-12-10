@@ -1,0 +1,11 @@
+\begin{tabular}{rllr}
+\hline
+    & Task    & Bin Label   &   Proportion \\
+\hline
+  0 & Opacity & glass       &        0.046 \\
+  1 & Opacity & paper       &        0.032 \\
+  2 & Opacity & cloud       &        0.056 \\
+  3 & Opacity & man         &        0.454 \\
+  4 & Opacity & wall        &        0.411 \\
+\hline
+\end{tabular}

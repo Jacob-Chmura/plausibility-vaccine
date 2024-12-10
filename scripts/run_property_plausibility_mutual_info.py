@@ -13,7 +13,7 @@ from plausibility_vaccine.util.path import get_root_dir
 pd.options.display.max_rows = 100
 
 parser = argparse.ArgumentParser(
-    description='Run analysis of datasets',
+    description='Run mutual information analysis of property and plausibility',
     formatter_class=argparse.ArgumentDefaultsHelpFormatter,
 )
 parser.add_argument(
@@ -31,7 +31,7 @@ parser.add_argument(
 parser.add_argument(
     '--artifacts-dir',
     type=str,
-    default='artifacts',
+    default='artifacts/dataset_relationships',
     help='Path to artifact directory containing plots',
 )
 parser.add_argument(
@@ -144,7 +144,9 @@ def plot_mi_df(df: pd.DataFrame, artifacts_dir_str: str) -> None:
         a.set_xlabel('Normalized Mutual Information')
         a.set_xlim(0, 1)
 
-    plt.legend(title='', loc='center right', labels=['Object', 'Subject'])
+    plt.legend(
+        title='', loc='center right', labels=['Object', 'Subject'], frameon=False
+    )
     ax = plt.gca()
     leg = ax.get_legend()
     leg.legend_handles[0].set_color(palette_object[1])

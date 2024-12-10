@@ -1,0 +1,11 @@
+\begin{tabular}{rllr}
+\hline
+    & Task        & Bin Label   &   Proportion \\
+\hline
+  0 & Temperature & ice         &        0.137 \\
+  1 & Temperature & soup        &        0.28  \\
+  2 & Temperature & fire        &        0.294 \\
+  3 & Temperature & lava        &        0.251 \\
+  4 & Temperature & sun         &        0.039 \\
+\hline
+\end{tabular}

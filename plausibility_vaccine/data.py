@@ -1,7 +1,7 @@
 import logging
 from typing import Dict, List, Optional, Tuple
 
-from datasets import DatasetDict, load_dataset
+from datasets import DatasetDict, concatenate_datasets, load_dataset
 from transformers import BatchEncoding, PreTrainedTokenizer
 
 from plausibility_vaccine.util.args import DataArguments
@@ -31,11 +31,24 @@ def preprocess_function(
 
 
 def get_data(data_args: DataArguments) -> Tuple[DatasetDict, Optional[List[str]]]:
-    data_files = {'train': data_args.train_file, 'test': data_args.test_file}
-    for key in data_files.keys():
-        logging.info(f'Loading a local file for {key}: {data_files[key]}')
+    logging.info(f'Loading training dataset with files: {data_args.train_file}')
+    train_dataset = load_dataset('csv', data_files=data_args.train_file)
+    train_dataset = concatenate_datasets(train_dataset.values())
 
-    raw_datasets: DatasetDict = load_dataset('csv', data_files=data_files)
+    logging.info(f'Loading testing dataset with files: {data_args.test_file}')
+    test_dataset = load_dataset('csv', data_files=data_args.test_file)
+    test_dataset = concatenate_datasets(test_dataset.values())
+
+    logging.info(f'Breaking test dataset into {data_args.num_test_cv} shards')
+    test_shards = {}
+    for i in range(data_args.num_test_cv):
+        test_shards[f'shard-{i}'] = test_dataset.shard(
+            num_shards=data_args.num_test_cv, index=i
+        )
+
+    raw_datasets = DatasetDict(
+        {'train': train_dataset, 'test': DatasetDict(test_shards)}
+    )
     logging.info('Loaded datasets: %s', raw_datasets)
 
     if data_args.is_regression:

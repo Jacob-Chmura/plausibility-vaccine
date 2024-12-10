@@ -23,7 +23,7 @@ def main() -> None:
     if not results_dir.is_dir():
         raise FileNotFoundError(f'Results directory: {results_dir.resolve()}')
 
-    pep_dfs, q_dfs, property_adapters_dfs, verb_adapters_dfs = [], [], [], []
+    pep_dfs, q_dfs = [], []
     for result_dir in results_dir.iterdir():
         if result_dir.is_dir():
             with open(result_dir / 'eval_results.json') as f:
@@ -35,20 +35,12 @@ def main() -> None:
                 pep_dfs.append(result_df)
             elif '20q' in result_dir.name:
                 q_dfs.append(result_df)
-            elif 'verb' in result_dir.name:
-                verb_adapters_dfs.append(result_df)
-            else:
-                property_adapters_dfs.append(result_df)
 
     pep_dfs = pd.concat(pep_dfs).sort_values('eval_accuracy')
     q_dfs = pd.concat(q_dfs).sort_values('eval_accuracy')
-    property_adapters_dfs = pd.concat(property_adapters_dfs).sort_values('task')
-    verb_adapters_dfs = pd.concat(verb_adapters_dfs).sort_values('task')
 
     print(pep_dfs)
     print(q_dfs)
-    print(property_adapters_dfs)
-    print(verb_adapters_dfs)
 
 
 if __name__ == '__main__':
