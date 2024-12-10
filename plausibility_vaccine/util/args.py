@@ -38,6 +38,10 @@ class DataArguments:
     test_file: Union[str, List[str]] = field(
         metadata={'help': 'A csv or list of csv files containing the test data.'},
     )
+    num_test_cv: int = field(
+        metadata={'help': 'Number of test splits to do for uncertainty estimates.'},
+        default=1,
+    )
 
     def __post_init__(self) -> None:
         root_dir = get_root_dir()

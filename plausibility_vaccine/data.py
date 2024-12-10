@@ -39,7 +39,16 @@ def get_data(data_args: DataArguments) -> Tuple[DatasetDict, Optional[List[str]]
     test_dataset = load_dataset('csv', data_files=data_args.test_file)
     test_dataset = concatenate_datasets(test_dataset.values())
 
-    raw_datasets = DatasetDict({'train': train_dataset, 'test': test_dataset})
+    logging.info(f'Breaking test dataset into {data_args.num_test_cv} shards')
+    test_shards = {}
+    for i in range(data_args.num_test_cv):
+        test_shards[f'shard-{i}'] = test_dataset.shard(
+            num_shards=data_args.num_test_cv, index=i
+        )
+
+    raw_datasets = DatasetDict(
+        {'train': train_dataset, 'test': DatasetDict(test_shards)}
+    )
     logging.info('Loaded datasets: %s', raw_datasets)
 
     if data_args.is_regression:

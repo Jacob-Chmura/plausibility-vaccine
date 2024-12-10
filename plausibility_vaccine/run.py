@@ -58,11 +58,12 @@ def _run_task(
     )
 
     with training_args.main_process_first(desc='dataset map pre-processing'):
-        raw_datasets = raw_datasets.map(
-            lambda batch: preprocess_function(batch, tokenizer, label_list),
-            batched=True,
-            desc='Running tokenizer on dataset',
-        )
+        for split in ['train', 'test']:
+            raw_datasets[split] = raw_datasets[split].map(
+                lambda batch: preprocess_function(batch, tokenizer, label_list),
+                batched=True,
+                desc=f'Running tokenizer on {split} dataset',
+            )
 
     # Evaluation Metrics
     if data_args.is_regression:

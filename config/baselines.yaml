@@ -23,6 +23,7 @@ FinetuningArguments:
         is_regression: false
         train_file: data/plausibility_data/pep_3k/valid.csv
         test_file: data/plausibility_data/pep_3k/test.csv
+        num_test_cv: 5
       adapter_args:
         adapter_config:
       use_adapter_for_task: false
@@ -32,6 +33,7 @@ FinetuningArguments:
         is_regression: false
         train_file: data/plausibility_data/pep_3k/valid.csv
         test_file: data/plausibility_data/pep_3k/test.csv
+        num_test_cv: 5
       adapter_args:
         adapter_config: seq_bn[reduction_factor=64]
       use_adapter_for_task: true
@@ -41,6 +43,7 @@ FinetuningArguments:
         is_regression: false
         train_file: data/plausibility_data/twentyquestions/valid.csv
         test_file: data/plausibility_data/twentyquestions/test.csv
+        num_test_cv: 5
       adapter_args:
         adapter_config:
       use_adapter_for_task: false
@@ -50,6 +53,7 @@ FinetuningArguments:
         is_regression: false
         train_file: data/plausibility_data/twentyquestions/valid.csv
         test_file: data/plausibility_data/twentyquestions/test.csv
+        num_test_cv: 5
       adapter_args:
         adapter_config: seq_bn[reduction_factor=64]
       use_adapter_for_task: true
