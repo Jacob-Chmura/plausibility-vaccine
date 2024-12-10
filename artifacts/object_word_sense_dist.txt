@@ -1,0 +1,8 @@
+\begin{tabular}{lrrrr}
+\hline
+ object          &   Sense Rank 1 &   Sense Rank 2 &   Sense Rank 3 &   Other \\
+\hline
+ pep\_3k          &           0.55 &           0.16 &           0.12 &    0.18 \\
+ twentyquestions &           0.51 &           0.22 &           0.1  &    0.16 \\
+\hline
+\end{tabular}
