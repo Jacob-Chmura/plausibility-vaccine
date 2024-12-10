@@ -34,6 +34,9 @@ main() {
     echo "Running property-plausibility mutual information analysis"
     uv run scripts/run_property_plausibility_mutual_info.py
 
+    echo "Running selectional association -plausibility correlation analysis"
+    uv run scripts/run_selectional_association_plausibility_correlation.py
+
     if [[ ${RESULTS} -eq 0 ]]; then
         exit 0
     fi

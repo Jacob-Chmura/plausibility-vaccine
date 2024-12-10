@@ -13,7 +13,7 @@ from plausibility_vaccine.util.path import get_root_dir
 pd.options.display.max_rows = 100
 
 parser = argparse.ArgumentParser(
-    description='Run analysis of datasets',
+    description='Run mutual information analysis of property and plausibility',
     formatter_class=argparse.ArgumentDefaultsHelpFormatter,
 )
 parser.add_argument(
