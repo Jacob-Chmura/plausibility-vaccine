@@ -30,7 +30,9 @@ def preprocess_function(
     return result
 
 
-def get_data(data_args: DataArguments) -> Tuple[DatasetDict, Optional[List[str]]]:
+def get_data(
+    data_args: DataArguments, num_test_cv: int
+) -> Tuple[DatasetDict, Optional[List[str]]]:
     logging.info(f'Loading training dataset with files: {data_args.train_file}')
     train_dataset = load_dataset('csv', data_files=data_args.train_file)
     train_dataset = concatenate_datasets(train_dataset.values())
@@ -39,7 +41,14 @@ def get_data(data_args: DataArguments) -> Tuple[DatasetDict, Optional[List[str]]
     test_dataset = load_dataset('csv', data_files=data_args.test_file)
     test_dataset = concatenate_datasets(test_dataset.values())
 
-    raw_datasets = DatasetDict({'train': train_dataset, 'test': test_dataset})
+    logging.info(f'Breaking test dataset into {num_test_cv} shards')
+    test_shards = {}
+    for i in range(num_test_cv):
+        test_shards[f'shard-{i}'] = test_dataset.shard(num_shards=num_test_cv, index=i)
+
+    raw_datasets = DatasetDict(
+        {'train': train_dataset, 'test': DatasetDict(test_shards)}
+    )
     logging.info('Loaded datasets: %s', raw_datasets)
 
     if data_args.is_regression:

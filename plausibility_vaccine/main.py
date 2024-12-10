@@ -24,7 +24,7 @@ def main() -> None:
     meta_args, model_args, training_args, finetuning_args = parse_args(config_file_path)
     setup_basic_logging(meta_args.log_file_path)
     seed_everything(meta_args.global_seed)
-    run(model_args, training_args, finetuning_args)
+    run(meta_args, model_args, training_args, finetuning_args)
 
 
 if __name__ == '__main__':

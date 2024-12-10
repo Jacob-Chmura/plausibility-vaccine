@@ -18,6 +18,10 @@ class MetaArguments:
         default=1337,
         metadata={'help': 'Random seed to use for reproducibiility.'},
     )
+    num_test_cv: int = field(
+        metadata={'help': 'Number of test splits to do for uncertainty estimates.'},
+        default=1,
+    )
 
     def __post_init__(self) -> None:
         if self.log_file_path is not None:
