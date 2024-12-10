@@ -32,16 +32,23 @@ class DataArguments:
     is_regression: bool = field(
         metadata={'help': 'Is the task a regression or classification problem'},
     )
-    train_file: str = field(
-        metadata={'help': 'A csv file containing the training data.'},
+    train_file: Union[str, List[str]] = field(
+        metadata={'help': 'A csv or list of csv files containing the training data.'},
     )
-    test_file: str = field(
-        metadata={'help': 'A csv file containing the test data.'},
+    test_file: Union[str, List[str]] = field(
+        metadata={'help': 'A csv or list of csv files containing the test data.'},
     )
 
     def __post_init__(self) -> None:
-        self.train_file = str(get_root_dir() / self.train_file)
-        self.test_file = str(get_root_dir() / self.test_file)
+        root_dir = get_root_dir()
+
+        def resolve_paths(files: Union[str, List[str]]) -> Union[str, List[str]]:
+            if isinstance(files, str):
+                return str(root_dir / files)
+            return [str(root_dir / file) for file in files]
+
+        self.train_file = resolve_paths(self.train_file)
+        self.test_file = resolve_paths(self.test_file)
 
 
 @dataclass
