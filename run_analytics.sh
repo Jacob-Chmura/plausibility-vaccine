@@ -41,6 +41,9 @@ main() {
         exit 0
     fi
 
+    echo "Running Adapter Pretraining analysis"
+    uv run scripts/run_pretraining_performance_analysis.py
+
     echo "Running performance analysis"
     uv run scripts/aggregate_performance_results.py
 }
