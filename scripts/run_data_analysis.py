@@ -100,6 +100,8 @@ def _read_subdirectory_dataset_csvs(datasets_dir_str: str) -> pd.DataFrame:
             train_file = dataset_dir / 'train.csv'
             if not train_file.exists():
                 train_file = dataset_dir / 'valid.csv'
+            if not train_file.exists():
+                continue
 
             with open(train_file) as f:
                 train_data = pd.read_csv(f)
