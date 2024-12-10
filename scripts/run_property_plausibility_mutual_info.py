@@ -144,7 +144,9 @@ def plot_mi_df(df: pd.DataFrame, artifacts_dir_str: str) -> None:
         a.set_xlabel('Normalized Mutual Information')
         a.set_xlim(0, 1)
 
-    plt.legend(title='', loc='center right', labels=['Object', 'Subject'])
+    plt.legend(
+        title='', loc='center right', labels=['Object', 'Subject'], frameon=False
+    )
     ax = plt.gca()
     leg = ax.get_legend()
     leg.legend_handles[0].set_color(palette_object[1])

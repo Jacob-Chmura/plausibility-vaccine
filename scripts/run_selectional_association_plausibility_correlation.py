@@ -1,7 +1,9 @@
 import argparse
 import pathlib
 
+import matplotlib.pyplot as plt
 import pandas as pd
+import seaborn as sns
 
 from plausibility_vaccine.util.path import get_root_dir
 
@@ -44,7 +46,7 @@ def main() -> None:
     plausibility_df = plausibility_df[plausibility_df.split == 'train']
 
     sa_df = get_merged_plausibility_sa_data(plausibility_df, sa_datasets_dir)
-    print(sa_df)
+    plot_correlation(sa_df, args.artifacts_dir)
 
 
 def get_merged_plausibility_sa_data(
@@ -67,6 +69,47 @@ def get_merged_plausibility_sa_data(
             dfs.append(sa_df)
     df = pd.concat(dfs)
     return df
+
+
+def plot_correlation(df: pd.DataFrame, artifacts_dir_str: str) -> pd.DataFrame:
+    artifacts_dir = pathlib.Path(artifacts_dir_str)
+    artifacts_dir.mkdir(parents=True, exist_ok=True)
+
+    for entity, df_g in df.groupby('entity_type'):
+        color_map = 'Greens_r' if entity == 'subject' else 'Blues_r'
+        c = sns.color_palette(color_map, 13)[1]
+        a = sns.regplot(
+            data=df_g,
+            x='association',
+            y='plausibility',
+            label=entity,
+            scatter_kws={'s': 2, 'alpha': 0.3},
+            color=c,
+            line_kws=dict(color=c),
+            lowess=True,
+        )
+        a.grid(alpha=0.3)
+        a.set_ylabel('Plausibility')
+        a.set_xlabel('Verb Association')
+        a.spines[['right', 'top']].set_visible(False)
+        a.plot([0], [0], c=c, label=entity[0].upper() + entity[1:])
+        a.legend()
+
+    ax = plt.gca()
+    h, l = ax.get_legend_handles_labels()
+    ax.legend(
+        handles=[h[1], h[3]],
+        labels=[l[1], l[3]],
+        frameon=False,
+        loc=(0.3, 0.1),
+        ncol=2,
+    )
+    plt.savefig(
+        artifacts_dir / 'selectional_association_correlation.png',
+        dpi=200,
+        bbox_inches='tight',
+    )
+    plt.close()
 
 
 def _read_subdirectory_dataset_csvs(datasets_dir_str: str) -> pd.DataFrame:
