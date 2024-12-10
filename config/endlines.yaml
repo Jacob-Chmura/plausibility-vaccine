@@ -40,6 +40,27 @@ FinetuningArguments:
         - texture_pred
         - weight_pred
       use_adapter_for_task: false
+    pep_plausibility_finetune_mlp_use_property_adapters:
+      data_args:
+        task_name: pep_plausibility_funetune_mlp_use_adapters
+        is_regression: false
+        train_file: data/plausibility_data/pep_3k/valid.csv
+        test_file: data/plausibility_data/pep_3k/test.csv
+        num_test_cv: 5
+      adapter_args:
+        adapter_config:
+      fusion:
+        - mobility_pred
+        - opacity_pred
+        - phase_pred
+        - rigidity_pred
+        - sentience_pred
+        - shape_pred
+        - size_pred
+        - temperature_pred
+        - texture_pred
+        - weight_pred
+      use_adapter_for_task: false
     pep_plausibility_finetune_adapter_use_adapters:
       data_args:
         task_name: pep_plausibility_finetune_adapter_use_adapters
@@ -52,6 +73,27 @@ FinetuningArguments:
       fusion:
         - verb_subject_score
         - verb_object_score
+        - mobility_pred
+        - opacity_pred
+        - phase_pred
+        - rigidity_pred
+        - sentience_pred
+        - shape_pred
+        - size_pred
+        - temperature_pred
+        - texture_pred
+        - weight_pred
+      use_adapter_for_task: true
+    pep_plausibility_finetune_adapter_use_property_adapters:
+      data_args:
+        task_name: pep_plausibility_finetune_adapter_use_adapters
+        is_regression: false
+        train_file: data/plausibility_data/pep_3k/valid.csv
+        test_file: data/plausibility_data/pep_3k/test.csv
+        num_test_cv: 5
+      adapter_args:
+        adapter_config: seq_bn[reduction_factor=64]
+      fusion:
         - mobility_pred
         - opacity_pred
         - phase_pred
@@ -86,6 +128,27 @@ FinetuningArguments:
         - texture_pred
         - weight_pred
       use_adapter_for_task: false
+    20q_plausibility_finetune_mlp_use_property_adapters:
+      data_args:
+        task_name: 20q_plausibility_finetune_mlp_use_adapters
+        is_regression: false
+        train_file: data/plausibility_data/twentyquestions/valid.csv
+        test_file: data/plausibility_data/twentyquestions/test.csv
+        num_test_cv: 5
+      adapter_args:
+        adapter_config:
+      fusion:
+        - mobility_pred
+        - opacity_pred
+        - phase_pred
+        - rigidity_pred
+        - sentience_pred
+        - shape_pred
+        - size_pred
+        - temperature_pred
+        - texture_pred
+        - weight_pred
+      use_adapter_for_task: false
     20q_plausibility_finetune_adapter_use_adapters:
       data_args:
         task_name: 20q_plausibility_finetune_adapter_use_adapters
@@ -98,6 +161,27 @@ FinetuningArguments:
       fusion:
         - verb_subject_score
         - verb_object_score
+        - mobility_pred
+        - opacity_pred
+        - phase_pred
+        - rigidity_pred
+        - sentience_pred
+        - shape_pred
+        - size_pred
+        - temperature_pred
+        - texture_pred
+        - weight_pred
+      use_adapter_for_task: true
+    20q_plausibility_finetune_adapter_use_property_adapters:
+      data_args:
+        task_name: 20q_plausibility_finetune_adapter_use_adapters
+        is_regression: false
+        train_file: data/plausibility_data/twentyquestions/valid.csv
+        test_file: data/plausibility_data/twentyquestions/test.csv
+        num_test_cv: 5
+      adapter_args:
+        adapter_config: seq_bn[reduction_factor=64]
+      fusion:
         - mobility_pred
         - opacity_pred
         - phase_pred
