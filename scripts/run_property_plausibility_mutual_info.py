@@ -31,7 +31,7 @@ parser.add_argument(
 parser.add_argument(
     '--artifacts-dir',
     type=str,
-    default='artifacts',
+    default='artifacts/dataset_relationships',
     help='Path to artifact directory containing plots',
 )
 parser.add_argument(
