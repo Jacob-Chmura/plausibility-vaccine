@@ -18,13 +18,11 @@ from plausibility_vaccine.fine_tune import load_pretrained_model
 from plausibility_vaccine.util.args import (
     FinetuningArgument,
     FinetuningArguments,
-    MetaArguments,
     ModelArguments,
 )
 
 
 def run(
-    meta_args: MetaArguments,
     model_args: ModelArguments,
     training_args: TrainingArguments,
     finetuning_args: FinetuningArguments,
@@ -37,22 +35,21 @@ def run(
 
     for task_name, task_args in finetuning_args.pretraining_tasks.items():
         logging.info('Running %s', task_name)
-        _run_task(meta_args, model_args, training_args, task_args)
+        _run_task(model_args, training_args, task_args)
 
     for task_name, task_args in finetuning_args.downstream_tasks.items():
         logging.info('Running %s', task_name)
-        _run_task(meta_args, model_args, training_args, task_args)
+        _run_task(model_args, training_args, task_args)
 
 
 def _run_task(
-    meta_args: MetaArguments,
     model_args: ModelArguments,
     training_args: TrainingArguments,
     task_args: FinetuningArgument,
 ) -> None:
     logging.info('Setting up pre-training for task: %s', task_args.data_args.task_name)
     data_args, adapter_args = task_args.data_args, task_args.adapter_args
-    raw_datasets, label_list = get_data(data_args, meta_args.num_test_cv)
+    raw_datasets, label_list = get_data(data_args)
 
     model, tokenizer = load_pretrained_model(
         model_args,

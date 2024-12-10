@@ -2,7 +2,6 @@
 MetaArguments:
   global_seed: 1337
   log_file_path: plausibility_vaccine.log
-  num_test_cv: 5
 ModelArguments:
   cache_dir: .cache
   pretrained_model_name: albert-base-v2
@@ -23,6 +22,7 @@ FinetuningArguments:
         is_regression: true
         train_file: data/verb_understanding_data/selectional_association_subject/train.csv
         test_file: data/verb_understanding_data/selectional_association_subject/test.csv
+        num_test_cv: 5
       adapter_args:
         adapter_config: seq_bn[reduction_factor=64]
     verb_object_score:
@@ -31,6 +31,7 @@ FinetuningArguments:
         is_regression: true
         train_file: data/verb_understanding_data/selectional_association_object/train.csv
         test_file: data/verb_understanding_data/selectional_association_object/test.csv
+        num_test_cv: 5
       adapter_args:
         adapter_config: seq_bn[reduction_factor=64]
     mobility_pred:
@@ -39,6 +40,7 @@ FinetuningArguments:
         is_regression: false
         train_file: data/property_data/Mobility/train.csv
         test_file: data/property_data/Mobility/test.csv
+        num_test_cv: 5
       adapter_args:
         adapter_config: seq_bn[reduction_factor=64]
     opacity_pred:
@@ -47,6 +49,7 @@ FinetuningArguments:
         is_regression: false
         train_file: data/property_data/Opacity/train.csv
         test_file: data/property_data/Opacity/test.csv
+        num_test_cv: 5
       adapter_args:
         adapter_config: seq_bn[reduction_factor=64]
     phase_pred:
@@ -55,6 +58,7 @@ FinetuningArguments:
         is_regression: false
         train_file: data/property_data/Phase/train.csv
         test_file: data/property_data/Phase/test.csv
+        num_test_cv: 5
       adapter_args:
         adapter_config: seq_bn[reduction_factor=64]
     rigidity_pred:
@@ -63,6 +67,7 @@ FinetuningArguments:
         is_regression: false
         train_file: data/property_data/Rigidity/train.csv
         test_file: data/property_data/Rigidity/test.csv
+        num_test_cv: 5
       adapter_args:
         adapter_config: seq_bn[reduction_factor=64]
     sentience_pred:
@@ -71,6 +76,7 @@ FinetuningArguments:
         is_regression: false
         train_file: data/property_data/Sentience/train.csv
         test_file: data/property_data/Sentience/test.csv
+        num_test_cv: 5
       adapter_args:
         adapter_config: seq_bn[reduction_factor=64]
     shape_pred:
@@ -79,6 +85,7 @@ FinetuningArguments:
         is_regression: false
         train_file: data/property_data/Shape/train.csv
         test_file: data/property_data/Shape/test.csv
+        num_test_cv: 5
       adapter_args:
         adapter_config: seq_bn[reduction_factor=64]
     size_pred:
@@ -87,6 +94,7 @@ FinetuningArguments:
         is_regression: false
         train_file: data/property_data/Size/train.csv
         test_file: data/property_data/Size/test.csv
+        num_test_cv: 5
       adapter_args:
         adapter_config: seq_bn[reduction_factor=64]
     temperature_pred:
@@ -95,6 +103,7 @@ FinetuningArguments:
         is_regression: false
         train_file: data/property_data/Temperature/train.csv
         test_file: data/property_data/Temperature/test.csv
+        num_test_cv: 5
       adapter_args:
         adapter_config: seq_bn[reduction_factor=64]
     texture_pred:
@@ -103,6 +112,7 @@ FinetuningArguments:
         is_regression: false
         train_file: data/property_data/Texture/train.csv
         test_file: data/property_data/Texture/test.csv
+        num_test_cv: 5
       adapter_args:
         adapter_config: seq_bn[reduction_factor=64]
     weight_pred:
@@ -111,6 +121,7 @@ FinetuningArguments:
         is_regression: false
         train_file: data/property_data/Weight/train.csv
         test_file: data/property_data/Weight/test.csv
+        num_test_cv: 5
       adapter_args:
         adapter_config: seq_bn[reduction_factor=64]
   downstream_tasks: {}
