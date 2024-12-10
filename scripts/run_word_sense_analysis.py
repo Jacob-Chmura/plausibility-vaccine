@@ -23,7 +23,7 @@ parser.add_argument(
 parser.add_argument(
     '--artifacts-dir',
     type=str,
-    default='artifacts',
+    default='artifacts/word_sense_statistics',
     help='Path to artifact directory containing plots',
 )
 
