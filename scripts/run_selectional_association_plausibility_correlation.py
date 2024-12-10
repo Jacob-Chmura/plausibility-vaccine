@@ -2,8 +2,10 @@ import argparse
 import pathlib
 
 import matplotlib.pyplot as plt
+import numpy as np
 import pandas as pd
 import seaborn as sns
+from scipy.ndimage import gaussian_filter
 
 from plausibility_vaccine.util.path import get_root_dir
 
@@ -45,8 +47,13 @@ def main() -> None:
     plausibility_df = _read_subdirectory_dataset_csvs(args.plausibility_datasets_dir)
     plausibility_df = plausibility_df[plausibility_df.split == 'train']
 
-    sa_df = get_merged_plausibility_sa_data(plausibility_df, sa_datasets_dir)
-    plot_correlation(sa_df, args.artifacts_dir)
+    get_merged_plausibility_sa_data(plausibility_df, sa_datasets_dir)
+    # plot_correlation(sa_df, args.artifacts_dir)
+
+    joint_sa_df = get_joint_merged_plausibility_sa_data(
+        plausibility_df, sa_datasets_dir
+    )
+    plot_joint_correlation(joint_sa_df, args.artifacts_dir)
 
 
 def get_merged_plausibility_sa_data(
@@ -69,6 +76,77 @@ def get_merged_plausibility_sa_data(
             dfs.append(sa_df)
     df = pd.concat(dfs)
     return df
+
+
+def get_joint_merged_plausibility_sa_data(
+    plausibility_df: pd.DataFrame, sa_datasets_dir: pathlib.Path
+) -> pd.DataFrame:
+    dfs = []
+    for task, plausibility_task in plausibility_df.groupby('task'):
+        data_dir = sa_datasets_dir / task
+        sa_df = _read_subdirectory_dataset_csvs(data_dir)
+
+        plausibility_task['sv_association'] = plausibility_task.apply(
+            lambda x: sa_df[
+                (sa_df['subject'] == x['subject']) & (sa_df['verb'] == x['verb'])
+            ]['label'].values[0],
+            axis=1,
+        )
+        plausibility_task['vo_association'] = plausibility_task.apply(
+            lambda x: sa_df[
+                (sa_df['object'] == x['object']) & (sa_df['verb'] == x['verb'])
+            ]['label'].values[0],
+            axis=1,
+        )
+        plausibility_task = plausibility_task.rename({'label': 'plausibility'}, axis=1)
+        plausibility_task = plausibility_task[
+            ['task', 'sv_association', 'vo_association', 'plausibility']
+        ]
+        dfs.append(plausibility_task)
+    df = pd.concat(dfs)
+    return df
+
+
+def plot_joint_correlation(df: pd.DataFrame, artifacts_dir_str: str) -> pd.DataFrame:
+    artifacts_dir = pathlib.Path(artifacts_dir_str)
+    artifacts_dir.mkdir(parents=True, exist_ok=True)
+
+    df['sv_group'] = (100 * df['sv_association'].round(1)).astype(int)
+    df['vo_group'] = (100 * df['vo_association'].round(1)).astype(int)
+    df = df[(df['sv_group'] >= 0) & (df['vo_group'] >= 0)]
+    df2 = df.groupby(['sv_group', 'vo_group'])['plausibility'].mean()
+    df2 = df2.reset_index()
+    df2.groupby('sv_group')
+    corr = np.zeros((10, 10))
+    for i in range(10):
+        for j in range(10):
+            res = df2[(df2.sv_group == 10 * i) & (df2.vo_group == 10 * j)][
+                'plausibility'
+            ].values
+            corr[i][j] = res[0] if len(res) else 0.5
+
+    corr = gaussian_filter(corr, sigma=1.7)
+    a = sns.heatmap(
+        corr,
+        cmap='coolwarm_r',
+        vmin=0.43,
+        vmax=0.57,
+        cbar_kws={'label': 'Plausibility Probability'},
+    )
+
+    a.set_xlabel('Subject-Verb Association')
+    a.set_xticks([0, 5, 10])
+    a.set_xticklabels([0, 0.5, 1])
+    a.set_ylabel('Verb-Object Association')
+    a.set_yticks([0, 5, 10])
+    a.set_yticklabels([0, 0.5, 1])
+
+    plt.savefig(
+        artifacts_dir / 'joint_selectional_association_correlation.png',
+        dpi=200,
+        bbox_inches='tight',
+    )
+    plt.close()
 
 
 def plot_correlation(df: pd.DataFrame, artifacts_dir_str: str) -> pd.DataFrame:
