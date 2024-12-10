@@ -39,11 +39,11 @@ def get_data(data_args: DataArguments) -> Tuple[DatasetDict, Optional[List[str]]
     test_dataset = load_dataset('csv', data_files=data_args.test_file)
     test_dataset = concatenate_datasets(test_dataset.values())
 
-    logging.info(f'Breaking test dataset into {data_args.num_test_cv} shards')
+    logging.info(f'Breaking test dataset into {data_args.num_test_shards} shards')
     test_shards = {}
-    for i in range(data_args.num_test_cv):
+    for i in range(data_args.num_test_shards):
         test_shards[f'shard-{i}'] = test_dataset.shard(
-            num_shards=data_args.num_test_cv, index=i
+            num_shards=data_args.num_test_shards, index=i
         )
 
     raw_datasets = DatasetDict(

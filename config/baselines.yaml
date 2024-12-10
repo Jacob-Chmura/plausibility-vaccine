@@ -23,7 +23,7 @@ FinetuningArguments:
         is_regression: false
         train_file: data/plausibility_data/pep_3k/valid.csv
         test_file: data/plausibility_data/pep_3k/test.csv
-        num_test_cv: 5
+        num_test_shards: 5
       adapter_args:
         adapter_config:
       use_adapter_for_task: false
@@ -33,7 +33,7 @@ FinetuningArguments:
         is_regression: false
         train_file: data/plausibility_data/pep_3k/valid.csv
         test_file: data/plausibility_data/pep_3k/test.csv
-        num_test_cv: 5
+        num_test_shards: 5
       adapter_args:
         adapter_config: seq_bn[reduction_factor=64]
       use_adapter_for_task: true
@@ -43,7 +43,7 @@ FinetuningArguments:
         is_regression: false
         train_file: data/plausibility_data/twentyquestions/valid.csv
         test_file: data/plausibility_data/twentyquestions/test.csv
-        num_test_cv: 5
+        num_test_shards: 5
       adapter_args:
         adapter_config:
       use_adapter_for_task: false
@@ -53,7 +53,55 @@ FinetuningArguments:
         is_regression: false
         train_file: data/plausibility_data/twentyquestions/valid.csv
         test_file: data/plausibility_data/twentyquestions/test.csv
-        num_test_cv: 5
+        num_test_shards: 5
+      adapter_args:
+        adapter_config: seq_bn[reduction_factor=64]
+      use_adapter_for_task: true
+    pep_plausibility_combined_finetune_mlp_base:
+      data_args:
+        task_name: pep_plausibility_combined_finetune_mlp_base
+        is_regression: false
+        train_file:
+          - data/plausibility_data/pep_3k/valid.csv
+          - data/plausibility_data/twentyquestions/valid.csv
+        test_file: data/plausibility_data/pep_3k/test.csv
+        num_test_shards: 5
+      adapter_args:
+        adapter_config:
+      use_adapter_for_task: false
+    pep_plausibility_combined_finetune_adapter_base:
+      data_args:
+        task_name: pep_plausibility_combined_finetune_adapter_base
+        is_regression: false
+        train_file:
+          - data/plausibility_data/pep_3k/valid.csv
+          - data/plausibility_data/twentyquestions/valid.csv
+        test_file: data/plausibility_data/pep_3k/test.csv
+        num_test_shards: 5
+      adapter_args:
+        adapter_config: seq_bn[reduction_factor=64]
+      use_adapter_for_task: true
+    20q_plausibility_combined_finetune_mlp_base:
+      data_args:
+        task_name: 20q_plausibility_combined_finetune_mlp_base
+        is_regression: false
+        train_file:
+          - data/plausibility_data/pep_3k/valid.csv
+          - data/plausibility_data/twentyquestions/valid.csv
+        test_file: data/plausibility_data/twentyquestions/test.csv
+        num_test_shards: 5
+      adapter_args:
+        adapter_config:
+      use_adapter_for_task: false
+    20q_plausibility_combined_finetune_adapter_base:
+      data_args:
+        task_name: 20q_plausibility_combined_finetune_adapter_base
+        is_regression: false
+        train_file:
+          - data/plausibility_data/pep_3k/valid.csv
+          - data/plausibility_data/twentyquestions/valid.csv
+        test_file: data/plausibility_data/twentyquestions/test.csv
+        num_test_shards: 5
       adapter_args:
         adapter_config: seq_bn[reduction_factor=64]
       use_adapter_for_task: true

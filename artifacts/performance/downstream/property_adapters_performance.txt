@@ -1,0 +1,17 @@
+\begin{tabular}{rlllllll}
+\hline
+    & Task   & Adapter Fusion           & FineTune Plausibility   & Accuracy     & F1           & Precision    & Recall       \\
+\hline
+  0 & 20q    & No Adapters              & Adapter                 & 0.66 ± 0.027 & 0.66 ± 0.027 & 0.66 ± 0.027 & 0.66 ± 0.027 \\
+  1 & 20q    & No Adapters              & MLP                     & 0.59 ± 0.023 & 0.59 ± 0.023 & 0.59 ± 0.023 & 0.59 ± 0.023 \\
+  2 & 20q    & Property + Verb Adapters & Adapter                 & 0.68 ± 0.014 & 0.68 ± 0.014 & 0.68 ± 0.014 & 0.68 ± 0.014 \\
+  3 & 20q    & Property + Verb Adapters & MLP                     & 0.67 ± 0.018 & 0.67 ± 0.018 & 0.67 ± 0.018 & 0.67 ± 0.018 \\
+  4 & 20q    & Property Adapters        & Adapter                 & 0.68 ± 0.027 & 0.68 ± 0.027 & 0.68 ± 0.027 & 0.68 ± 0.027 \\
+  5 & 20q    & Property Adapters        & MLP                     & 0.67 ± 0.021 & 0.67 ± 0.021 & 0.67 ± 0.021 & 0.67 ± 0.021 \\
+  6 & pep    & No Adapters              & Adapter                 & 0.55 ± 0.018 & 0.55 ± 0.018 & 0.55 ± 0.018 & 0.55 ± 0.018 \\
+  7 & pep    & No Adapters              & MLP                     & 0.55 ± 0.029 & 0.55 ± 0.029 & 0.55 ± 0.029 & 0.55 ± 0.029 \\
+  8 & pep    & Property + Verb Adapters & Adapter                 & 0.56 ± 0.021 & 0.56 ± 0.021 & 0.56 ± 0.021 & 0.56 ± 0.021 \\
+  9 & pep    & Property + Verb Adapters & MLP                     & 0.56 ± 0.024 & 0.56 ± 0.024 & 0.56 ± 0.024 & 0.56 ± 0.024 \\
+ 10 & pep    & Property Adapters        & MLP                     & 0.58 ± 0.025 & 0.58 ± 0.025 & 0.58 ± 0.025 & 0.58 ± 0.025 \\
+\hline
+\end{tabular}
