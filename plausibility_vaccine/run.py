@@ -98,6 +98,7 @@ def _run_task(
         label_list,
         task_args.fusion,
         task_args.use_adapter_for_task,
+        training_args.output_dir,
     )
 
     # Initialize our Trainer
@@ -121,7 +122,7 @@ def _run_task(
 
     # Save and deactivate the trained adapters to restore the base model
     if task_args.use_adapter_for_task:
-        save_delete_adapter(model, data_args.task_name)
+        save_delete_adapter(model, data_args.task_name, training_args.output_dir)
 
 
 def _run_trainer(trainer: Union[AdapterTrainer, Trainer]) -> None:
