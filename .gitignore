@@ -163,6 +163,3 @@ cython_debug/
 
 # Ignore results directory
 results
-
-# Ignore model weights directory
-weights

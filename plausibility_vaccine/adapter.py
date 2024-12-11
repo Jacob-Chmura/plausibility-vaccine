@@ -94,6 +94,6 @@ def _setup_adapter_fusion(
 
 
 def _get_adapter_weight_path(output_dir: str, adapter_name: str) -> pathlib.Path:
-    adapter_weight_path = pathlib.Path(output_dir) / adapter_name
+    adapter_weight_path = pathlib.Path(output_dir) / adapter_name / adapter_name
     adapter_weight_path.mkdir(parents=True, exist_ok=True)
     return adapter_weight_path

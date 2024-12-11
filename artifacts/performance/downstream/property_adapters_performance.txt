@@ -2,16 +2,16 @@
 \hline
     & Task   & Adapter Fusion           & FineTune Plausibility   & Accuracy     & F1           & Precision    & Recall       \\
 \hline
-  0 & 20q    & No Adapters              & Adapter                 & 0.66 ± 0.027 & 0.66 ± 0.027 & 0.66 ± 0.027 & 0.66 ± 0.027 \\
-  1 & 20q    & No Adapters              & MLP                     & 0.59 ± 0.023 & 0.59 ± 0.023 & 0.59 ± 0.023 & 0.59 ± 0.023 \\
-  2 & 20q    & Property + Verb Adapters & Adapter                 & 0.68 ± 0.014 & 0.68 ± 0.014 & 0.68 ± 0.014 & 0.68 ± 0.014 \\
-  3 & 20q    & Property + Verb Adapters & MLP                     & 0.67 ± 0.018 & 0.67 ± 0.018 & 0.67 ± 0.018 & 0.67 ± 0.018 \\
-  4 & 20q    & Property Adapters        & Adapter                 & 0.68 ± 0.027 & 0.68 ± 0.027 & 0.68 ± 0.027 & 0.68 ± 0.027 \\
-  5 & 20q    & Property Adapters        & MLP                     & 0.67 ± 0.021 & 0.67 ± 0.021 & 0.67 ± 0.021 & 0.67 ± 0.021 \\
-  6 & pep    & No Adapters              & Adapter                 & 0.55 ± 0.018 & 0.55 ± 0.018 & 0.55 ± 0.018 & 0.55 ± 0.018 \\
-  7 & pep    & No Adapters              & MLP                     & 0.55 ± 0.029 & 0.55 ± 0.029 & 0.55 ± 0.029 & 0.55 ± 0.029 \\
-  8 & pep    & Property + Verb Adapters & Adapter                 & 0.56 ± 0.021 & 0.56 ± 0.021 & 0.56 ± 0.021 & 0.56 ± 0.021 \\
-  9 & pep    & Property + Verb Adapters & MLP                     & 0.56 ± 0.024 & 0.56 ± 0.024 & 0.56 ± 0.024 & 0.56 ± 0.024 \\
- 10 & pep    & Property Adapters        & MLP                     & 0.58 ± 0.025 & 0.58 ± 0.025 & 0.58 ± 0.025 & 0.58 ± 0.025 \\
+  0 & 20q    & No Adapters              & Adapter                 & 0.66 ± 0.026 & 0.66 ± 0.026 & 0.66 ± 0.025 & 0.66 ± 0.026 \\
+  1 & 20q    & No Adapters              & MLP                     & 0.56 ± 0.022 & 0.55 ± 0.022 & 0.56 ± 0.022 & 0.56 ± 0.021 \\
+  2 & 20q    & Property + Verb Adapters & Adapter                 & 0.67 ± 0.028 & 0.67 ± 0.028 & 0.67 ± 0.028 & 0.67 ± 0.028 \\
+  3 & 20q    & Property + Verb Adapters & MLP                     & 0.64 ± 0.019 & 0.64 ± 0.019 & 0.64 ± 0.019 & 0.64 ± 0.019 \\
+  4 & 20q    & Property Adapters        & Adapter                 & 0.66 ± 0.023 & 0.66 ± 0.022 & 0.66 ± 0.022 & 0.67 ± 0.022 \\
+  5 & 20q    & Property Adapters        & MLP                     & 0.65 ± 0.024 & 0.65 ± 0.024 & 0.65 ± 0.022 & 0.65 ± 0.023 \\
+  6 & pep    & No Adapters              & Adapter                 & 0.57 ± 0.02  & 0.57 ± 0.019 & 0.57 ± 0.019 & 0.57 ± 0.019 \\
+  7 & pep    & No Adapters              & MLP                     & 0.54 ± 0.036 & 0.54 ± 0.035 & 0.54 ± 0.035 & 0.54 ± 0.035 \\
+  8 & pep    & Property + Verb Adapters & Adapter                 & 0.57 ± 0.015 & 0.57 ± 0.016 & 0.58 ± 0.015 & 0.58 ± 0.015 \\
+  9 & pep    & Property + Verb Adapters & MLP                     & 0.56 ± 0.033 & 0.56 ± 0.032 & 0.56 ± 0.034 & 0.56 ± 0.033 \\
+ 10 & pep    & Property Adapters        & MLP                     & 0.56 ± 0.024 & 0.56 ± 0.025 & 0.56 ± 0.025 & 0.56 ± 0.025 \\
 \hline
 \end{tabular}

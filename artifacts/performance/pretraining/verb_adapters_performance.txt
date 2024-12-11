@@ -1,8 +1,8 @@
 \begin{tabular}{ll}
 \hline
- Task               & Mse            \\
+ Task               & Mse           \\
 \hline
- verb\_object\_score  & 0.042 ± 0.0046 \\
- verb\_subject\_score & 0.076 ± 0.0053 \\
+ verb\_object\_score  & 0.05 ± 0.0091 \\
+ verb\_subject\_score & 0.077 ± 0.007 \\
 \hline
 \end{tabular}
