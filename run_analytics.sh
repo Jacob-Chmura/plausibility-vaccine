@@ -45,7 +45,7 @@ main() {
     uv run scripts/run_pretraining_performance_analysis.py
 
     echo "Running Downstream Performance analysis"
-    uv run scripts/run_downstream_performance_anslysis.py
+    uv run scripts/run_downstream_performance_analysis.py
 }
 
 parse_args() {
