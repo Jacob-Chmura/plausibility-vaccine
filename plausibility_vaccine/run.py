@@ -12,7 +12,7 @@ from transformers import (
     TrainingArguments,
 )
 
-from plausibility_vaccine.adapter import save_delete_adapter, setup_adapters
+from plausibility_vaccine.adapter import setup_adapters
 from plausibility_vaccine.data import get_data, preprocess_function
 from plausibility_vaccine.fine_tune import load_pretrained_model
 from plausibility_vaccine.util.args import (
@@ -120,9 +120,10 @@ def _run_task(
     )
     _run_trainer(trainer)
 
-    # Save and deactivate the trained adapters to restore the base model
+    # Deactivate the trained adapters to restore the base model
     if task_args.use_adapter_for_task:
-        save_delete_adapter(model, data_args.task_name, training_args.output_dir)
+        logging.info(f'Deleting adapter {data_args.task_name} from base model')
+        model.delete_adapter(data_args.task_name)
 
 
 def _run_trainer(trainer: Union[AdapterTrainer, Trainer]) -> None:

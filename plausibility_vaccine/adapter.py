@@ -10,17 +10,6 @@ from transformers import PreTrainedModel
 from plausibility_vaccine.util.args import AdapterArguments
 
 
-def save_delete_adapter(
-    model: PreTrainedModel, adapter_name: str, output_dir: str
-) -> None:
-    save_path = _get_adapter_weight_path(output_dir, adapter_name)
-    logging.info(f'Saving adapter {adapter_name} to {save_path}')
-    model.save_adapter(save_path, adapter_name)
-
-    logging.info(f'Deleting adapter {adapter_name} from base model')
-    model.delete_adapter(adapter_name)
-
-
 def setup_adapters(
     model: PreTrainedModel,
     adapter_args: AdapterArguments,
@@ -77,7 +66,6 @@ def _setup_adapter_fusion(
     output_dir: str,
 ) -> PreTrainedModel:
     for task in fusion_list:
-        # TODO: Need to push config through
         adapter_weight_path = _get_adapter_weight_path(output_dir, task)
         logging.info('Loading pre-trained adapter: %s', adapter_weight_path)
         model.load_adapter(str(adapter_weight_path), with_head=False)
