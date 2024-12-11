@@ -86,7 +86,7 @@ def _run_task(
             metric_obj = evaluate.load(metric)
             kwargs = {'predictions': preds, 'references': labels}
             if metric in ['precision', 'recall', 'f1']:
-                kwargs['average'] = 'micro'
+                kwargs['average'] = 'macro'
             result.update(metric_obj.compute(**kwargs))
         return result
 
