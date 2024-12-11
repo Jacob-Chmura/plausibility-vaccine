@@ -57,12 +57,12 @@ def main() -> None:
 
 def generate_perf_tables(perf_df: pd.DataFrame) -> Dict[str, str]:
     metrics = ['accuracy', 'f1', 'precision', 'recall']
-    keep_cols = ['task']
+    keep_cols = ['ablation_name', 'task']
     for c in perf_df.columns:
         if any([metric in c for metric in metrics]):
             keep_cols.append(c)
 
-    perf_df = pd.melt(perf_df[keep_cols], 'task')
+    perf_df = pd.melt(perf_df[keep_cols], ['ablation_name', 'task'])
     perf_df['metric'] = perf_df['variable'].apply(lambda x: x.split('_')[-1])
     perf_df['train_data'] = perf_df['variable'].apply(
         lambda x: 'Combined' if 'combined' in x else 'Individual'
@@ -84,6 +84,7 @@ def generate_perf_tables(perf_df: pd.DataFrame) -> Dict[str, str]:
     perf_df = perf_df.drop('variable', axis=1)
 
     group_cols = [
+        'ablation_name',
         'task',
         'adapter_fusion',
         'train_data',
@@ -101,7 +102,7 @@ def generate_perf_tables(perf_df: pd.DataFrame) -> Dict[str, str]:
     data = data.drop(['mu', 'std'], axis=1)
     table_data = data.pivot_table(
         values=['value'],
-        index=['task', 'adapter_fusion', 'finetune_plausibility'],
+        index=['ablation_name', 'task', 'adapter_fusion', 'finetune_plausibility'],
         columns='metric',
         aggfunc='first',
     ).reset_index()
