@@ -10,15 +10,6 @@ from transformers import PreTrainedModel
 from plausibility_vaccine.util.args import AdapterArguments
 
 
-def save_delete_adapter(model: PreTrainedModel, adapter_name: str) -> None:
-    save_path = _get_adapter_weight_path(adapter_name)
-    logging.info(f'Saving adapter {adapter_name} to {save_path}')
-    model.save_adapter(save_path, adapter_name)
-
-    logging.info(f'Deleting adapter {adapter_name} from base model')
-    model.delete_adapter(adapter_name)
-
-
 def setup_adapters(
     model: PreTrainedModel,
     adapter_args: AdapterArguments,
@@ -26,6 +17,7 @@ def setup_adapters(
     label_list: Optional[List[str]],
     fusion_list: Optional[List[str]],
     use_adapter_for_task: bool,
+    output_dir: str,
 ) -> PreTrainedModel:
     if not use_adapter_for_task and fusion_list is not None:
         logging.info(
@@ -36,7 +28,7 @@ def setup_adapters(
 
     if fusion_list is not None:
         model = _setup_adapter_fusion(
-            model, task_name, label_list, fusion_list, use_adapter_for_task
+            model, task_name, label_list, fusion_list, use_adapter_for_task, output_dir
         )
     elif use_adapter_for_task:
         model = _setup_adapter_pretraining(model, adapter_args, task_name, label_list)
@@ -71,10 +63,10 @@ def _setup_adapter_fusion(
     label_list: Optional[List[str]],
     fusion_list: List[str],
     use_adapter_for_task: bool,
+    output_dir: str,
 ) -> PreTrainedModel:
     for task in fusion_list:
-        # TODO: Need to push config through
-        adapter_weight_path = _get_adapter_weight_path(task)
+        adapter_weight_path = _get_adapter_weight_path(output_dir, task)
         logging.info('Loading pre-trained adapter: %s', adapter_weight_path)
         model.load_adapter(str(adapter_weight_path), with_head=False)
 
@@ -101,7 +93,7 @@ def _setup_adapter_fusion(
     return model
 
 
-def _get_adapter_weight_path(adapter_name: str) -> pathlib.Path:
-    adapter_weight_path = pathlib.Path('weights') / adapter_name
+def _get_adapter_weight_path(output_dir: str, adapter_name: str) -> pathlib.Path:
+    adapter_weight_path = pathlib.Path(output_dir) / adapter_name
     adapter_weight_path.mkdir(parents=True, exist_ok=True)
     return adapter_weight_path

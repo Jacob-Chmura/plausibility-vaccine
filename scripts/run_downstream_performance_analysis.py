@@ -15,7 +15,7 @@ parser = argparse.ArgumentParser(
 parser.add_argument(
     '--results-dir',
     type=str,
-    default='results',
+    default='results/albert_reduce_factor_64',
     help='Path to root directory containing results',
 )
 parser.add_argument(

@@ -4,12 +4,12 @@ MetaArguments:
   log_file_path: plausibility_vaccine.log
 ModelArguments:
   cache_dir: .cache
-  pretrained_model_name: albert-base-v2
+  pretrained_model_name: bert-base-uncased
 TrainingArguments:
   learning_rate: 0.0001
   num_train_epochs: 10.0
   optim: adamw_torch
-  output_dir: results
+  output_dir: results/albert_reduce_factor_16
   overwrite_output_dir: false
   per_device_eval_batch_size: 8
   per_device_train_batch_size: 8
@@ -24,7 +24,7 @@ FinetuningArguments:
         test_file: data/verb_understanding_data/selectional_association_subject/test.csv
         num_test_shards: 5
       adapter_args:
-        adapter_config: seq_bn[reduction_factor=64]
+        adapter_config: seq_bn[reduction_factor=16]
     verb_object_score:
       data_args:
         task_name: verb_object_score
@@ -33,7 +33,7 @@ FinetuningArguments:
         test_file: data/verb_understanding_data/selectional_association_object/test.csv
         num_test_shards: 5
       adapter_args:
-        adapter_config: seq_bn[reduction_factor=64]
+        adapter_config: seq_bn[reduction_factor=16]
     mobility_pred:
       data_args:
         task_name: mobility_pred
@@ -42,7 +42,7 @@ FinetuningArguments:
         test_file: data/property_data/Mobility/test.csv
         num_test_shards: 5
       adapter_args:
-        adapter_config: seq_bn[reduction_factor=64]
+        adapter_config: seq_bn[reduction_factor=16]
     opacity_pred:
       data_args:
         task_name: opacity_pred
@@ -51,7 +51,7 @@ FinetuningArguments:
         test_file: data/property_data/Opacity/test.csv
         num_test_shards: 5
       adapter_args:
-        adapter_config: seq_bn[reduction_factor=64]
+        adapter_config: seq_bn[reduction_factor=16]
     phase_pred:
       data_args:
         task_name: phase_pred
@@ -60,7 +60,7 @@ FinetuningArguments:
         test_file: data/property_data/Phase/test.csv
         num_test_shards: 5
       adapter_args:
-        adapter_config: seq_bn[reduction_factor=64]
+        adapter_config: seq_bn[reduction_factor=16]
     rigidity_pred:
       data_args:
         task_name: rigidity_pred
@@ -69,7 +69,7 @@ FinetuningArguments:
         test_file: data/property_data/Rigidity/test.csv
         num_test_shards: 5
       adapter_args:
-        adapter_config: seq_bn[reduction_factor=64]
+        adapter_config: seq_bn[reduction_factor=16]
     sentience_pred:
       data_args:
         task_name: sentience_pred
@@ -78,7 +78,7 @@ FinetuningArguments:
         test_file: data/property_data/Sentience/test.csv
         num_test_shards: 5
       adapter_args:
-        adapter_config: seq_bn[reduction_factor=64]
+        adapter_config: seq_bn[reduction_factor=16]
     shape_pred:
       data_args:
         task_name: shape_pred
@@ -87,7 +87,7 @@ FinetuningArguments:
         test_file: data/property_data/Shape/test.csv
         num_test_shards: 5
       adapter_args:
-        adapter_config: seq_bn[reduction_factor=64]
+        adapter_config: seq_bn[reduction_factor=16]
     size_pred:
       data_args:
         task_name: size_pred
@@ -96,7 +96,7 @@ FinetuningArguments:
         test_file: data/property_data/Size/test.csv
         num_test_shards: 5
       adapter_args:
-        adapter_config: seq_bn[reduction_factor=64]
+        adapter_config: seq_bn[reduction_factor=16]
     temperature_pred:
       data_args:
         task_name: temperature_pred
@@ -105,7 +105,7 @@ FinetuningArguments:
         test_file: data/property_data/Temperature/test.csv
         num_test_shards: 5
       adapter_args:
-        adapter_config: seq_bn[reduction_factor=64]
+        adapter_config: seq_bn[reduction_factor=16]
     texture_pred:
       data_args:
         task_name: texture_pred
@@ -114,7 +114,7 @@ FinetuningArguments:
         test_file: data/property_data/Texture/test.csv
         num_test_shards: 5
       adapter_args:
-        adapter_config: seq_bn[reduction_factor=64]
+        adapter_config: seq_bn[reduction_factor=16]
     weight_pred:
       data_args:
         task_name: weight_pred
@@ -123,5 +123,5 @@ FinetuningArguments:
         test_file: data/property_data/Weight/test.csv
         num_test_shards: 5
       adapter_args:
-        adapter_config: seq_bn[reduction_factor=64]
+        adapter_config: seq_bn[reduction_factor=16]
   downstream_tasks: {}

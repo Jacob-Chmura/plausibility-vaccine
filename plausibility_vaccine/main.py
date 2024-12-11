@@ -13,7 +13,7 @@ parser = argparse.ArgumentParser(
 parser.add_argument(
     '--config-file',
     type=str,
-    default='config/base.yaml',
+    default='config/albert_reduce_factor_64/base.yaml',
     help='Path to yaml configuration file to use',
 )
 

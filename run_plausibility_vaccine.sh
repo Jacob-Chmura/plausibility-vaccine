@@ -8,13 +8,13 @@ print_usage() {
     echo "Run Plausibility Vaccine experiments"
     echo
     echo "Positional argument:"
-    echo "  config_file            The path of the configuration file to use (default='config/base.yaml')."
+    echo "  config_file            The path of the configuration file to use (default='config/albert_reduce_factor_64/base.yaml')."
     echo
     echo "Optional arguments:"
     echo "  -h, --help             Show this help message and exit."
 }
 
-CONFIG_FILE="config/base.yaml"
+CONFIG_FILE="config/albert_reduce_factor_64/base.yaml"
 
 
 main() {
