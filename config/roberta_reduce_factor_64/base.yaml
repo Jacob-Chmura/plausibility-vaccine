@@ -7,7 +7,7 @@ ModelArguments:
   pretrained_model_name: roberta-base
 TrainingArguments:
   learning_rate: 0.0001
-  num_train_epochs: 10.0
+  num_train_epochs: 5.0
   optim: adamw_torch
   output_dir: results/albert_reduce_factor_64
   overwrite_output_dir: false
