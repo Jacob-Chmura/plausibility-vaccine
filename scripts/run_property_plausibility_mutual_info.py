@@ -40,6 +40,12 @@ parser.add_argument(
     default=50,
     help='The amount of re-sample to estimate mutual information statistics',
 )
+parser.add_argument(
+    '--rng',
+    type=int,
+    default=1337,
+    help='The random state to use when estimating mutual information, for reproducibility',
+)
 
 
 def main() -> None:
@@ -47,7 +53,7 @@ def main() -> None:
     plausibility_df = _read_subdirectory_dataset_csvs(args.plausibility_datasets_dir)
     property_df = _read_subdirectory_dataset_csvs(args.property_datasets_dir)
     df = get_merged_plausibility_property_data(plausibility_df, property_df)
-    mi_df = compute_mutual_info_scores(df, args.n_mutual_info_samples)
+    mi_df = compute_mutual_info_scores(df, args.n_mutual_info_samples, args.rng)
     plot_mi_df(mi_df, args.artifacts_dir)
 
 
@@ -76,7 +82,9 @@ def get_merged_plausibility_property_data(
     return df
 
 
-def compute_mutual_info_scores(df: pd.DataFrame, n_samples: int) -> pd.DataFrame:
+def compute_mutual_info_scores(
+    df: pd.DataFrame, n_samples: int, rng: int
+) -> pd.DataFrame:
     mi_data: Dict[str, List[float]] = {
         'task': [],
         'entity': [],
@@ -84,10 +92,10 @@ def compute_mutual_info_scores(df: pd.DataFrame, n_samples: int) -> pd.DataFrame
         'mi': [],
     }
     groups = ['task', 'entity', 'property']
-    for _ in range(n_samples):
+    for i in range(n_samples):
         for (task, entity, property), df_g in df.groupby(groups):
             x, y = df_g[['property_label']], df_g['plausibility']
-            mi = mutual_info_classif(x, y)[0]
+            mi = mutual_info_classif(x, y, random_state=rng + i)[0]
             mi_data['task'].append(task)
             mi_data['entity'].append(entity)
             mi_data['property'].append(property)
