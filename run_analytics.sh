@@ -46,6 +46,12 @@ main() {
 
     echo "Running Downstream Performance analysis"
     uv run scripts/run_downstream_performance_analysis.py
+
+    echo "Running Adapter Ablation"
+    uv run scripts/run_adapter_ablation.py
+
+    echo "Running Transformer Ablation"
+    uv run scripts/run_transformer_ablation.py
 }
 
 parse_args() {
