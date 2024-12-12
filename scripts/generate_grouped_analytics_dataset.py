@@ -96,8 +96,8 @@ def get_merged_plausibility_sa_data(
 
             sa_df = sa_df[[entity, 'verb', 'label']].dropna()
             sa_df = pd.merge(sa_df, entity_df, how='left', on=[entity, 'verb'])
-            sa_df = sa_df.rename({'label': 'association', entity: 'entity'}, axis=1)
-            sa_df['entity_type'] = entity
+            sa_df = sa_df.rename({'label': 'association', entity: 'Item'}, axis=1)
+            sa_df['entity'] = entity
             sa_df['task'] = task
             dfs.append(sa_df)
     df = pd.concat(dfs)
