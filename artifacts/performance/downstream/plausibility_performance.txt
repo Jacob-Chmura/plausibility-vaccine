@@ -1,0 +1,28 @@
+\begin{tabular}{rllllllll}
+\hline
+    & Task   & Training Data   & Adapter Fusion           & FineTune Plausibility   & Accuracy      & F1            & Precision     & Recall        \\
+\hline
+  0 & 20q    & Combined        & No Adapters              & Adapter                 & 0.67 ± 0.025  & 0.67 ± 0.024  & 0.67 ± 0.025  & 0.67 ± 0.025  \\
+  1 & 20q    & Combined        & No Adapters              & MLP                     & 0.56 ± 0.016  & 0.56 ± 0.015  & 0.56 ± 0.017  & 0.56 ± 0.017  \\
+  2 & 20q    & Combined        & Property + Verb Adapters & Adapter                 & 0.67 ± 0.031  & 0.67 ± 0.031  & 0.67 ± 0.031  & 0.67 ± 0.031  \\
+  3 & 20q    & Combined        & Property + Verb Adapters & MLP                     & 0.64 ± 0.02   & 0.64 ± 0.019  & 0.64 ± 0.019  & 0.64 ± 0.02   \\
+  4 & 20q    & Combined        & Property Adapters        & Adapter                 & 0.67 ± 0.018  & 0.67 ± 0.017  & 0.67 ± 0.017  & 0.67 ± 0.017  \\
+  5 & 20q    & Combined        & Property Adapters        & MLP                     & 0.65 ± 0.024  & 0.65 ± 0.023  & 0.66 ± 0.022  & 0.65 ± 0.022  \\
+  6 & 20q    & Individual      & No Adapters              & Adapter                 & 0.65 ± 0.027  & 0.65 ± 0.027  & 0.65 ± 0.026  & 0.65 ± 0.027  \\
+  7 & 20q    & Individual      & No Adapters              & MLP                     & 0.55 ± 0.028  & 0.55 ± 0.028  & 0.55 ± 0.027  & 0.55 ± 0.027  \\
+  8 & 20q    & Individual      & Property + Verb Adapters & Adapter                 & 0.68 ± 0.027  & 0.68 ± 0.026  & 0.68 ± 0.026  & 0.68 ± 0.026  \\
+  9 & 20q    & Individual      & Property + Verb Adapters & MLP                     & 0.63 ± 0.019  & 0.63 ± 0.019  & 0.63 ± 0.019  & 0.63 ± 0.019  \\
+ 10 & 20q    & Individual      & Property Adapters        & Adapter                 & 0.66 ± 0.029  & 0.66 ± 0.029  & 0.66 ± 0.028  & 0.66 ± 0.029  \\
+ 11 & 20q    & Individual      & Property Adapters        & MLP                     & 0.65 ± 0.027  & 0.65 ± 0.027  & 0.65 ± 0.025  & 0.65 ± 0.026  \\
+ 12 & pep    & Combined        & No Adapters              & Adapter                 & 0.58 ± 0.023  & 0.58 ± 0.023  & 0.58 ± 0.023  & 0.58 ± 0.023  \\
+ 13 & pep    & Combined        & No Adapters              & MLP                     & 0.54 ± 0.043  & 0.54 ± 0.042  & 0.54 ± 0.042  & 0.54 ± 0.041  \\
+ 14 & pep    & Combined        & Property + Verb Adapters & Adapter                 & 0.58 ± 0.015  & 0.58 ± 0.015  & 0.58 ± 0.015  & 0.58 ± 0.015  \\
+ 15 & pep    & Combined        & Property + Verb Adapters & MLP                     & 0.54 ± 0.037  & 0.54 ± 0.038  & 0.54 ± 0.037  & 0.54 ± 0.037  \\
+ 16 & pep    & Combined        & Property Adapters        & MLP                     & 0.54 ± 0.022  & 0.54 ± 0.023  & 0.55 ± 0.023  & 0.55 ± 0.023  \\
+ 17 & pep    & Individual      & No Adapters              & Adapter                 & 0.51 ± 0.025  & 0.36 ± 0.029  & 0.55 ± 0.23   & 0.51 ± 0.013  \\
+ 18 & pep    & Individual      & No Adapters              & MLP                     & 0.5 ± 0.018   & 0.35 ± 0.015  & 0.43 ± 0.12   & 0.5 ± 0.0062  \\
+ 19 & pep    & Individual      & Property + Verb Adapters & Adapter                 & 0.57 ± 0.014  & 0.57 ± 0.014  & 0.57 ± 0.012  & 0.57 ± 0.013  \\
+ 20 & pep    & Individual      & Property + Verb Adapters & MLP                     & 0.54 ± 0.015  & 0.54 ± 0.015  & 0.55 ± 0.014  & 0.54 ± 0.014  \\
+ 21 & pep    & Individual      & Property Adapters        & MLP                     & 0.52 ± 0.0046 & 0.52 ± 0.0094 & 0.53 ± 0.0094 & 0.53 ± 0.0089 \\
+\hline
+\end{tabular}

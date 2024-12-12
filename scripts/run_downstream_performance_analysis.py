@@ -46,7 +46,7 @@ def generate_perf_tables(perf_df: pd.DataFrame) -> Dict[str, str]:
 
     perf_df = pd.melt(perf_df[keep_cols], 'task')
     perf_df['metric'] = perf_df['variable'].apply(lambda x: x.split('_')[-1])
-    perf_df['train_data'] = perf_df['variable'].apply(
+    perf_df['train_data'] = perf_df['task'].apply(
         lambda x: 'Combined' if 'combined' in x else 'Individual'
     )
     perf_df['shard'] = perf_df['variable'].apply(
@@ -83,16 +83,16 @@ def generate_perf_tables(perf_df: pd.DataFrame) -> Dict[str, str]:
     data = data.drop(['mu', 'std'], axis=1)
     table_data = data.pivot_table(
         values=['value'],
-        index=['task', 'adapter_fusion', 'finetune_plausibility'],
+        index=['task', 'train_data', 'adapter_fusion', 'finetune_plausibility'],
         columns='metric',
         aggfunc='first',
     ).reset_index()
 
-    headers = ['Task', 'Adapter Fusion', 'FineTune Plausibility'] + [
+    headers = ['Task', 'Training Data', 'Adapter Fusion', 'FineTune Plausibility'] + [
         metric[0].upper() + metric[1:] for metric in metrics
     ]
     print(tabulate(table_data, headers, tablefmt='fancy_grid'))
-    return {'property_adapters': tabulate(table_data, headers, tablefmt='latex')}
+    return {'plausibility': tabulate(table_data, headers, tablefmt='latex')}
 
 
 def save_latex_tables(latex_tables: Dict[str, str], artifacts_dir_str: str) -> None:
