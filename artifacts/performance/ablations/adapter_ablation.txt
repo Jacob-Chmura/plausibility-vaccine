@@ -1,0 +1,72 @@
+\begin{tabular}{rlllllllll}
+\hline
+    & Ablation                & Task   & Training Data   & Adapter Fusion           & FineTune Plausibility   & Accuracy      & F1            & Precision     & Recall        \\
+\hline
+  0 & albert\_reduce\_factor\_16 & 20q    & Combined        & No Adapters              & Adapter                 & 0.67 ± 0.018  & 0.67 ± 0.018  & 0.67 ± 0.018  & 0.67 ± 0.018  \\
+  1 & albert\_reduce\_factor\_16 & 20q    & Combined        & No Adapters              & MLP                     & 0.56 ± 0.016  & 0.56 ± 0.015  & 0.56 ± 0.017  & 0.56 ± 0.017  \\
+  2 & albert\_reduce\_factor\_16 & 20q    & Combined        & Property + Verb Adapters & Adapter                 & 0.66 ± 0.011  & 0.66 ± 0.012  & 0.66 ± 0.011  & 0.66 ± 0.012  \\
+  3 & albert\_reduce\_factor\_16 & 20q    & Combined        & Property + Verb Adapters & MLP                     & 0.65 ± 0.019  & 0.65 ± 0.018  & 0.65 ± 0.017  & 0.65 ± 0.017  \\
+  4 & albert\_reduce\_factor\_16 & 20q    & Combined        & Property Adapters        & Adapter                 & 0.67 ± 0.026  & 0.67 ± 0.026  & 0.67 ± 0.026  & 0.67 ± 0.026  \\
+  5 & albert\_reduce\_factor\_16 & 20q    & Combined        & Property Adapters        & MLP                     & 0.66 ± 0.027  & 0.66 ± 0.026  & 0.66 ± 0.025  & 0.66 ± 0.025  \\
+  6 & albert\_reduce\_factor\_16 & 20q    & Individual      & No Adapters              & Adapter                 & 0.66 ± 0.024  & 0.66 ± 0.024  & 0.66 ± 0.023  & 0.66 ± 0.024  \\
+  7 & albert\_reduce\_factor\_16 & 20q    & Individual      & No Adapters              & MLP                     & 0.55 ± 0.028  & 0.55 ± 0.028  & 0.55 ± 0.027  & 0.55 ± 0.027  \\
+  8 & albert\_reduce\_factor\_16 & 20q    & Individual      & Property + Verb Adapters & Adapter                 & 0.66 ± 0.024  & 0.66 ± 0.024  & 0.66 ± 0.022  & 0.66 ± 0.023  \\
+  9 & albert\_reduce\_factor\_16 & 20q    & Individual      & Property + Verb Adapters & MLP                     & 0.66 ± 0.018  & 0.66 ± 0.018  & 0.66 ± 0.017  & 0.66 ± 0.018  \\
+ 10 & albert\_reduce\_factor\_16 & 20q    & Individual      & Property Adapters        & Adapter                 & 0.67 ± 0.021  & 0.67 ± 0.021  & 0.67 ± 0.02   & 0.67 ± 0.021  \\
+ 11 & albert\_reduce\_factor\_16 & 20q    & Individual      & Property Adapters        & MLP                     & 0.67 ± 0.014  & 0.67 ± 0.013  & 0.67 ± 0.011  & 0.67 ± 0.011  \\
+ 12 & albert\_reduce\_factor\_16 & pep    & Combined        & No Adapters              & Adapter                 & 0.55 ± 0.0065 & 0.55 ± 0.0063 & 0.55 ± 0.0061 & 0.55 ± 0.0061 \\
+ 13 & albert\_reduce\_factor\_16 & pep    & Combined        & No Adapters              & MLP                     & 0.54 ± 0.043  & 0.54 ± 0.042  & 0.54 ± 0.042  & 0.54 ± 0.041  \\
+ 14 & albert\_reduce\_factor\_16 & pep    & Combined        & Property + Verb Adapters & Adapter                 & 0.57 ± 0.035  & 0.57 ± 0.035  & 0.57 ± 0.035  & 0.57 ± 0.035  \\
+ 15 & albert\_reduce\_factor\_16 & pep    & Combined        & Property + Verb Adapters & MLP                     & 0.55 ± 0.043  & 0.55 ± 0.043  & 0.55 ± 0.044  & 0.55 ± 0.043  \\
+ 16 & albert\_reduce\_factor\_16 & pep    & Combined        & Property Adapters        & MLP                     & 0.56 ± 0.023  & 0.55 ± 0.023  & 0.56 ± 0.027  & 0.56 ± 0.025  \\
+ 17 & albert\_reduce\_factor\_16 & pep    & Individual      & No Adapters              & Adapter                 & 0.57 ± 0.018  & 0.57 ± 0.018  & 0.57 ± 0.019  & 0.57 ± 0.018  \\
+ 18 & albert\_reduce\_factor\_16 & pep    & Individual      & No Adapters              & MLP                     & 0.54 ± 0.032  & 0.54 ± 0.032  & 0.54 ± 0.031  & 0.54 ± 0.031  \\
+ 19 & albert\_reduce\_factor\_16 & pep    & Individual      & Property + Verb Adapters & Adapter                 & 0.57 ± 0.025  & 0.56 ± 0.025  & 0.57 ± 0.025  & 0.57 ± 0.024  \\
+ 20 & albert\_reduce\_factor\_16 & pep    & Individual      & Property + Verb Adapters & MLP                     & 0.57 ± 0.028  & 0.56 ± 0.027  & 0.57 ± 0.028  & 0.57 ± 0.026  \\
+ 21 & albert\_reduce\_factor\_16 & pep    & Individual      & Property Adapters        & MLP                     & 0.54 ± 0.056  & 0.54 ± 0.056  & 0.54 ± 0.055  & 0.54 ± 0.055  \\
+ 22 & albert\_reduce\_factor\_32 & 20q    & Combined        & No Adapters              & Adapter                 & 0.67 ± 0.018  & 0.67 ± 0.018  & 0.67 ± 0.018  & 0.67 ± 0.018  \\
+ 23 & albert\_reduce\_factor\_32 & 20q    & Combined        & No Adapters              & MLP                     & 0.56 ± 0.016  & 0.56 ± 0.015  & 0.56 ± 0.017  & 0.56 ± 0.017  \\
+ 24 & albert\_reduce\_factor\_32 & 20q    & Combined        & Property + Verb Adapters & Adapter                 & 0.68 ± 0.012  & 0.68 ± 0.012  & 0.68 ± 0.011  & 0.68 ± 0.012  \\
+ 25 & albert\_reduce\_factor\_32 & 20q    & Combined        & Property + Verb Adapters & MLP                     & 0.68 ± 0.016  & 0.68 ± 0.015  & 0.68 ± 0.016  & 0.68 ± 0.015  \\
+ 26 & albert\_reduce\_factor\_32 & 20q    & Combined        & Property Adapters        & Adapter                 & 0.68 ± 0.03   & 0.68 ± 0.03   & 0.68 ± 0.03   & 0.68 ± 0.03   \\
+ 27 & albert\_reduce\_factor\_32 & 20q    & Combined        & Property Adapters        & MLP                     & 0.64 ± 0.026  & 0.64 ± 0.026  & 0.64 ± 0.026  & 0.64 ± 0.026  \\
+ 28 & albert\_reduce\_factor\_32 & 20q    & Individual      & No Adapters              & Adapter                 & 0.65 ± 0.027  & 0.65 ± 0.027  & 0.65 ± 0.026  & 0.65 ± 0.026  \\
+ 29 & albert\_reduce\_factor\_32 & 20q    & Individual      & No Adapters              & MLP                     & 0.55 ± 0.028  & 0.55 ± 0.028  & 0.55 ± 0.027  & 0.55 ± 0.027  \\
+ 30 & albert\_reduce\_factor\_32 & 20q    & Individual      & Property + Verb Adapters & Adapter                 & 0.67 ± 0.023  & 0.67 ± 0.023  & 0.67 ± 0.022  & 0.67 ± 0.023  \\
+ 31 & albert\_reduce\_factor\_32 & 20q    & Individual      & Property + Verb Adapters & MLP                     & 0.67 ± 0.024  & 0.66 ± 0.024  & 0.67 ± 0.023  & 0.67 ± 0.023  \\
+ 32 & albert\_reduce\_factor\_32 & 20q    & Individual      & Property Adapters        & Adapter                 & 0.68 ± 0.035  & 0.68 ± 0.035  & 0.68 ± 0.033  & 0.68 ± 0.033  \\
+ 33 & albert\_reduce\_factor\_32 & 20q    & Individual      & Property Adapters        & MLP                     & 0.67 ± 0.028  & 0.67 ± 0.027  & 0.67 ± 0.026  & 0.67 ± 0.026  \\
+ 34 & albert\_reduce\_factor\_32 & pep    & Combined        & No Adapters              & Adapter                 & 0.57 ± 0.02   & 0.57 ± 0.021  & 0.57 ± 0.02   & 0.57 ± 0.02   \\
+ 35 & albert\_reduce\_factor\_32 & pep    & Combined        & No Adapters              & MLP                     & 0.54 ± 0.043  & 0.54 ± 0.042  & 0.54 ± 0.042  & 0.54 ± 0.041  \\
+ 36 & albert\_reduce\_factor\_32 & pep    & Combined        & Property + Verb Adapters & Adapter                 & 0.56 ± 0.031  & 0.56 ± 0.032  & 0.57 ± 0.031  & 0.57 ± 0.031  \\
+ 37 & albert\_reduce\_factor\_32 & pep    & Combined        & Property + Verb Adapters & MLP                     & 0.55 ± 0.014  & 0.55 ± 0.015  & 0.55 ± 0.014  & 0.55 ± 0.014  \\
+ 38 & albert\_reduce\_factor\_32 & pep    & Combined        & Property Adapters        & MLP                     & 0.53 ± 0.025  & 0.53 ± 0.025  & 0.53 ± 0.025  & 0.53 ± 0.025  \\
+ 39 & albert\_reduce\_factor\_32 & pep    & Individual      & No Adapters              & Adapter                 & 0.56 ± 0.026  & 0.56 ± 0.024  & 0.57 ± 0.024  & 0.57 ± 0.023  \\
+ 40 & albert\_reduce\_factor\_32 & pep    & Individual      & No Adapters              & MLP                     & 0.54 ± 0.032  & 0.54 ± 0.032  & 0.54 ± 0.031  & 0.54 ± 0.031  \\
+ 41 & albert\_reduce\_factor\_32 & pep    & Individual      & Property + Verb Adapters & Adapter                 & 0.58 ± 0.019  & 0.58 ± 0.019  & 0.58 ± 0.019  & 0.58 ± 0.018  \\
+ 42 & albert\_reduce\_factor\_32 & pep    & Individual      & Property + Verb Adapters & MLP                     & 0.55 ± 0.019  & 0.55 ± 0.02   & 0.56 ± 0.02   & 0.55 ± 0.02   \\
+ 43 & albert\_reduce\_factor\_32 & pep    & Individual      & Property Adapters        & MLP                     & 0.57 ± 0.026  & 0.57 ± 0.026  & 0.57 ± 0.024  & 0.57 ± 0.024  \\
+ 44 & albert\_reduce\_factor\_64 & 20q    & Combined        & No Adapters              & Adapter                 & 0.67 ± 0.025  & 0.67 ± 0.024  & 0.67 ± 0.025  & 0.67 ± 0.025  \\
+ 45 & albert\_reduce\_factor\_64 & 20q    & Combined        & No Adapters              & MLP                     & 0.56 ± 0.016  & 0.56 ± 0.015  & 0.56 ± 0.017  & 0.56 ± 0.017  \\
+ 46 & albert\_reduce\_factor\_64 & 20q    & Combined        & Property + Verb Adapters & Adapter                 & 0.67 ± 0.031  & 0.67 ± 0.031  & 0.67 ± 0.031  & 0.67 ± 0.031  \\
+ 47 & albert\_reduce\_factor\_64 & 20q    & Combined        & Property + Verb Adapters & MLP                     & 0.64 ± 0.02   & 0.64 ± 0.019  & 0.64 ± 0.019  & 0.64 ± 0.02   \\
+ 48 & albert\_reduce\_factor\_64 & 20q    & Combined        & Property Adapters        & Adapter                 & 0.67 ± 0.018  & 0.67 ± 0.017  & 0.67 ± 0.017  & 0.67 ± 0.017  \\
+ 49 & albert\_reduce\_factor\_64 & 20q    & Combined        & Property Adapters        & MLP                     & 0.65 ± 0.024  & 0.65 ± 0.023  & 0.66 ± 0.022  & 0.65 ± 0.022  \\
+ 50 & albert\_reduce\_factor\_64 & 20q    & Individual      & No Adapters              & Adapter                 & 0.65 ± 0.027  & 0.65 ± 0.027  & 0.65 ± 0.026  & 0.65 ± 0.027  \\
+ 51 & albert\_reduce\_factor\_64 & 20q    & Individual      & No Adapters              & MLP                     & 0.55 ± 0.028  & 0.55 ± 0.028  & 0.55 ± 0.027  & 0.55 ± 0.027  \\
+ 52 & albert\_reduce\_factor\_64 & 20q    & Individual      & Property + Verb Adapters & Adapter                 & 0.68 ± 0.027  & 0.68 ± 0.026  & 0.68 ± 0.026  & 0.68 ± 0.026  \\
+ 53 & albert\_reduce\_factor\_64 & 20q    & Individual      & Property + Verb Adapters & MLP                     & 0.63 ± 0.019  & 0.63 ± 0.019  & 0.63 ± 0.019  & 0.63 ± 0.019  \\
+ 54 & albert\_reduce\_factor\_64 & 20q    & Individual      & Property Adapters        & Adapter                 & 0.66 ± 0.029  & 0.66 ± 0.029  & 0.66 ± 0.028  & 0.66 ± 0.029  \\
+ 55 & albert\_reduce\_factor\_64 & 20q    & Individual      & Property Adapters        & MLP                     & 0.65 ± 0.027  & 0.65 ± 0.027  & 0.65 ± 0.025  & 0.65 ± 0.026  \\
+ 56 & albert\_reduce\_factor\_64 & pep    & Combined        & No Adapters              & Adapter                 & 0.58 ± 0.023  & 0.58 ± 0.023  & 0.58 ± 0.023  & 0.58 ± 0.023  \\
+ 57 & albert\_reduce\_factor\_64 & pep    & Combined        & No Adapters              & MLP                     & 0.54 ± 0.043  & 0.54 ± 0.042  & 0.54 ± 0.042  & 0.54 ± 0.041  \\
+ 58 & albert\_reduce\_factor\_64 & pep    & Combined        & Property + Verb Adapters & Adapter                 & 0.58 ± 0.015  & 0.58 ± 0.015  & 0.58 ± 0.015  & 0.58 ± 0.015  \\
+ 59 & albert\_reduce\_factor\_64 & pep    & Combined        & Property + Verb Adapters & MLP                     & 0.54 ± 0.037  & 0.54 ± 0.038  & 0.54 ± 0.037  & 0.54 ± 0.037  \\
+ 60 & albert\_reduce\_factor\_64 & pep    & Combined        & Property Adapters        & MLP                     & 0.54 ± 0.022  & 0.54 ± 0.023  & 0.55 ± 0.023  & 0.55 ± 0.023  \\
+ 61 & albert\_reduce\_factor\_64 & pep    & Individual      & No Adapters              & Adapter                 & 0.51 ± 0.025  & 0.36 ± 0.029  & 0.55 ± 0.23   & 0.51 ± 0.013  \\
+ 62 & albert\_reduce\_factor\_64 & pep    & Individual      & No Adapters              & MLP                     & 0.5 ± 0.018   & 0.35 ± 0.015  & 0.43 ± 0.12   & 0.5 ± 0.0062  \\
+ 63 & albert\_reduce\_factor\_64 & pep    & Individual      & Property + Verb Adapters & Adapter                 & 0.57 ± 0.014  & 0.57 ± 0.014  & 0.57 ± 0.012  & 0.57 ± 0.013  \\
+ 64 & albert\_reduce\_factor\_64 & pep    & Individual      & Property + Verb Adapters & MLP                     & 0.54 ± 0.015  & 0.54 ± 0.015  & 0.55 ± 0.014  & 0.54 ± 0.014  \\
+ 65 & albert\_reduce\_factor\_64 & pep    & Individual      & Property Adapters        & MLP                     & 0.52 ± 0.0046 & 0.52 ± 0.0094 & 0.53 ± 0.0094 & 0.53 ± 0.0089 \\
+\hline
+\end{tabular}
