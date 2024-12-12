@@ -48,8 +48,11 @@ git clone https://github.com/Jacob-Chmura/plausibility-vaccine.git
 # Enter the repo directory
 cd plausibility-vaccine
 
-# Install dependencies into an isolated environment
+# Install core dependencies into an isolated environment
 uv sync
+
+# [Optional] Install extra dependencies to run analytics
+uv sync --group analytics
 ```
 
 ## Usage
