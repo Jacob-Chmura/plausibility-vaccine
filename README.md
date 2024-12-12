@@ -68,13 +68,13 @@ _Full End-to-End Experiments_
 _Baseline Experiments Only_
 
 ```sh
-./run_plausibility_vaccine.sh config/baseline.yaml
+./run_plausibility_vaccine.sh config/albert_reduce_factor_64/baseline.yaml
 ```
 
 _Pre-training Adapters Only_
 
 ```sh
-./run_plausibility_vaccine.sh config/pretraining.yaml
+./run_plausibility_vaccine.sh config/albert_reduce_factor_64/pretraining.yaml
 ```
 
 ### Running Analytics
