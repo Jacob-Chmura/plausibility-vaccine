@@ -28,6 +28,12 @@ parser.add_argument(
     help='Path to root directory containing property data',
 )
 parser.add_argument(
+    '--results-dir',
+    type=str,
+    default='results/albert_reduce_factor_64/',
+    help='Path to to results directory for albert_64.',
+)
+parser.add_argument(
     '--output-dir',
     type=str,
     default='data/plausibility_prop_assoc_data/',
@@ -68,9 +74,15 @@ def get_merged_plausibility_property_data(
     for property_name, df_property in property_data.groupby('task'):
         property = df_property[['Item', 'label']]
         for entity_name in ['subject', 'object']:
-            entity = plausibility_data[[entity_name, 'task', 'plausibility']].rename(
-                {entity_name: 'Item'}, axis=1
-            )
+            entity = plausibility_data[
+                [
+                    entity_name,
+                    'task',
+                    'plausibility',
+                    'baseline_predict',
+                    'endline_predict',
+                ]
+            ].rename({entity_name: 'Item'}, axis=1)
             entity = pd.merge(entity, property, how='left', on='Item').dropna()
             entity['property'] = property_name
             entity['entity'] = entity_name
@@ -88,7 +100,9 @@ def get_merged_plausibility_sa_data(
     dfs = []
     for task, plausibility_task in plausibility_df.groupby('task'):
         for entity in ['subject', 'object']:
-            entity_df = plausibility_task[[entity, 'verb', 'label']]
+            entity_df = plausibility_task[
+                [entity, 'verb', 'label', 'baseline_predict', 'endline_predict']
+            ]
             entity_df = entity_df.rename({'label': 'plausibility'}, axis=1)
 
             data_dir = sa_datasets_dir / task
@@ -106,16 +120,58 @@ def get_merged_plausibility_sa_data(
 
 def main() -> None:
     args = parser.parse_args()
-    output_dir_prop = get_root_dir() / args.output_dir / f'concate_properties.csv'
-    output_dir_assoc = get_root_dir() / args.output_dir / f'concate_association.csv'
+    output_dir_prop = get_root_dir() / args.output_dir / 'concate_properties.csv'
+    output_dir_assoc = get_root_dir() / args.output_dir / 'concate_association.csv'
     sa_datasets_dir = get_root_dir() / args.selectional_association_datasets_dir
 
-    plausibility_df = _read_subdirectory_dataset_csvs(args.plausibility_datasets_dir)
+    plausibility_df = _read_subdirectory_dataset_csvs(
+        args.plausibility_datasets_dir
+    )  # Already combined pep/20q
+
+    # Append the predictions
+    # Baseline:
+    baseline_file = (
+        get_root_dir()
+        / args.results_dir
+        / '20q_plausibility_combined_finetune_adapter_base'
+        / 'train_binary_predictions.csv'
+    )
+    baseline = pd.read_csv(baseline_file)['predicted_label']
+    print(f'Shape of baseline: {baseline.shape}')
+    sum_base = baseline.sum()
+    print(f'sum of baseline: {sum_base}')
+
+    # Endline
+    endline_file = (
+        get_root_dir()
+        / args.results_dir
+        / '20q_plausibility_combined_finetune_adapter_use_adapters'
+        / 'train_binary_predictions.csv'
+    )
+    endline = pd.read_csv(endline_file)['predicted_label']
+    print(f'Shape of endline: {endline.shape}')
+    sum_end = endline.sum()
+    print(f'sum of endline: {sum_end}')
+
+    print(f'Shape of plausibility_df: {plausibility_df.shape}')
+
+    plausibility_df['baseline_predict'] = baseline
+    plausibility_df['endline_predict'] = endline
+    print(plausibility_df.head())
+    print(f'Shape of plausibility_df: {plausibility_df.shape}')
 
     property_df = _read_subdirectory_dataset_csvs(args.property_datasets_dir)
+    print('Head of property_df:')
+    print(property_df.head())
     df_merged_properties = get_merged_plausibility_property_data(
         plausibility_df, property_df
     )
+    print(f'Shape of merged properties: {df_merged_properties.shape}')
+    print(f'The duplicates: {df_merged_properties.duplicated().sum()}')
+    baseline_sum = df_merged_properties['baseline_predict'].sum()
+    print(f'Baseline sum merge: {baseline_sum}')
+    endline_sum = df_merged_properties['endline_predict'].sum()
+    print(f'Endline sum merge: {endline_sum}')
     df_merged_properties.to_csv(output_dir_prop)
 
     df_merged_assocation = get_merged_plausibility_sa_data(
