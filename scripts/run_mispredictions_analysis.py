@@ -345,12 +345,9 @@ def main() -> None:
     plausibility_df = add_predictions_sense_rank(
         plausibility_df, baseline_file, endline_file
     )
-    print(plausibility_df.head())
     merged_property_df = get_merged_plausibility_property_data(
         plausibility_df, property_df
     )
-    print('Head of merged property:')
-    print(merged_property_df)
     merged_association_df = get_merged_plausibility_sa_data(
         plausibility_df, association_dir
     )
