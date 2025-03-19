@@ -3,7 +3,7 @@
 <div align="center">
   <h1 style="font-size:3vw;padding:0;margin:0;display:inline">Plausibility Vaccine</h3>
   <h3 style="margin:0">Injecting LLM Knowledge for Event Plausibility</h3>
-  <a href="https://github.com/Jacob-Chmura/plausibility-vaccine"><strong>Read the paper»</strong></a>
+  <a href="https://arxiv.org/abs/2503.12667"><strong>Read the paper»</strong></a>
 </div>
 
 <br />
@@ -107,8 +107,8 @@ Jacob Chmura - jacobpaul.chmura@gmail.com
 @article{chmura-etal-2024-plausibility,
   title   = "Plausibility Vaccine: Injecting LLM Knowledge for Event Plausibility",
   author  = "Chmura, Jacob and Dauvet, Jonah, and Sabry, Sebastian"
-  journal = "arXiv preprint arXiv:TODO.TODO",
-  url     = "TODO"
+  journal = "arXiv preprint arXiv:2503.12667",
+  url     = "https://arxiv.org/abs/2503.12667",
   year    = "2024",
 }
 ```
