@@ -108,7 +108,7 @@ Jacob Chmura - jacobpaul.chmura@gmail.com
   title   = "Plausibility Vaccine: Injecting LLM Knowledge for Event Plausibility",
   author  = "Chmura, Jacob and Dauvet, Jonah, and Sabry, Sebastian"
   journal = "arXiv preprint arXiv:2503.12667",
-  url     = "https://arxiv.org/abs/2503.12667"
+  url     = "https://arxiv.org/abs/2503.12667",
   year    = "2024",
 }
 ```
