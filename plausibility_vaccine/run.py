@@ -1,10 +1,12 @@
 import copy
 import logging
+from pathlib import Path
 from typing import Dict, Union
 
 import evaluate
 import numpy as np
 from adapters import AdapterTrainer
+from scipy.special import softmax
 from transformers import (
     DataCollatorWithPadding,
     EvalPrediction,
@@ -35,17 +37,18 @@ def run(
 
     for task_name, task_args in finetuning_args.pretraining_tasks.items():
         logging.info('Running %s', task_name)
-        _run_task(model_args, training_args, task_args)
+        _run_task(model_args, training_args, task_args, downstream=False)
 
     for task_name, task_args in finetuning_args.downstream_tasks.items():
         logging.info('Running %s', task_name)
-        _run_task(model_args, training_args, task_args)
+        _run_task(model_args, training_args, task_args, downstream=True)
 
 
 def _run_task(
     model_args: ModelArguments,
     training_args: TrainingArguments,
     task_args: FinetuningArgument,
+    downstream: bool,
 ) -> None:
     logging.info('Setting up pre-training for task: %s', task_args.data_args.task_name)
     data_args, adapter_args = task_args.data_args, task_args.adapter_args
@@ -118,7 +121,7 @@ def _run_task(
         tokenizer=tokenizer,
         data_collator=DataCollatorWithPadding(tokenizer, pad_to_multiple_of=8),
     )
-    _run_trainer(trainer)
+    _run_trainer(trainer, downstream)
 
     # Deactivate the trained adapters to restore the base model
     if task_args.use_adapter_for_task:
@@ -126,7 +129,7 @@ def _run_task(
         model.delete_adapter(data_args.task_name)
 
 
-def _run_trainer(trainer: Union[AdapterTrainer, Trainer]) -> None:
+def _run_trainer(trainer: Union[AdapterTrainer, Trainer], downstream: bool) -> None:
     logging.info('*** Training ***')
     train_result = trainer.train()
     metrics = train_result.metrics
@@ -139,3 +142,24 @@ def _run_trainer(trainer: Union[AdapterTrainer, Trainer]) -> None:
     metrics = trainer.evaluate()
     trainer.log_metrics('eval', metrics)
     trainer.save_metrics('eval', metrics)
+
+    if downstream:
+        logging.info('*** Generating predictions on training set. ***')
+        predictions_output = trainer.predict(trainer.train_dataset)
+        logits = predictions_output.predictions
+        label_ids = predictions_output.label_ids
+        probabilites = softmax(logits, axis=1)
+        binary_predictions = np.argmax(probabilites, axis=1)
+
+        output_dir = Path(trainer.args.output_dir)
+        predictions_file = output_dir / 'train_binary_predictions.csv'
+
+        np.savetxt(
+            predictions_file,
+            np.column_stack((binary_predictions, label_ids)),
+            delimiter=',',
+            header='predicted_label, true_label',
+            fmt='%d',
+            comments='',
+        )
+        logging.info(f'Train predictions saved to {predictions_file}')
